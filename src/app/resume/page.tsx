@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eraser, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
@@ -37,6 +37,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { ResumePreview } from "./resume-preview";
 
 const optionalUrl = z.union([z.literal(""), z.string().url("Enter a valid URL")]);
 
@@ -229,6 +230,9 @@ export default function ResumePage() {
     [form.formState.errors]
   );
 
+  useWatch({ control: form.control });
+  const previewDraft = toResumeDraft(form.getValues());
+
   async function onGenerate(values: ResumeFormValues) {
     setIsGenerating(true);
     try {
@@ -416,236 +420,240 @@ export default function ResumePage() {
         </div>
       </header>
 
-      <Card className="border-primary/20">
-        <CardHeader>
-          <CardTitle>Resume Details</CardTitle>
-          <CardDescription>
-            Build from scratch, or import your saved data into empty sections.
-          </CardDescription>
-        </CardHeader>
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+        <Card className="border-primary/20">
+          <CardHeader>
+            <CardTitle>Resume Details</CardTitle>
+            <CardDescription>
+              Build from scratch, or import your saved data into empty sections.
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent>
-          <div className="mb-6 grid gap-2">
-            <Label htmlFor="resume-title">Resume Title</Label>
-            <Input id="resume-title" {...form.register("title")} />
-            {form.formState.errors.title ? (
-              <p className="text-xs text-destructive">{form.formState.errors.title.message}</p>
-            ) : null}
-          </div>
-
-          <Tabs defaultValue="personal">
-            <TabsList>
-              <TabsTrigger value="personal">Personal Info</TabsTrigger>
-              <TabsTrigger value="education">Education</TabsTrigger>
-              <TabsTrigger value="projects">Projects</TabsTrigger>
-              <TabsTrigger value="skills">Skills</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="personal" className="mt-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="full_name">Full name</Label>
-                  <Input id="full_name" {...form.register("payload.personal_info.full_name")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" {...form.register("payload.personal_info.email")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" {...form.register("payload.personal_info.phone")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" {...form.register("payload.personal_info.address")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="github_label">GitHub label</Label>
-                  <Input id="github_label" {...form.register("payload.personal_info.github_label")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="github_url">GitHub URL</Label>
-                  <Input id="github_url" placeholder="https://github.com/username" {...form.register("payload.personal_info.github_url")} />
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="education" className="mt-4 space-y-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => education.append({ ...emptyEducation })}
-              >
-                <Plus className="size-4" />
-                Add Education
-              </Button>
-
-              {education.fields.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No education entries yet.</p>
+          <CardContent>
+            <div className="mb-6 grid gap-2">
+              <Label htmlFor="resume-title">Resume Title</Label>
+              <Input id="resume-title" {...form.register("title")} />
+              {form.formState.errors.title ? (
+                <p className="text-xs text-destructive">{form.formState.errors.title.message}</p>
               ) : null}
+            </div>
 
-              {education.fields.map((field, index) => (
-                <Card key={field.id}>
-                  <CardHeader>
-                    <CardTitle>Education #{index + 1}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid gap-4 md:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label>University</Label>
-                      <Input {...form.register(`payload.education.${index}.university`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>Degree</Label>
-                      <Input {...form.register(`payload.education.${index}.degree`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>Field</Label>
-                      <Input {...form.register(`payload.education.${index}.field`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>Time Period</Label>
-                      <Input {...form.register(`payload.education.${index}.time_period`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>GPA (optional)</Label>
-                      <Input {...form.register(`payload.education.${index}.gpa`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>Location (optional)</Label>
-                      <Input {...form.register(`payload.education.${index}.location`)} />
-                    </div>
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label>Relevant Coursework (optional)</Label>
-                      <Textarea rows={3} {...form.register(`payload.education.${index}.relevant_coursework`)} />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => education.remove(index)}
-                    >
-                      <Trash2 className="size-4" />
-                      Remove
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </TabsContent>
+            <Tabs defaultValue="personal">
+              <TabsList>
+                <TabsTrigger value="personal">Personal Info</TabsTrigger>
+                <TabsTrigger value="education">Education</TabsTrigger>
+                <TabsTrigger value="projects">Projects</TabsTrigger>
+                <TabsTrigger value="skills">Skills</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="projects" className="mt-4 space-y-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => projects.append({ ...emptyProject })}
-              >
-                <Plus className="size-4" />
-                Add Project
-              </Button>
+              <TabsContent value="personal" className="mt-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor="full_name">Full name</Label>
+                    <Input id="full_name" {...form.register("payload.personal_info.full_name")} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" {...form.register("payload.personal_info.email")} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" {...form.register("payload.personal_info.phone")} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input id="address" {...form.register("payload.personal_info.address")} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="github_label">GitHub label</Label>
+                    <Input id="github_label" {...form.register("payload.personal_info.github_label")} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="github_url">GitHub URL</Label>
+                    <Input id="github_url" placeholder="https://github.com/username" {...form.register("payload.personal_info.github_url")} />
+                  </div>
+                </div>
+              </TabsContent>
 
-              {projects.fields.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No project entries yet.</p>
-              ) : null}
+              <TabsContent value="education" className="mt-4 space-y-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => education.append({ ...emptyEducation })}
+                >
+                  <Plus className="size-4" />
+                  Add Education
+                </Button>
 
-              {projects.fields.map((field, index) => (
-                <Card key={field.id}>
-                  <CardHeader>
-                    <CardTitle>Project #{index + 1}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid gap-4 md:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label>Title</Label>
-                      <Input {...form.register(`payload.projects.${index}.title`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>Date Range</Label>
-                      <Input {...form.register(`payload.projects.${index}.date_range`)} />
-                    </div>
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label>GitHub URL (optional)</Label>
-                      <Input placeholder="https://github.com/org/repo" {...form.register(`payload.projects.${index}.github_url`)} />
-                    </div>
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label>Tech Stack (optional)</Label>
-                      <Input {...form.register(`payload.projects.${index}.tech_stack`)} />
-                    </div>
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label>Bullets (one line per bullet)</Label>
-                      <Textarea rows={5} {...form.register(`payload.projects.${index}.bullets_text`)} />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => projects.remove(index)}
-                    >
-                      <Trash2 className="size-4" />
-                      Remove
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </TabsContent>
+                {education.fields.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No education entries yet.</p>
+                ) : null}
 
-            <TabsContent value="skills" className="mt-4 space-y-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => skills.append({ ...emptySkill })}
-              >
-                <Plus className="size-4" />
-                Add Skill Group
-              </Button>
+                {education.fields.map((field, index) => (
+                  <Card key={field.id}>
+                    <CardHeader>
+                      <CardTitle>Education #{index + 1}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-4 md:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label>University</Label>
+                        <Input {...form.register(`payload.education.${index}.university`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Degree</Label>
+                        <Input {...form.register(`payload.education.${index}.degree`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Field</Label>
+                        <Input {...form.register(`payload.education.${index}.field`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Time Period</Label>
+                        <Input {...form.register(`payload.education.${index}.time_period`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>GPA (optional)</Label>
+                        <Input {...form.register(`payload.education.${index}.gpa`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Location (optional)</Label>
+                        <Input {...form.register(`payload.education.${index}.location`)} />
+                      </div>
+                      <div className="grid gap-2 md:col-span-2">
+                        <Label>Relevant Coursework (optional)</Label>
+                        <Textarea rows={3} {...form.register(`payload.education.${index}.relevant_coursework`)} />
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => education.remove(index)}
+                      >
+                        <Trash2 className="size-4" />
+                        Remove
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
 
-              {skills.fields.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No skills added yet.</p>
-              ) : null}
+              <TabsContent value="projects" className="mt-4 space-y-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => projects.append({ ...emptyProject })}
+                >
+                  <Plus className="size-4" />
+                  Add Project
+                </Button>
 
-              {skills.fields.map((field, index) => (
-                <Card key={field.id}>
-                  <CardHeader>
-                    <CardTitle>Skill Group #{index + 1}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid gap-4 md:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label>Label</Label>
-                      <Input placeholder="Languages" {...form.register(`payload.skills.${index}.label`)} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>Values</Label>
-                      <Input
-                        placeholder="Python, TypeScript, SQL"
-                        {...form.register(`payload.skills.${index}.values`)}
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => skills.remove(index)}
-                    >
-                      <Trash2 className="size-4" />
-                      Remove
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
+                {projects.fields.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No project entries yet.</p>
+                ) : null}
 
-        <Separator />
+                {projects.fields.map((field, index) => (
+                  <Card key={field.id}>
+                    <CardHeader>
+                      <CardTitle>Project #{index + 1}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-4 md:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label>Title</Label>
+                        <Input {...form.register(`payload.projects.${index}.title`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Date Range</Label>
+                        <Input {...form.register(`payload.projects.${index}.date_range`)} />
+                      </div>
+                      <div className="grid gap-2 md:col-span-2">
+                        <Label>GitHub URL (optional)</Label>
+                        <Input placeholder="https://github.com/org/repo" {...form.register(`payload.projects.${index}.github_url`)} />
+                      </div>
+                      <div className="grid gap-2 md:col-span-2">
+                        <Label>Tech Stack (optional)</Label>
+                        <Input {...form.register(`payload.projects.${index}.tech_stack`)} />
+                      </div>
+                      <div className="grid gap-2 md:col-span-2">
+                        <Label>Bullets (one line per bullet)</Label>
+                        <Textarea rows={5} {...form.register(`payload.projects.${index}.bullets_text`)} />
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => projects.remove(index)}
+                      >
+                        <Trash2 className="size-4" />
+                        Remove
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
 
-        <CardFooter className="justify-between gap-3">
-          <p className="text-xs text-muted-foreground">Draft is autosaved in your browser.</p>
-          <Button size="lg" disabled={isGenerating} onClick={form.handleSubmit(onGenerate)}>
-            {isGenerating ? <Loader2 className="size-4 animate-spin" /> : null}
-            Generate Resume
-          </Button>
-        </CardFooter>
-      </Card>
+              <TabsContent value="skills" className="mt-4 space-y-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => skills.append({ ...emptySkill })}
+                >
+                  <Plus className="size-4" />
+                  Add Skill Group
+                </Button>
+
+                {skills.fields.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No skills added yet.</p>
+                ) : null}
+
+                {skills.fields.map((field, index) => (
+                  <Card key={field.id}>
+                    <CardHeader>
+                      <CardTitle>Skill Group #{index + 1}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-4 md:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label>Label</Label>
+                        <Input placeholder="Languages" {...form.register(`payload.skills.${index}.label`)} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Values</Label>
+                        <Input
+                          placeholder="Python, TypeScript, SQL"
+                          {...form.register(`payload.skills.${index}.values`)}
+                        />
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => skills.remove(index)}
+                      >
+                        <Trash2 className="size-4" />
+                        Remove
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+
+          <Separator />
+
+          <CardFooter className="justify-between gap-3">
+            <p className="text-xs text-muted-foreground">Draft is autosaved in your browser.</p>
+            <Button size="lg" disabled={isGenerating} onClick={form.handleSubmit(onGenerate)}>
+              {isGenerating ? <Loader2 className="size-4 animate-spin" /> : null}
+              Generate Resume
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <ResumePreview draft={previewDraft} />
+      </section>
 
       {hasValidationErrors ? (
         <p className="text-xs text-destructive">
