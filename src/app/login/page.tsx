@@ -20,7 +20,7 @@ export default function LoginPage() {
       try {
         await getMe();
         if (!active) return;
-        router.replace("/resume");
+        router.replace("/home");
       } catch {
         if (!active) return;
       } finally {
@@ -38,7 +38,7 @@ export default function LoginPage() {
   async function handleGoogleLogin() {
     setLoading(true);
     try {
-      const { authorization_url } = await startGoogleLogin("/resume");
+      const { authorization_url } = await startGoogleLogin("/home");
       window.location.href = authorization_url;
     } catch (error) {
       const detail =

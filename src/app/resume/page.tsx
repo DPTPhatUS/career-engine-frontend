@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Eraser, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   ApiError,
   createResume,
   generateDoc,
-  getMe,
-  logout,
+  getProfile,
+  listEducations,
+  listProjects,
   updateResume,
   type ResumeDraft,
 } from "@/lib/api";
@@ -21,6 +22,7 @@ import {
   RESUME_DRAFT_STORAGE_KEY,
   RESUME_ID_STORAGE_KEY,
 } from "@/lib/resume-defaults";
+import { useAuth } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -35,7 +37,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const optionalUrl = z.union([z.literal(""), z.string().url("Enter a valid URL")]);
 
@@ -162,12 +163,11 @@ function toResumeDraft(values: ResumeFormValues): ResumeDraft {
 
 export default function ResumePage() {
   const router = useRouter();
-  const [authLoading, setAuthLoading] = useState(true);
+  const { me, profile } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isInsertingInfo, setIsInsertingInfo] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const [resumeId, setResumeId] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [authError, setAuthError] = useState<string>("");
 
   const form = useForm<ResumeFormValues>({
     resolver: zodResolver(resumeFormSchema),
@@ -191,87 +191,43 @@ export default function ResumePage() {
   });
 
   useEffect(() => {
-    let mounted = true;
-
-    async function bootstrap() {
+    const draftRaw = window.localStorage.getItem(RESUME_DRAFT_STORAGE_KEY);
+    if (draftRaw) {
       try {
-        const me = await getMe();
-        if (!mounted) return;
-        setUserEmail(me.email);
-
-        const draftRaw = window.localStorage.getItem(RESUME_DRAFT_STORAGE_KEY);
-        if (draftRaw) {
-          try {
-            const parsed = JSON.parse(draftRaw) as ResumeFormValues;
-            const validated = resumeFormSchema.safeParse(parsed);
-            if (validated.success) {
-              form.reset(validated.data);
-            }
-          } catch {
-            // Ignore malformed local draft data and keep defaults.
-          }
+        const parsed = JSON.parse(draftRaw) as ResumeFormValues;
+        const validated = resumeFormSchema.safeParse(parsed);
+        if (validated.success) {
+          form.reset(validated.data);
         }
-
-        const storedResumeId = window.localStorage.getItem(RESUME_ID_STORAGE_KEY);
-        if (storedResumeId) setResumeId(storedResumeId);
-      } catch (error) {
-        if (!mounted) return;
-        if (error instanceof ApiError && error.status === 401) {
-          router.replace("/login");
-          return;
-        }
-
-        setAuthError(
-          error instanceof Error
-            ? error.message
-            : "Unable to validate session."
-        );
-      } finally {
-        if (mounted) setAuthLoading(false);
+      } catch {
+        // Ignore malformed local draft data and keep defaults.
       }
     }
 
-    void bootstrap();
-
-    return () => {
-      mounted = false;
-    };
-  }, [form, router]);
+    const storedResumeId = window.localStorage.getItem(RESUME_ID_STORAGE_KEY);
+    if (storedResumeId) setResumeId(storedResumeId);
+  }, [form]);
 
   useEffect(() => {
-    if (authLoading) return;
-
     let timer: number | undefined;
 
     const subscription = form.watch((value) => {
       if (timer) window.clearTimeout(timer);
       timer = window.setTimeout(() => {
         window.localStorage.setItem(RESUME_DRAFT_STORAGE_KEY, JSON.stringify(value));
-      }, 350);
+      }, 300);
     });
 
     return () => {
       if (timer) window.clearTimeout(timer);
       subscription.unsubscribe();
     };
-  }, [authLoading, form]);
+  }, [form]);
 
   const hasValidationErrors = useMemo(
     () => Object.keys(form.formState.errors).length > 0,
     [form.formState.errors]
   );
-
-  async function handleLogout() {
-    setIsLoggingOut(true);
-    try {
-      await logout();
-      window.localStorage.removeItem(RESUME_ID_STORAGE_KEY);
-      router.replace("/login");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Logout failed");
-      setIsLoggingOut(false);
-    }
-  }
 
   async function onGenerate(values: ResumeFormValues) {
     setIsGenerating(true);
@@ -296,54 +252,175 @@ export default function ResumePage() {
         router.replace("/login");
         return;
       }
-
       toast.error(error instanceof Error ? error.message : "Failed to generate resume.");
     } finally {
       setIsGenerating(false);
     }
   }
 
-  if (authLoading) {
-    return (
-      <main className="mx-auto flex w-full max-w-5xl flex-1 items-center justify-center px-6 py-12">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex items-center justify-center py-10">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
-          </CardContent>
-        </Card>
-      </main>
-    );
+  async function handleInsertMyInfo() {
+    setIsInsertingInfo(true);
+
+    try {
+      const current = form.getValues();
+      const [freshProfile, educations, projectItems] = await Promise.all([
+        getProfile().catch((error) => {
+          if (error instanceof ApiError && error.status === 404) return null;
+          throw error;
+        }),
+        listEducations(),
+        listProjects(),
+      ]);
+
+      const fallbackProfile = profile ?? null;
+      const profileToUse = freshProfile ?? fallbackProfile;
+
+      let insertedPersonal = false;
+      let insertedEducation = false;
+      let insertedProjects = false;
+
+      const nextPersonal = { ...current.payload.personal_info };
+      if (profileToUse) {
+        if (!nextPersonal.full_name.trim() && profileToUse.full_name?.trim()) {
+          nextPersonal.full_name = profileToUse.full_name;
+          insertedPersonal = true;
+        }
+        if (!nextPersonal.email.trim() && profileToUse.email?.trim()) {
+          nextPersonal.email = profileToUse.email;
+          insertedPersonal = true;
+        }
+        if (!nextPersonal.phone.trim() && profileToUse.phone?.trim()) {
+          nextPersonal.phone = profileToUse.phone;
+          insertedPersonal = true;
+        }
+        if (!nextPersonal.address.trim() && profileToUse.address?.trim()) {
+          nextPersonal.address = profileToUse.address;
+          insertedPersonal = true;
+        }
+        if (!nextPersonal.github_label.trim() && profileToUse.github_label?.trim()) {
+          nextPersonal.github_label = profileToUse.github_label;
+          insertedPersonal = true;
+        }
+        if (!nextPersonal.github_url.trim() && profileToUse.github_url?.trim()) {
+          nextPersonal.github_url = profileToUse.github_url;
+          insertedPersonal = true;
+        }
+      }
+
+      if (current.payload.education.length === 0 && educations.length > 0) {
+        insertedEducation = true;
+      }
+
+      if (current.payload.projects.length === 0 && projectItems.length > 0) {
+        insertedProjects = true;
+      }
+
+      form.reset({
+        ...current,
+        payload: {
+          ...current.payload,
+          personal_info: nextPersonal,
+          education:
+            current.payload.education.length === 0
+              ? educations.map((item) => ({
+                  university: item.university,
+                  degree: item.degree,
+                  field: item.field,
+                  time_period: item.time_period,
+                  gpa: item.gpa ?? "",
+                  location: item.location ?? "",
+                  relevant_coursework: item.relevant_coursework ?? "",
+                }))
+              : current.payload.education,
+          projects:
+            current.payload.projects.length === 0
+              ? projectItems.map((item) => ({
+                  title: item.title,
+                  date_range: item.date_range,
+                  github_url: item.github_url ?? "",
+                  tech_stack: item.tech_stack ?? "",
+                  bullets_text: item.bullets.join("\n"),
+                }))
+              : current.payload.projects,
+        },
+      });
+
+      if (!insertedPersonal && !insertedEducation && !insertedProjects) {
+        toast.info("No empty section was available for import.");
+        return;
+      }
+
+      const insertedParts = [
+        insertedPersonal ? "personal info" : "",
+        insertedEducation ? "education" : "",
+        insertedProjects ? "projects" : "",
+      ].filter(Boolean);
+
+      toast.success(`Inserted ${insertedParts.join(", ")} into the draft.`);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        router.replace("/login");
+        return;
+      }
+      toast.error(error instanceof Error ? error.message : "Failed to insert data.");
+    } finally {
+      setIsInsertingInfo(false);
+    }
+  }
+
+  function handleClearDraft() {
+    setIsClearing(true);
+    form.reset(defaultFormValues);
+    setResumeId(null);
+    window.localStorage.removeItem(RESUME_DRAFT_STORAGE_KEY);
+    window.localStorage.removeItem(RESUME_ID_STORAGE_KEY);
+    toast.success("Draft cleared.");
+    setIsClearing(false);
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-8 md:px-10 md:py-10">
-      <header className="flex flex-col gap-4 rounded-2xl border bg-card/95 p-5 shadow-sm md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="font-heading text-2xl font-semibold tracking-tight">Resume Builder</p>
-          <p className="text-sm text-muted-foreground">
-            Signed in as {userEmail || "your account"}
-          </p>
-        </div>
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-8 md:px-8 md:py-10">
+      <header className="rounded-2xl border bg-card/95 p-5 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="font-heading text-3xl font-semibold tracking-tight">Resume Builder</p>
+            <p className="text-sm text-muted-foreground">
+              Signed in as {profile?.full_name || me?.email || "your account"}
+            </p>
+          </div>
 
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
-            {isLoggingOut ? <Loader2 className="size-4 animate-spin" /> : null}
-            Logout
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleInsertMyInfo}
+              disabled={isInsertingInfo}
+            >
+              {isInsertingInfo ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+              Insert my info
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleClearDraft}
+              disabled={isClearing}
+            >
+              {isClearing ? <Loader2 className="size-4 animate-spin" /> : <Eraser className="size-4" />}
+              Clear draft
+            </Button>
+            <Button size="lg" disabled={isGenerating} onClick={form.handleSubmit(onGenerate)}>
+              {isGenerating ? <Loader2 className="size-4 animate-spin" /> : null}
+              Generate Resume
+            </Button>
+          </div>
         </div>
       </header>
-
-      {authError ? (
-        <Alert variant="destructive">
-          <AlertDescription>{authError}</AlertDescription>
-        </Alert>
-      ) : null}
 
       <Card className="border-primary/20">
         <CardHeader>
           <CardTitle>Resume Details</CardTitle>
           <CardDescription>
-            Complete your details section by section, then generate the Google Doc.
+            Build from scratch, or import your saved data into empty sections.
           </CardDescription>
         </CardHeader>
 
@@ -352,9 +429,7 @@ export default function ResumePage() {
             <Label htmlFor="resume-title">Resume Title</Label>
             <Input id="resume-title" {...form.register("title")} />
             {form.formState.errors.title ? (
-              <p className="text-xs text-destructive">
-                {form.formState.errors.title.message}
-              </p>
+              <p className="text-xs text-destructive">{form.formState.errors.title.message}</p>
             ) : null}
           </div>
 
@@ -564,14 +639,8 @@ export default function ResumePage() {
         <Separator />
 
         <CardFooter className="justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            Draft is autosaved in your browser.
-          </p>
-          <Button
-            size="lg"
-            disabled={isGenerating}
-            onClick={form.handleSubmit(onGenerate)}
-          >
+          <p className="text-xs text-muted-foreground">Draft is autosaved in your browser.</p>
+          <Button size="lg" disabled={isGenerating} onClick={form.handleSubmit(onGenerate)}>
             {isGenerating ? <Loader2 className="size-4 animate-spin" /> : null}
             Generate Resume
           </Button>

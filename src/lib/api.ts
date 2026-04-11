@@ -63,6 +63,76 @@ export type MeResponse = {
   email: string;
 };
 
+export type ProfilePayload = {
+  full_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  github_label?: string;
+  github_url?: string;
+};
+
+export type ProfileRecord = {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  github_label: string;
+  github_url?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type EducationPayload = {
+  university: string;
+  degree: string;
+  field: string;
+  time_period: string;
+  gpa?: string;
+  location?: string;
+  relevant_coursework?: string;
+  sort_order?: number;
+};
+
+export type EducationRecord = {
+  id: string;
+  user_id: string;
+  sort_order: number;
+  university: string;
+  degree: string;
+  field: string;
+  time_period: string;
+  gpa?: string;
+  location?: string;
+  relevant_coursework?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProjectPayload = {
+  title: string;
+  date_range: string;
+  github_url?: string;
+  tech_stack?: string;
+  bullets?: string[];
+  sort_order?: number;
+};
+
+export type ProjectRecord = {
+  id: string;
+  user_id: string;
+  sort_order: number;
+  title: string;
+  date_range: string;
+  github_url?: string;
+  tech_stack?: string;
+  bullets: string[];
+  created_at: string;
+  updated_at: string;
+};
+
 export type ResumePayload = {
   personal_info: {
     full_name: string;
@@ -117,6 +187,71 @@ export async function startGoogleLogin(nextPath = "/resume") {
 
 export async function getMe() {
   return request<MeResponse>("/api/v1/auth/me", { method: "GET" });
+}
+
+export async function getProfile() {
+  return request<ProfileRecord>("/api/v1/profile", { method: "GET" });
+}
+
+export async function putProfile(body: ProfilePayload) {
+  return request<ProfileRecord>("/api/v1/profile", {
+    method: "PUT",
+    body,
+  });
+}
+
+export async function listEducations() {
+  return request<EducationRecord[]>("/api/v1/educations", { method: "GET" });
+}
+
+export async function createEducation(body: EducationPayload) {
+  return request<EducationRecord>("/api/v1/educations", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function updateEducation(
+  educationId: string,
+  patch: Partial<EducationPayload>
+) {
+  return request<EducationRecord>(`/api/v1/educations/${educationId}`, {
+    method: "PATCH",
+    body: patch,
+  });
+}
+
+export async function deleteEducation(educationId: string) {
+  return request<void>(`/api/v1/educations/${educationId}`, {
+    method: "DELETE",
+  });
+}
+
+export async function listProjects() {
+  return request<ProjectRecord[]>("/api/v1/projects", { method: "GET" });
+}
+
+export async function createProject(body: ProjectPayload) {
+  return request<ProjectRecord>("/api/v1/projects", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function updateProject(
+  projectId: string,
+  patch: Partial<ProjectPayload>
+) {
+  return request<ProjectRecord>(`/api/v1/projects/${projectId}`, {
+    method: "PATCH",
+    body: patch,
+  });
+}
+
+export async function deleteProject(projectId: string) {
+  return request<void>(`/api/v1/projects/${projectId}`, {
+    method: "DELETE",
+  });
 }
 
 export async function logout() {
