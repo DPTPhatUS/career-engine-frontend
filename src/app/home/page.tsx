@@ -223,14 +223,14 @@ export default function DashboardHomePage() {
                 <div className="absolute inset-0 flex items-center justify-center gap-3 bg-primary/35 opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100">
                   <button
                     type="button"
-                    className="inline-flex size-9 items-center justify-center rounded-full bg-background text-primary shadow"
+                    className="inline-flex size-9 items-center justify-center rounded-full bg-background text-primary shadow transition-transform hover:scale-105"
                     aria-label={`Preview ${resume.title}`}
                   >
                     <Eye className="size-4" />
                   </button>
                   <button
                     type="button"
-                    className="inline-flex size-9 items-center justify-center rounded-full bg-background text-primary shadow"
+                    className="inline-flex size-9 items-center justify-center rounded-full bg-background text-primary shadow transition-transform hover:scale-105"
                     aria-label={`Download ${resume.title}`}
                   >
                     <Download className="size-4" />
@@ -255,7 +255,7 @@ export default function DashboardHomePage() {
 
           <Link
             href="/resume"
-            className="group flex aspect-3/4 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-border bg-card/70 text-muted-foreground transition-all duration-300 hover:border-primary/40 hover:bg-card hover:text-primary"
+            className="group flex aspect-3/4 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-border bg-card/70 text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card hover:text-primary"
           >
             <span className="inline-flex size-12 items-center justify-center rounded-full bg-secondary text-primary transition-transform group-hover:scale-105">
               <CirclePlus className="size-5" />

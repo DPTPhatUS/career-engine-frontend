@@ -284,7 +284,7 @@ export default function ProfilePage() {
                   <Button
                     type="submit"
                     disabled={saving}
-                    className="ce-primary-gradient rounded-lg text-primary-foreground"
+                    className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
                   >
                     {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
                     Save Changes

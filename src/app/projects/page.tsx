@@ -198,7 +198,8 @@ export default function ProjectsPage() {
         </div>
         <Button
           onClick={addDraft}
-          className="ce-primary-gradient rounded-lg text-primary-foreground"
+          size="lg"
+          className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
         >
           <Plus className="size-4" />
           New Entry
@@ -269,7 +270,7 @@ export default function ProjectsPage() {
             </div>
             <Button
               onClick={addDraft}
-              className="ce-primary-gradient rounded-lg text-primary-foreground"
+              className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
             >
               <Plus className="size-4" />
               Add Project
@@ -327,6 +328,7 @@ export default function ProjectsPage() {
                       size="icon-sm"
                       onClick={() => saveItem(index)}
                       disabled={item.saving || item.deleting}
+                      className="transition-transform hover:scale-105"
                       aria-label={`Edit ${item.title || `project ${index + 1}`}`}
                     >
                       {item.saving ? <Loader2 className="size-4 animate-spin" /> : <Pencil className="size-4" />}
@@ -337,6 +339,7 @@ export default function ProjectsPage() {
                       size="icon-sm"
                       onClick={() => removeItem(index)}
                       disabled={item.saving || item.deleting}
+                      className="transition-transform hover:scale-105"
                       aria-label={`Delete ${item.title || `project ${index + 1}`}`}
                     >
                       {item.deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
@@ -419,7 +422,7 @@ export default function ProjectsPage() {
                   <Button
                     onClick={() => saveItem(index)}
                     disabled={item.saving || item.deleting}
-                    className="ce-primary-gradient rounded-lg text-primary-foreground"
+                    className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
                   >
                     {item.saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
                     {item.id ? "Save Changes" : "Save Entry"}

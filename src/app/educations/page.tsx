@@ -203,7 +203,8 @@ export default function EducationsPage() {
 
         <Button
           onClick={addDraft}
-          className="ce-primary-gradient rounded-lg text-primary-foreground"
+          size="lg"
+          className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
         >
           <Plus className="size-4" />
           Add Education
@@ -226,7 +227,7 @@ export default function EducationsPage() {
             <p className="text-sm text-muted-foreground">No education entries yet.</p>
             <Button
               onClick={addDraft}
-              className="ce-primary-gradient rounded-lg text-primary-foreground"
+              className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
             >
               <Plus className="size-4" />
               Add your first education
@@ -354,7 +355,7 @@ export default function EducationsPage() {
                     <Button
                       onClick={() => saveItem(0)}
                       disabled={primaryItem.saving || primaryItem.deleting}
-                      className="ce-primary-gradient rounded-lg text-primary-foreground"
+                      className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
                     >
                       {primaryItem.saving ? (
                         <Loader2 className="size-4 animate-spin" />
@@ -501,7 +502,7 @@ export default function EducationsPage() {
                           <Button
                             onClick={() => saveItem(realIndex)}
                             disabled={item.saving || item.deleting}
-                            className="ce-primary-gradient rounded-lg text-primary-foreground"
+                            className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
                           >
                             {item.saving ? (
                               <Loader2 className="size-4 animate-spin" />

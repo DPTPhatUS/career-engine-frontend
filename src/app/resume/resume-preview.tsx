@@ -67,15 +67,15 @@ export function ResumePreview({ draft }: ResumePreviewProps) {
   const hasGithub = Boolean(personal.github_url);
 
   return (
-    <section className="ce-card sticky top-6 rounded-xl p-4 lg:top-8">
-      <header className="mb-3">
+    <section className="rounded-xl border border-border/70 bg-[#eceff1] p-4 shadow-sm">
+      <header className="mb-3 px-1">
         <p className="font-heading text-xl font-semibold tracking-tight text-primary">Live Preview</p>
         <p className="text-xs text-muted-foreground">Mirrors backend Google Docs formatting rules.</p>
       </header>
 
       <div
         ref={containerRef}
-        className="max-h-[calc(100vh-11rem)] overflow-auto rounded-xl border border-border/70 bg-[#f1f3f4] p-3"
+        className="max-h-[calc(100vh-16rem)] overflow-auto rounded-lg border border-border/60 bg-[#e7eaee] p-4"
       >
         <div
           className="mx-auto"
@@ -94,7 +94,7 @@ export function ResumePreview({ draft }: ResumePreviewProps) {
               backgroundColor: "#fff",
               color: "#000",
               padding: "32pt 36pt",
-              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.22)",
+              boxShadow: "0 18px 40px -24px rgba(0, 0, 0, 0.52)",
               fontFamily: 'Garamond, "Times New Roman", serif',
               fontSize: "12pt",
               lineHeight: 1.2,
