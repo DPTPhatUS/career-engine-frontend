@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowRight,
+  GraduationCap,
+  Lightbulb,
+  Loader2,
+  Plus,
+  Save,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   ApiError,
@@ -15,9 +24,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -177,113 +183,371 @@ export default function EducationsPage() {
     }
   }
 
+  const primaryItem = items[0] ?? null;
+  const secondaryItems = items.slice(1);
+
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 md:px-8 md:py-12">
-      <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <div>
-          <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
-            Academic History
+    <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
+      <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-3xl space-y-3">
+          <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+            Curation Hub
           </p>
-          <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">Educations</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Manage your education timeline and highlights.</p>
+          <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
+            Academic History
+          </h1>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+            Organize your educational credentials with the precision of a curated portfolio. Each entry strengthens your professional narrative.
+          </p>
         </div>
-        <Button onClick={addDraft} className="ce-primary-gradient rounded-lg text-primary-foreground">
+
+        <Button
+          onClick={addDraft}
+          className="ce-primary-gradient rounded-lg text-primary-foreground"
+        >
           <Plus className="size-4" />
           Add Education
         </Button>
-      </div>
+      </header>
 
       {errorMessage ? (
-        <Alert variant="destructive" className="mb-4">
+        <Alert variant="destructive" className="mb-5">
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       ) : null}
 
       {loading ? (
-        <div className="flex justify-center py-10">
+        <div className="flex justify-center py-12">
           <Loader2 className="size-5 animate-spin text-muted-foreground" />
         </div>
       ) : items.length === 0 ? (
         <Card className="ce-card rounded-xl">
-          <CardContent className="py-10 text-center text-muted-foreground">
-            No education entries yet.
+          <CardContent className="space-y-4 py-12 text-center">
+            <p className="text-sm text-muted-foreground">No education entries yet.</p>
+            <Button
+              onClick={addDraft}
+              className="ce-primary-gradient rounded-lg text-primary-foreground"
+            >
+              <Plus className="size-4" />
+              Add your first education
+            </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {items.map((item, index) => (
-            <Card key={item.id ?? `draft-${index}`} className="ce-card rounded-xl">
-              <CardHeader>
-                <CardTitle className="font-heading text-2xl text-primary">Education #{index + 1}</CardTitle>
-                <CardDescription>Keep this concise and recruiter-friendly.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label>University</Label>
-                    <Input
-                      value={item.university}
-                      onChange={(event) => patchItem(index, { university: event.target.value })}
-                    />
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+          <div className="space-y-6 md:col-span-8">
+            {primaryItem ? (
+              <Card className="ce-card rounded-xl">
+                <CardContent className="p-6 md:p-8 lg:p-9">
+                  <div className="mb-8 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+                        Primary Credential
+                      </p>
+                      <h2 className="mt-2 font-heading text-3xl text-primary">
+                        {primaryItem.university.trim() || "Education #1"}
+                      </h2>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-primary" />
+                      <span className="h-2 w-2 rounded-full bg-border" />
+                    </div>
                   </div>
-                  <div className="grid gap-2">
-                    <Label>Degree</Label>
-                    <Input value={item.degree} onChange={(event) => patchItem(index, { degree: event.target.value })} />
+
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+                    <div className="grid gap-2 md:col-span-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        University Name
+                      </Label>
+                      <Input
+                        value={primaryItem.university}
+                        onChange={(event) => patchItem(0, { university: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Degree
+                      </Label>
+                      <Input
+                        value={primaryItem.degree}
+                        onChange={(event) => patchItem(0, { degree: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Field of Study
+                      </Label>
+                      <Input
+                        value={primaryItem.field}
+                        onChange={(event) => patchItem(0, { field: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Time Period
+                      </Label>
+                      <Input
+                        value={primaryItem.time_period}
+                        onChange={(event) => patchItem(0, { time_period: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                        placeholder="e.g. 2018 - 2020"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        GPA (optional)
+                      </Label>
+                      <Input
+                        value={primaryItem.gpa}
+                        onChange={(event) => patchItem(0, { gpa: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                      />
+                    </div>
+
+                    <div className="grid gap-2 md:col-span-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Location (optional)
+                      </Label>
+                      <Input
+                        value={primaryItem.location}
+                        onChange={(event) => patchItem(0, { location: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                      />
+                    </div>
+
+                    <div className="grid gap-2 md:col-span-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Relevant Coursework (optional)
+                      </Label>
+                      <Textarea
+                        rows={4}
+                        value={primaryItem.relevant_coursework}
+                        onChange={(event) =>
+                          patchItem(0, { relevant_coursework: event.target.value })
+                        }
+                        className="border-border/80 bg-card"
+                      />
+                    </div>
                   </div>
-                  <div className="grid gap-2">
-                    <Label>Field</Label>
-                    <Input value={item.field} onChange={(event) => patchItem(index, { field: event.target.value })} />
+
+                  <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => removeItem(0)}
+                      disabled={primaryItem.saving || primaryItem.deleting}
+                    >
+                      {primaryItem.deleting ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="size-4" />
+                      )}
+                      Delete Entry
+                    </Button>
+                    <Button
+                      onClick={() => saveItem(0)}
+                      disabled={primaryItem.saving || primaryItem.deleting}
+                      className="ce-primary-gradient rounded-lg text-primary-foreground"
+                    >
+                      {primaryItem.saving ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Save className="size-4" />
+                      )}
+                      {primaryItem.id ? "Save Changes" : "Save Entry"}
+                    </Button>
                   </div>
-                  <div className="grid gap-2">
-                    <Label>Time Period</Label>
-                    <Input
-                      value={item.time_period}
-                      onChange={(event) => patchItem(index, { time_period: event.target.value })}
-                    />
+                </CardContent>
+              </Card>
+            ) : null}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Card className="rounded-xl border-border/70 bg-card/95">
+                <CardContent className="space-y-2 p-5">
+                  <div className="inline-flex rounded-lg bg-secondary p-2 text-primary">
+                    <Lightbulb className="size-4" />
                   </div>
-                  <div className="grid gap-2">
-                    <Label>GPA (optional)</Label>
-                    <Input value={item.gpa} onChange={(event) => patchItem(index, { gpa: event.target.value })} />
+                  <h3 className="font-heading text-xl text-primary">Curator Tip</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Keep coursework concise and relevant to the roles you target most often.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-xl border-border/70 bg-card/95">
+                <CardContent className="space-y-2 p-5">
+                  <div className="inline-flex rounded-lg bg-secondary p-2 text-primary">
+                    <Sparkles className="size-4" />
                   </div>
-                  <div className="grid gap-2">
-                    <Label>Location (optional)</Label>
-                    <Input value={item.location} onChange={(event) => patchItem(index, { location: event.target.value })} />
-                  </div>
+                  <h3 className="font-heading text-xl text-primary">Profile Strength</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Use consistent time periods and complete location fields for stronger resume parsing.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <aside className="space-y-5 md:col-span-4">
+            <Card className="rounded-xl border-border/70 bg-card/95">
+              <CardContent className="p-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+                    Your Curriculum
+                  </h3>
+                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold text-secondary-foreground">
+                    {items.length} Entries
+                  </span>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label>Relevant Coursework (optional)</Label>
-                  <Textarea
-                    rows={3}
-                    value={item.relevant_coursework}
-                    onChange={(event) =>
-                      patchItem(index, { relevant_coursework: event.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <Button
-                    onClick={() => saveItem(index)}
-                    disabled={item.saving || item.deleting}
-                    className="ce-primary-gradient rounded-lg text-primary-foreground"
-                  >
-                    {item.saving ? <Loader2 className="size-4 animate-spin" /> : null}
-                    {item.id ? "Update" : "Save"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => removeItem(index)}
-                    disabled={item.saving || item.deleting}
-                  >
-                    {item.deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-                    Remove
-                  </Button>
+                <div className="space-y-3">
+                  {items.map((item, index) => {
+                    const isPrimary = index === 0;
+                    return (
+                      <div
+                        key={item.id ?? `sidebar-${index}`}
+                        className={
+                          isPrimary
+                            ? "rounded-xl border border-primary/20 bg-primary/5 p-4"
+                            : "rounded-xl border border-border/70 bg-background/80 p-4"
+                        }
+                      >
+                        <div className="mb-3 flex items-center justify-between">
+                          <span className="inline-flex size-8 items-center justify-center rounded-lg bg-secondary text-primary">
+                            <GraduationCap className="size-4" />
+                          </span>
+                          {isPrimary ? (
+                            <span className="text-[10px] font-semibold tracking-wide text-primary uppercase">
+                              Active
+                            </span>
+                          ) : null}
+                        </div>
+                        <h4 className="font-heading text-xl leading-tight text-primary">
+                          {item.university.trim() || `Education #${index + 1}`}
+                        </h4>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {item.degree.trim() || "Degree"}
+                          {item.field.trim() ? ` in ${item.field.trim()}` : ""}
+                        </p>
+                        <p className="mt-3 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                          {item.time_period.trim() || "No time period"}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
-          ))}
+
+            {secondaryItems.length > 0 ? (
+              <div className="space-y-3">
+                {secondaryItems.map((item, offset) => {
+                  const realIndex = offset + 1;
+                  return (
+                    <Card key={item.id ?? `secondary-${realIndex}`} className="ce-card rounded-xl">
+                      <CardContent className="space-y-4 p-4">
+                        <div>
+                          <p className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                            Entry {realIndex + 1}
+                          </p>
+                          <h4 className="mt-1 font-heading text-2xl text-primary">
+                            {item.university.trim() || "New Education"}
+                          </h4>
+                        </div>
+
+                        <div className="grid gap-3">
+                          <Input
+                            value={item.university}
+                            onChange={(event) =>
+                              patchItem(realIndex, { university: event.target.value })
+                            }
+                            placeholder="University"
+                            className="h-9 border-border/80 bg-card"
+                          />
+                          <Input
+                            value={item.degree}
+                            onChange={(event) =>
+                              patchItem(realIndex, { degree: event.target.value })
+                            }
+                            placeholder="Degree"
+                            className="h-9 border-border/80 bg-card"
+                          />
+                          <Input
+                            value={item.field}
+                            onChange={(event) =>
+                              patchItem(realIndex, { field: event.target.value })
+                            }
+                            placeholder="Field"
+                            className="h-9 border-border/80 bg-card"
+                          />
+                          <Input
+                            value={item.time_period}
+                            onChange={(event) =>
+                              patchItem(realIndex, { time_period: event.target.value })
+                            }
+                            placeholder="Time period"
+                            className="h-9 border-border/80 bg-card"
+                          />
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Button
+                            onClick={() => saveItem(realIndex)}
+                            disabled={item.saving || item.deleting}
+                            className="ce-primary-gradient rounded-lg text-primary-foreground"
+                          >
+                            {item.saving ? (
+                              <Loader2 className="size-4 animate-spin" />
+                            ) : (
+                              <ArrowRight className="size-4" />
+                            )}
+                            {item.id ? "Update" : "Save"}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => removeItem(realIndex)}
+                            disabled={item.saving || item.deleting}
+                          >
+                            {item.deleting ? (
+                              <Loader2 className="size-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="size-4" />
+                            )}
+                            Remove
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <Card className="rounded-xl border-border/70 bg-card/95">
+                <CardContent className="space-y-3 p-5">
+                  <h3 className="font-heading text-xl text-primary">Need More Entries?</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Add certifications, bootcamps, or additional degrees to strengthen your academic profile.
+                  </p>
+                  <Button
+                    onClick={addDraft}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Plus className="size-4" />
+                    Add Another Entry
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </aside>
         </div>
       )}
     </main>
