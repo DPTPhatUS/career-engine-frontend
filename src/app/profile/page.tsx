@@ -141,10 +141,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
-      <section className="mb-10 max-w-4xl">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
+      <section className="mb-12 max-w-4xl">
         <div className="mb-2 flex items-center gap-3">
-          <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
             Account Settings
           </p>
           <span className="h-px w-10 bg-border" />
@@ -158,7 +158,7 @@ export default function ProfilePage() {
       </section>
 
       {errorMessage ? (
-        <Alert variant="destructive" className="mb-5">
+        <Alert variant="destructive" className="mb-4">
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       ) : null}
@@ -297,7 +297,7 @@ export default function ProfilePage() {
       </Card>
 
       <section className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className="rounded-xl border-border/70 bg-card/95">
+        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
           <CardContent className="space-y-2 p-5">
             <span className="inline-flex rounded-lg bg-secondary p-2 text-primary">
               <ShieldCheck className="size-4" />
@@ -309,7 +309,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/70 bg-card/95">
+        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
           <CardContent className="space-y-2 p-5">
             <span className="inline-flex rounded-lg bg-secondary p-2 text-primary">
               <Sparkles className="size-4" />
@@ -321,7 +321,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/70 bg-card/95">
+        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
           <CardContent className="space-y-2 p-5">
             <span className="inline-flex rounded-lg bg-secondary p-2 text-primary">
               <Info className="size-4" />

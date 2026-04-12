@@ -190,7 +190,7 @@ export default function EducationsPage() {
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
       <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
             Curation Hub
           </p>
           <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
@@ -211,7 +211,7 @@ export default function EducationsPage() {
       </header>
 
       {errorMessage ? (
-        <Alert variant="destructive" className="mb-5">
+        <Alert variant="destructive" className="mb-4">
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       ) : null}
@@ -369,7 +369,7 @@ export default function EducationsPage() {
             ) : null}
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Card className="rounded-xl border-border/70 bg-card/95">
+              <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
                 <CardContent className="space-y-2 p-5">
                   <div className="inline-flex rounded-lg bg-secondary p-2 text-primary">
                     <Lightbulb className="size-4" />
@@ -381,7 +381,7 @@ export default function EducationsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-xl border-border/70 bg-card/95">
+              <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
                 <CardContent className="space-y-2 p-5">
                   <div className="inline-flex rounded-lg bg-secondary p-2 text-primary">
                     <Sparkles className="size-4" />
@@ -396,7 +396,7 @@ export default function EducationsPage() {
           </div>
 
           <aside className="space-y-5 md:col-span-4">
-            <Card className="rounded-xl border-border/70 bg-card/95">
+            <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
               <CardContent className="p-5">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase">

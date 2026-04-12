@@ -185,13 +185,16 @@ export default function ProjectsPage() {
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
       <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-2">
-          <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+        <div className="max-w-3xl space-y-3">
+          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
             Portfolio Curation
           </p>
           <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
             Technical Projects
           </h1>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+            Showcase your strongest technical work with clear impact bullets and repository context tailored for resume generation.
+          </p>
         </div>
         <Button
           onClick={addDraft}
@@ -202,8 +205,8 @@ export default function ProjectsPage() {
         </Button>
       </header>
 
-      <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className="rounded-xl border-border/70 bg-card/95">
+      <section className="mb-12 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
           <CardContent className="flex h-full flex-col justify-between p-5">
             <Code2 className="size-8 text-primary" />
             <div className="mt-6">
@@ -215,7 +218,7 @@ export default function ProjectsPage() {
           </CardContent>
         </Card>
 
-        <Card className="ce-primary-gradient rounded-xl text-primary-foreground">
+        <Card className="ce-primary-gradient rounded-xl text-primary-foreground shadow-sm">
           <CardContent className="flex h-full flex-col justify-between p-5">
             <FolderGit2 className="size-8 text-primary-foreground/90" />
             <div className="mt-6">
@@ -227,7 +230,7 @@ export default function ProjectsPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/70 bg-card/95">
+        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
           <CardContent className="flex h-full flex-col justify-between p-5">
             <Hammer className="size-8 text-primary" />
             <div className="mt-6">

@@ -54,7 +54,7 @@ export default function DashboardHomePage() {
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-10 md:px-8 md:py-12 lg:py-14">
       <section className="mb-12 grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
         <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
             Welcome Back
           </p>
           <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
