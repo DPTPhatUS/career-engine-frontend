@@ -384,10 +384,13 @@ export default function ResumePage() {
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-8 md:px-8 md:py-10">
-      <header className="rounded-2xl border bg-card/95 p-5 shadow-sm">
+      <header className="ce-card rounded-xl p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="font-heading text-3xl font-semibold tracking-tight">Resume Builder</p>
+            <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+              Document Workspace
+            </p>
+            <p className="font-heading text-4xl font-semibold tracking-tight text-primary">Resume Builder</p>
             <p className="text-sm text-muted-foreground">
               Signed in as {profile?.full_name || me?.email || "your account"}
             </p>
@@ -399,6 +402,7 @@ export default function ResumePage() {
               variant="outline"
               onClick={handleInsertMyInfo}
               disabled={isInsertingInfo}
+              className="rounded-lg"
             >
               {isInsertingInfo ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
               Insert my info
@@ -408,11 +412,17 @@ export default function ResumePage() {
               variant="secondary"
               onClick={handleClearDraft}
               disabled={isClearing}
+              className="rounded-lg"
             >
               {isClearing ? <Loader2 className="size-4 animate-spin" /> : <Eraser className="size-4" />}
               Clear draft
             </Button>
-            <Button size="lg" disabled={isGenerating} onClick={form.handleSubmit(onGenerate)}>
+            <Button
+              size="lg"
+              disabled={isGenerating}
+              onClick={form.handleSubmit(onGenerate)}
+              className="ce-primary-gradient rounded-lg text-primary-foreground"
+            >
               {isGenerating ? <Loader2 className="size-4 animate-spin" /> : null}
               Generate Resume
             </Button>
@@ -421,9 +431,9 @@ export default function ResumePage() {
       </header>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
-        <Card className="border-primary/20">
+        <Card className="ce-card rounded-xl">
           <CardHeader>
-            <CardTitle>Resume Details</CardTitle>
+            <CardTitle className="font-heading text-2xl text-primary">Resume Details</CardTitle>
             <CardDescription>
               Build from scratch, or import your saved data into empty sections.
             </CardDescription>
@@ -439,7 +449,7 @@ export default function ResumePage() {
             </div>
 
             <Tabs defaultValue="personal">
-              <TabsList>
+              <TabsList className="rounded-lg bg-muted/70 p-1">
                 <TabsTrigger value="personal">Personal Info</TabsTrigger>
                 <TabsTrigger value="education">Education</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
@@ -480,6 +490,7 @@ export default function ResumePage() {
                   type="button"
                   variant="outline"
                   onClick={() => education.append({ ...emptyEducation })}
+                  className="rounded-lg"
                 >
                   <Plus className="size-4" />
                   Add Education
@@ -490,9 +501,9 @@ export default function ResumePage() {
                 ) : null}
 
                 {education.fields.map((field, index) => (
-                  <Card key={field.id}>
+                  <Card key={field.id} className="rounded-xl border-border/70">
                     <CardHeader>
-                      <CardTitle>Education #{index + 1}</CardTitle>
+                      <CardTitle className="font-heading text-xl text-primary">Education #{index + 1}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-4 md:grid-cols-2">
                       <div className="grid gap-2">
@@ -543,6 +554,7 @@ export default function ResumePage() {
                   type="button"
                   variant="outline"
                   onClick={() => projects.append({ ...emptyProject })}
+                  className="rounded-lg"
                 >
                   <Plus className="size-4" />
                   Add Project
@@ -553,9 +565,9 @@ export default function ResumePage() {
                 ) : null}
 
                 {projects.fields.map((field, index) => (
-                  <Card key={field.id}>
+                  <Card key={field.id} className="rounded-xl border-border/70">
                     <CardHeader>
-                      <CardTitle>Project #{index + 1}</CardTitle>
+                      <CardTitle className="font-heading text-xl text-primary">Project #{index + 1}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-4 md:grid-cols-2">
                       <div className="grid gap-2">
@@ -598,6 +610,7 @@ export default function ResumePage() {
                   type="button"
                   variant="outline"
                   onClick={() => skills.append({ ...emptySkill })}
+                  className="rounded-lg"
                 >
                   <Plus className="size-4" />
                   Add Skill Group
@@ -608,9 +621,9 @@ export default function ResumePage() {
                 ) : null}
 
                 {skills.fields.map((field, index) => (
-                  <Card key={field.id}>
+                  <Card key={field.id} className="rounded-xl border-border/70">
                     <CardHeader>
-                      <CardTitle>Skill Group #{index + 1}</CardTitle>
+                      <CardTitle className="font-heading text-xl text-primary">Skill Group #{index + 1}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-4 md:grid-cols-2">
                       <div className="grid gap-2">
@@ -645,7 +658,12 @@ export default function ResumePage() {
 
           <CardFooter className="justify-between gap-3">
             <p className="text-xs text-muted-foreground">Draft is autosaved in your browser.</p>
-            <Button size="lg" disabled={isGenerating} onClick={form.handleSubmit(onGenerate)}>
+            <Button
+              size="lg"
+              disabled={isGenerating}
+              onClick={form.handleSubmit(onGenerate)}
+              className="ce-primary-gradient rounded-lg text-primary-foreground"
+            >
               {isGenerating ? <Loader2 className="size-4 animate-spin" /> : null}
               Generate Resume
             </Button>

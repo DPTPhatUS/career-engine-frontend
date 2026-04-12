@@ -125,11 +125,21 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-10 md:px-8 md:py-14">
-      <Card>
+    <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10 md:px-8 md:py-12">
+      <section className="mb-7 max-w-3xl">
+        <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+          Personal Identity
+        </p>
+        <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">Profile</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Update your personal information for fast reuse across resume drafts.
+        </p>
+      </section>
+
+      <Card className="ce-card rounded-xl">
         <CardHeader>
-          <CardTitle className="font-heading text-3xl">Profile</CardTitle>
-          <CardDescription>Update your personal information for fast reuse.</CardDescription>
+          <CardTitle className="font-heading text-2xl text-primary">Core Details</CardTitle>
+          <CardDescription>Keep this section precise and current.</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-5">
@@ -192,7 +202,12 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <Button type="submit" size="lg" disabled={saving}>
+              <Button
+                type="submit"
+                size="lg"
+                disabled={saving}
+                className="ce-primary-gradient rounded-lg text-primary-foreground"
+              >
                 {saving ? <Loader2 className="size-4 animate-spin" /> : null}
                 Save Profile
               </Button>

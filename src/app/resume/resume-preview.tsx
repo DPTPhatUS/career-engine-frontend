@@ -67,15 +67,15 @@ export function ResumePreview({ draft }: ResumePreviewProps) {
   const hasGithub = Boolean(personal.github_url);
 
   return (
-    <section className="sticky top-6 rounded-2xl border bg-card/95 p-4 shadow-sm lg:top-8">
+    <section className="ce-card sticky top-6 rounded-xl p-4 lg:top-8">
       <header className="mb-3">
-        <p className="font-heading text-lg font-semibold tracking-tight">Live Preview</p>
+        <p className="font-heading text-xl font-semibold tracking-tight text-primary">Live Preview</p>
         <p className="text-xs text-muted-foreground">Mirrors backend Google Docs formatting rules.</p>
       </header>
 
       <div
         ref={containerRef}
-        className="max-h-[calc(100vh-11rem)] overflow-auto rounded-xl border bg-[#f1f3f4] p-3"
+        className="max-h-[calc(100vh-11rem)] overflow-auto rounded-xl border border-border/70 bg-[#f1f3f4] p-3"
       >
         <div
           className="mx-auto"

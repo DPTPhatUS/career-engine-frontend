@@ -168,13 +168,16 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 md:px-8 md:py-14">
-      <div className="mb-6 flex items-center justify-between gap-3">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 md:px-8 md:py-12">
+      <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h1 className="font-heading text-3xl font-bold tracking-tight">Projects</h1>
-          <p className="text-sm text-muted-foreground">Manage project entries for your resume drafts.</p>
+          <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+            Project Portfolio
+          </p>
+          <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">Projects</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Manage project entries for your resume drafts.</p>
         </div>
-        <Button onClick={addDraft}>
+        <Button onClick={addDraft} className="ce-primary-gradient rounded-lg text-primary-foreground">
           <Plus className="size-4" />
           Add Project
         </Button>
@@ -191,7 +194,7 @@ export default function ProjectsPage() {
           <Loader2 className="size-5 animate-spin text-muted-foreground" />
         </div>
       ) : items.length === 0 ? (
-        <Card>
+        <Card className="ce-card rounded-xl">
           <CardContent className="py-10 text-center text-muted-foreground">
             No project entries yet.
           </CardContent>
@@ -199,9 +202,9 @@ export default function ProjectsPage() {
       ) : (
         <div className="space-y-4">
           {items.map((item, index) => (
-            <Card key={item.id ?? `draft-${index}`}>
+            <Card key={item.id ?? `draft-${index}`} className="ce-card rounded-xl">
               <CardHeader>
-                <CardTitle>Project #{index + 1}</CardTitle>
+                <CardTitle className="font-heading text-2xl text-primary">Project #{index + 1}</CardTitle>
                 <CardDescription>Use concise bullets and impact-oriented language.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -247,7 +250,11 @@ export default function ProjectsPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <Button onClick={() => saveItem(index)} disabled={item.saving || item.deleting}>
+                  <Button
+                    onClick={() => saveItem(index)}
+                    disabled={item.saving || item.deleting}
+                    className="ce-primary-gradient rounded-lg text-primary-foreground"
+                  >
                     {item.saving ? <Loader2 className="size-4 animate-spin" /> : null}
                     {item.id ? "Update" : "Save"}
                   </Button>

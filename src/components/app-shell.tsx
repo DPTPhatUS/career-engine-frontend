@@ -10,7 +10,16 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Loader2 } from "lucide-react";
+import {
+  Bell,
+  FileText,
+  FolderKanban,
+  GraduationCap,
+  House,
+  Loader2,
+  Settings,
+  User,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -34,14 +43,15 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const navItems = [
-  { href: "/home", label: "Home" },
-  { href: "/profile", label: "Profile" },
-  { href: "/educations", label: "Educations" },
-  { href: "/projects", label: "Projects" },
-  { href: "/resume", label: "Resume" },
+  { href: "/", label: "Home", icon: House },
+  { href: "/profile", label: "Profile", icon: User },
+  { href: "/educations", label: "Educations", icon: GraduationCap },
+  { href: "/projects", label: "Projects", icon: FolderKanban },
+  { href: "/resume", label: "Resume", icon: FileText },
 ] as const;
 
 const protectedRoutes = new Set([
+  "/",
   "/home",
   "/profile",
   "/educations",
@@ -136,89 +146,112 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const showProtectedLoader = authLoading && protectedRoutes.has(pathname);
   const shouldHideContent = !authLoading && !me && protectedRoutes.has(pathname);
+  const showChrome = pathname !== "/login";
 
   return (
     <AuthContext.Provider value={contextValue}>
       <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/85">
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-3 md:px-8">
-            <Link href="/" className="font-heading text-lg font-bold tracking-tight text-primary">
-              Career Engine
-            </Link>
+        {showChrome ? (
+          <>
+            <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-md">
+              <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-3 md:px-8">
+                <div className="flex items-center gap-10">
+                  <Link href="/" className="font-heading text-xl font-bold tracking-tight text-primary">
+                    Career Engine
+                  </Link>
 
-            <nav className="hidden items-center gap-2 md:flex">
+                  <nav className="hidden items-center gap-6 md:flex">
+                    {navItems.map((item) => {
+                      const active = pathname === item.href;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={cn(
+                            "border-b-2 pb-1 text-sm font-medium transition-colors",
+                            active
+                              ? "border-primary text-primary"
+                              : "border-transparent text-muted-foreground hover:text-primary"
+                          )}
+                        >
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {me ? (
+                    <>
+                      <Button variant="ghost" size="icon-sm" aria-label="Notifications" className="hidden md:inline-flex">
+                        <Bell className="size-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon-sm" aria-label="Settings" className="hidden md:inline-flex">
+                        <Settings className="size-4" />
+                      </Button>
+                    </>
+                  ) : null}
+
+                  {authLoading ? (
+                    <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
+                  ) : me ? (
+                    <>
+                      <Link
+                        href="/profile"
+                        className="inline-flex h-8 items-center rounded-full border border-border/70 bg-card px-3 text-xs font-medium text-foreground/90"
+                      >
+                        {displayName || "My profile"}
+                      </Link>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={isLoggingOut}
+                        onClick={handleLogout}
+                      >
+                        {isLoggingOut ? <Loader2 className="size-4 animate-spin" /> : null}
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <Link href="/login" className={cn(buttonVariants({ size: "sm" }))}>
+                      Login
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </header>
+
+            <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-border/60 bg-card/96 py-2 md:hidden">
               {navItems.map((item) => {
+                const Icon = item.icon;
                 const active = pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      buttonVariants({ variant: active ? "default" : "ghost", size: "sm" }),
-                      "transition-transform hover:-translate-y-0.5"
+                      "flex min-w-16 flex-col items-center gap-1 rounded-md px-2 py-1 text-[11px]",
+                      active ? "text-primary" : "text-muted-foreground"
                     )}
                   >
-                    {item.label}
+                    <Icon className="size-4" />
+                    <span>{item.label}</span>
                   </Link>
                 );
               })}
             </nav>
-
-            <div className="flex items-center gap-2">
-              {authLoading ? (
-                <div className="h-9 w-24 animate-pulse rounded-md bg-muted" />
-              ) : me ? (
-                <>
-                  <Link
-                    href="/profile"
-                    className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                  >
-                    {displayName || "My profile"}
-                  </Link>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={isLoggingOut}
-                    onClick={handleLogout}
-                  >
-                    {isLoggingOut ? <Loader2 className="size-4 animate-spin" /> : null}
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <Link href="/login" className={cn(buttonVariants({ size: "sm" }))}>
-                  Login
-                </Link>
-              )}
-            </div>
-          </div>
-
-          <nav className="mx-auto flex w-full max-w-7xl items-center gap-2 overflow-x-auto px-5 pb-3 md:hidden md:px-8">
-            {navItems.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    buttonVariants({ variant: active ? "default" : "ghost", size: "sm" }),
-                    "shrink-0"
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </header>
+          </>
+        ) : null}
 
         {showProtectedLoader ? (
           <main className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-7xl items-center justify-center px-6 py-10 md:px-8">
             <Loader2 className="size-6 animate-spin text-muted-foreground" />
           </main>
         ) : shouldHideContent ? null : (
-          children
+          <div className={cn(showChrome ? "pb-20 pt-16 md:pb-0 md:pt-20" : "")}>{children}</div>
         )}
+
       </div>
     </AuthContext.Provider>
   );
