@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowUpRight,
+  Code2,
+  FilePlus2,
+  FolderGit2,
+  Hammer,
+  Loader2,
+  Pencil,
+  Plus,
+  Save,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   createProject,
@@ -14,9 +25,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,6 +72,13 @@ function bulletsFromText(value: string) {
   return value
     .split("\n")
     .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function techTags(value: string) {
+  return value
+    .split(",")
+    .map((part) => part.trim())
     .filter(Boolean);
 }
 
@@ -168,20 +183,64 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 md:px-8 md:py-12">
-      <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <div>
-          <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
-            Project Portfolio
+    <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
+      <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+            Portfolio Curation
           </p>
-          <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">Projects</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Manage project entries for your resume drafts.</p>
+          <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
+            Technical Projects
+          </h1>
         </div>
-        <Button onClick={addDraft} className="ce-primary-gradient rounded-lg text-primary-foreground">
+        <Button
+          onClick={addDraft}
+          className="ce-primary-gradient rounded-lg text-primary-foreground"
+        >
           <Plus className="size-4" />
-          Add Project
+          New Entry
         </Button>
-      </div>
+      </header>
+
+      <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Card className="rounded-xl border-border/70 bg-card/95">
+          <CardContent className="flex h-full flex-col justify-between p-5">
+            <Code2 className="size-8 text-primary" />
+            <div className="mt-6">
+              <div className="font-heading text-3xl text-primary">{items.length}</div>
+              <p className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                Project Entries
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="ce-primary-gradient rounded-xl text-primary-foreground">
+          <CardContent className="flex h-full flex-col justify-between p-5">
+            <FolderGit2 className="size-8 text-primary-foreground/90" />
+            <div className="mt-6">
+              <div className="font-heading text-3xl">{items.filter((item) => item.github_url.trim()).length}</div>
+              <p className="text-[10px] font-semibold tracking-[0.16em] uppercase text-primary-foreground/75">
+                Linked Repositories
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-xl border-border/70 bg-card/95">
+          <CardContent className="flex h-full flex-col justify-between p-5">
+            <Hammer className="size-8 text-primary" />
+            <div className="mt-6">
+              <div className="font-heading text-3xl text-primary">
+                {items.reduce((sum, item) => sum + techTags(item.tech_stack).length, 0)}
+              </div>
+              <p className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                Tech Tags Captured
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
 
       {errorMessage ? (
         <Alert variant="destructive" className="mb-4">
@@ -194,60 +253,164 @@ export default function ProjectsPage() {
           <Loader2 className="size-5 animate-spin text-muted-foreground" />
         </div>
       ) : items.length === 0 ? (
-        <Card className="ce-card rounded-xl">
-          <CardContent className="py-10 text-center text-muted-foreground">
-            No project entries yet.
+        <Card className="ce-card rounded-xl border-2 border-dashed border-border/80 bg-card/70">
+          <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
+            <span className="inline-flex size-14 items-center justify-center rounded-full bg-secondary text-primary">
+              <FilePlus2 className="size-6" />
+            </span>
+            <div>
+              <h3 className="font-heading text-2xl text-primary">No projects yet</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add your first project entry to start curating your technical portfolio.
+              </p>
+            </div>
+            <Button
+              onClick={addDraft}
+              className="ce-primary-gradient rounded-lg text-primary-foreground"
+            >
+              <Plus className="size-4" />
+              Add Project
+            </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
+        <section className="space-y-5">
           {items.map((item, index) => (
             <Card key={item.id ?? `draft-${index}`} className="ce-card rounded-xl">
-              <CardHeader>
-                <CardTitle className="font-heading text-2xl text-primary">Project #{index + 1}</CardTitle>
-                <CardDescription>Use concise bullets and impact-oriented language.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label>Title</Label>
-                    <Input value={item.title} onChange={(event) => patchItem(index, { title: event.target.value })} />
+              <CardContent className="space-y-6 p-5 md:p-7">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="grid flex-1 gap-4 md:grid-cols-2">
+                    <div className="grid gap-2 md:col-span-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Project Title
+                      </Label>
+                      <Input
+                        value={item.title}
+                        onChange={(event) => patchItem(index, { title: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                        placeholder="e.g. Autonomous Supply Intelligence"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Date Range
+                      </Label>
+                      <Input
+                        value={item.date_range}
+                        onChange={(event) => patchItem(index, { date_range: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                        placeholder="e.g. Jan 2024 - Present"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        GitHub URL (optional)
+                      </Label>
+                      <Input
+                        placeholder="https://github.com/org/repo"
+                        value={item.github_url}
+                        onChange={(event) => patchItem(index, { github_url: event.target.value })}
+                        className="h-10 border-border/80 bg-card"
+                      />
+                    </div>
                   </div>
-                  <div className="grid gap-2">
-                    <Label>Date Range</Label>
-                    <Input
-                      value={item.date_range}
-                      onChange={(event) => patchItem(index, { date_range: event.target.value })}
-                    />
+
+                  <div className="flex items-center gap-2 self-start">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon-sm"
+                      onClick={() => saveItem(index)}
+                      disabled={item.saving || item.deleting}
+                      aria-label={`Edit ${item.title || `project ${index + 1}`}`}
+                    >
+                      {item.saving ? <Loader2 className="size-4 animate-spin" /> : <Pencil className="size-4" />}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon-sm"
+                      onClick={() => removeItem(index)}
+                      disabled={item.saving || item.deleting}
+                      aria-label={`Delete ${item.title || `project ${index + 1}`}`}
+                    >
+                      {item.deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                    </Button>
                   </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="grid gap-2">
-                    <Label>GitHub URL (optional)</Label>
-                    <Input
-                      placeholder="https://github.com/org/repo"
-                      value={item.github_url}
-                      onChange={(event) => patchItem(index, { github_url: event.target.value })}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Tech Stack (optional)</Label>
+                    <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                      Tech Stack (optional)
+                    </Label>
                     <Input
                       value={item.tech_stack}
                       onChange={(event) => patchItem(index, { tech_stack: event.target.value })}
+                      className="h-10 border-border/80 bg-card"
+                      placeholder="React, Next.js, Tailwind"
                     />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                      Repository Link Preview
+                    </Label>
+                    <div className="flex h-10 items-center rounded-lg border border-border/80 bg-card px-3 text-xs text-muted-foreground">
+                      {item.github_url.trim() ? (
+                        <a
+                          href={item.github_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-primary hover:underline"
+                        >
+                          {item.github_url}
+                          <ArrowUpRight className="size-3.5" />
+                        </a>
+                      ) : (
+                        <span>No repository linked</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
+                {techTags(item.tech_stack).length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {techTags(item.tech_stack).map((tag) => (
+                      <span
+                        key={`${item.id ?? index}-${tag}`}
+                        className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] text-secondary-foreground uppercase"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+
                 <div className="grid gap-2">
-                  <Label>Bullets (one per line)</Label>
+                  <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    Impact Bullets (one per line)
+                  </Label>
                   <Textarea
                     rows={5}
                     value={item.bullets_text}
                     onChange={(event) => patchItem(index, { bullets_text: event.target.value })}
+                    className="border-border/80 bg-card"
                   />
                 </div>
+
+                {bulletsFromText(item.bullets_text).length > 0 ? (
+                  <div className="space-y-2 rounded-xl border border-border/70 bg-background/70 p-4">
+                    {bulletsFromText(item.bullets_text).map((bullet, bulletIndex) => (
+                      <div key={`${item.id ?? index}-bullet-${bulletIndex}`} className="flex gap-3">
+                        <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                        <p className="text-sm leading-relaxed text-muted-foreground">{bullet}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
 
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
@@ -255,10 +418,11 @@ export default function ProjectsPage() {
                     disabled={item.saving || item.deleting}
                     className="ce-primary-gradient rounded-lg text-primary-foreground"
                   >
-                    {item.saving ? <Loader2 className="size-4 animate-spin" /> : null}
-                    {item.id ? "Update" : "Save"}
+                    {item.saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+                    {item.id ? "Save Changes" : "Save Entry"}
                   </Button>
                   <Button
+                    type="button"
                     variant="destructive"
                     onClick={() => removeItem(index)}
                     disabled={item.saving || item.deleting}
@@ -270,7 +434,7 @@ export default function ProjectsPage() {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </section>
       )}
     </main>
   );
