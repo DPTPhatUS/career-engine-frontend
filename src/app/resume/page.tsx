@@ -34,12 +34,7 @@ import {
   RESUME_ID_STORAGE_KEY,
 } from "@/lib/resume-defaults";
 import { useAuth } from "@/components/app-shell";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button, Card, Input, Tabs, TextArea } from "@heroui/react";
 import { ResumePreview } from "./resume-preview";
 
 const optionalUrl = z.union([z.literal(""), z.string().url("Enter a valid URL")]);
@@ -126,6 +121,11 @@ const emptySkill = {
   values: "",
 };
 
+const editorCardClassName = "ce-card rounded-2xl";
+const inputClassName = "ce-ghost-border rounded-xl bg-card";
+const labelClassName =
+  "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
+
 function toResumeDraft(values: ResumeFormValues): ResumeDraft {
   return {
     title: values.title.trim(),
@@ -172,6 +172,7 @@ export default function ResumePage() {
   const [isInsertingInfo, setIsInsertingInfo] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [resumeId, setResumeId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("personal");
 
   const form = useForm<ResumeFormValues>({
     resolver: zodResolver(resumeFormSchema),
@@ -387,9 +388,9 @@ export default function ResumePage() {
 
   return (
     <main className="mx-auto flex w-full max-w-375 flex-1 px-4 py-5 md:px-8 md:py-8">
-      <div className="flex min-h-[calc(100vh-10.5rem)] w-full overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-xl shadow-primary/5">
-        <section className="w-full overflow-y-auto bg-[linear-gradient(180deg,color-mix(in_oklab,var(--card)_84%,white_16%)_0%,color-mix(in_oklab,var(--muted)_58%,white_42%)_100%)] lg:w-1/2">
-          <div className="sticky top-0 z-20 border-b border-border/50 bg-background/84 px-5 py-5 backdrop-blur-md md:px-8">
+      <div className="flex min-h-[calc(100vh-10.5rem)] w-full overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-xl shadow-primary/5">
+        <section className="w-full overflow-y-auto bg-[linear-gradient(180deg,color-mix(in_oklab,var(--card)_82%,white_18%)_0%,color-mix(in_oklab,var(--muted)_54%,white_46%)_100%)] lg:w-1/2">
+          <div className="sticky top-0 z-20 border-b border-border/45 bg-background/82 px-5 py-5 backdrop-blur-md md:px-8">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
                 <h1 className="font-heading text-3xl text-primary">Resume Editor</h1>
@@ -401,10 +402,10 @@ export default function ResumePage() {
               <div className="flex flex-wrap gap-2">
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={handleInsertMyInfo}
-                  disabled={isInsertingInfo}
-                  className="rounded-lg border-border/70 bg-background/90"
+                  variant="secondary"
+                  onPress={handleInsertMyInfo}
+                  isDisabled={isInsertingInfo}
+                  className="rounded-lg"
                 >
                   {isInsertingInfo ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -413,11 +414,12 @@ export default function ResumePage() {
                   )}
                   Sync Data
                 </Button>
+
                 <Button
                   type="button"
-                  variant="secondary"
-                  onClick={handleClearDraft}
-                  disabled={isClearing}
+                  variant="tertiary"
+                  onPress={handleClearDraft}
+                  isDisabled={isClearing}
                   className="rounded-lg"
                 >
                   {isClearing ? (
@@ -427,11 +429,15 @@ export default function ResumePage() {
                   )}
                   Clear
                 </Button>
+
                 <Button
-                  size="lg"
-                  disabled={isGenerating}
-                  onClick={form.handleSubmit(onGenerate)}
-                  className="rounded-lg bg-linear-to-br from-primary via-primary to-primary/70 text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
+                  type="button"
+                  variant="primary"
+                  isDisabled={isGenerating}
+                  onPress={() => {
+                    void form.handleSubmit(onGenerate)();
+                  }}
+                  className="ce-primary-gradient rounded-lg text-primary-foreground"
                 >
                   {isGenerating ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -444,68 +450,113 @@ export default function ResumePage() {
             </div>
           </div>
 
-          <Tabs defaultValue="personal" className="flex flex-col">
-            <div className="border-b border-border/50 px-5 md:px-8">
-              <TabsList className="h-auto rounded-none bg-transparent p-0">
-                <TabsTrigger value="personal" className="rounded-none border-b-2 border-transparent px-3 py-3 text-sm text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary">Personal Info</TabsTrigger>
-                <TabsTrigger value="education" className="rounded-none border-b-2 border-transparent px-3 py-3 text-sm text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary">Education</TabsTrigger>
-                <TabsTrigger value="projects" className="rounded-none border-b-2 border-transparent px-3 py-3 text-sm text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary">Projects</TabsTrigger>
-                <TabsTrigger value="skills" className="rounded-none border-b-2 border-transparent px-3 py-3 text-sm text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary">Skills</TabsTrigger>
-              </TabsList>
-            </div>
-
-            <div className="space-y-6 p-5 md:p-8">
-              <div className="rounded-xl border border-border/60 bg-background/90 p-4 shadow-sm">
+          <div className="space-y-6 px-5 py-5 md:px-8 md:py-7">
+            <Card className={editorCardClassName}>
+              <Card.Content className="p-5">
                 <div className="grid gap-2">
-                  <Label htmlFor="resume-title" className="text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">Resume Title</Label>
-                  <Input id="resume-title" className="h-10 border-border/70 bg-card" {...form.register("title")} />
+                  <label htmlFor="resume-title" className={labelClassName}>
+                    Resume Title
+                  </label>
+                  <Input id="resume-title" className={inputClassName} {...form.register("title")} />
                   {form.formState.errors.title ? (
                     <p className="text-xs text-destructive">{form.formState.errors.title.message}</p>
                   ) : null}
                 </div>
-              </div>
+              </Card.Content>
+            </Card>
 
-              <TabsContent value="personal" className="mt-0 rounded-xl border border-border/60 bg-background/88 p-4 shadow-sm md:p-5">
-                <div className="mb-4">
-                  <h2 className="font-heading text-2xl text-primary">Personal Details</h2>
-                  <p className="text-xs tracking-[0.14em] text-muted-foreground uppercase">Contact information shown on your resume</p>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label htmlFor="full_name" className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">Full Name</Label>
-                    <Input id="full_name" className="h-10 border-border/70 bg-card" {...form.register("payload.personal_info.full_name")} />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email" className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">Email Address</Label>
-                    <Input id="email" type="email" className="h-10 border-border/70 bg-card" {...form.register("payload.personal_info.email")} />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="phone" className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">Phone Number</Label>
-                    <Input id="phone" className="h-10 border-border/70 bg-card" {...form.register("payload.personal_info.phone")} />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="address" className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">Address</Label>
-                    <Input id="address" className="h-10 border-border/70 bg-card" {...form.register("payload.personal_info.address")} />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="github_label" className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">GitHub Label</Label>
-                    <Input id="github_label" className="h-10 border-border/70 bg-card" {...form.register("payload.personal_info.github_label")} />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="github_url" className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">GitHub URL</Label>
-                    <Input id="github_url" className="h-10 border-border/70 bg-card" placeholder="https://github.com/username" {...form.register("payload.personal_info.github_url")} />
-                  </div>
-                </div>
-              </TabsContent>
+            <Tabs
+              selectedKey={activeTab}
+              onSelectionChange={(key) => setActiveTab(String(key))}
+              variant="secondary"
+              className="rounded-2xl bg-card/45 p-2 md:p-3"
+            >
+              <Tabs.ListContainer className="mb-5 border-b border-border/50 px-2 pt-1">
+                <Tabs.List aria-label="Resume sections" className="bg-transparent">
+                  <Tabs.Tab id="personal" className="text-[11px] font-semibold tracking-[0.12em] uppercase">
+                    Personal Info
+                  </Tabs.Tab>
+                  <Tabs.Tab id="education" className="text-[11px] font-semibold tracking-[0.12em] uppercase">
+                    Education
+                  </Tabs.Tab>
+                  <Tabs.Tab id="projects" className="text-[11px] font-semibold tracking-[0.12em] uppercase">
+                    Projects
+                  </Tabs.Tab>
+                  <Tabs.Tab id="skills" className="text-[11px] font-semibold tracking-[0.12em] uppercase">
+                    Skills
+                  </Tabs.Tab>
+                </Tabs.List>
+              </Tabs.ListContainer>
 
-              <TabsContent value="education" className="mt-0 space-y-4">
+              <Tabs.Panel id="personal" className="space-y-4 px-2 pb-2 md:px-3">
+                <Card className={editorCardClassName}>
+                  <Card.Content className="space-y-4 p-5">
+                    <div className="flex flex-wrap items-end justify-between gap-3">
+                      <h2 className="font-heading text-2xl text-primary">Personal Details</h2>
+                      <span className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                        Contact Header
+                      </span>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="grid gap-2">
+                        <label htmlFor="full_name" className={labelClassName}>
+                          Full Name
+                        </label>
+                        <Input id="full_name" className={inputClassName} {...form.register("payload.personal_info.full_name")} />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="email" className={labelClassName}>
+                          Email Address
+                        </label>
+                        <Input id="email" type="email" className={inputClassName} {...form.register("payload.personal_info.email")} />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="phone" className={labelClassName}>
+                          Phone Number
+                        </label>
+                        <Input id="phone" className={inputClassName} {...form.register("payload.personal_info.phone")} />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="address" className={labelClassName}>
+                          Address
+                        </label>
+                        <Input id="address" className={inputClassName} {...form.register("payload.personal_info.address")} />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="github_label" className={labelClassName}>
+                          GitHub Label
+                        </label>
+                        <Input id="github_label" className={inputClassName} {...form.register("payload.personal_info.github_label")} />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label htmlFor="github_url" className={labelClassName}>
+                          GitHub URL
+                        </label>
+                        <Input
+                          id="github_url"
+                          className={inputClassName}
+                          placeholder="https://github.com/username"
+                          {...form.register("payload.personal_info.github_url")}
+                        />
+                      </div>
+                    </div>
+                  </Card.Content>
+                </Card>
+              </Tabs.Panel>
+
+              <Tabs.Panel id="education" className="space-y-4 px-2 pb-2 md:px-3">
                 <div className="flex items-center justify-between">
                   <h2 className="font-heading text-2xl text-primary">Education</h2>
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => education.append({ ...emptyEducation })}
-                    className="rounded-lg border-border/70 bg-background/85"
+                    onPress={() => education.append({ ...emptyEducation })}
                   >
                     <Plus className="size-4" />
                     Add Education
@@ -513,21 +564,25 @@ export default function ResumePage() {
                 </div>
 
                 {education.fields.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-border/70 bg-background/80 px-4 py-5 text-sm text-muted-foreground">
-                    No education entries yet.
-                  </p>
+                  <Card className="rounded-xl border border-dashed border-border/70 bg-card/60">
+                    <Card.Content className="px-4 py-5 text-sm text-muted-foreground">
+                      No education entries yet.
+                    </Card.Content>
+                  </Card>
                 ) : null}
 
                 {education.fields.map((field, index) => (
-                  <Card key={field.id} className="rounded-xl border-border/65 bg-background/92 shadow-sm">
-                    <CardContent className="space-y-4 p-5">
+                  <Card key={field.id} className={editorCardClassName}>
+                    <Card.Content className="space-y-4 p-5">
                       <div className="flex items-center justify-between">
                         <h3 className="font-heading text-xl text-primary">Education #{index + 1}</h3>
                         <Button
                           type="button"
-                          variant="destructive"
-                          size="icon-sm"
-                          onClick={() => education.remove(index)}
+                          variant="danger-soft"
+                          size="sm"
+                          isIconOnly
+                          onPress={() => education.remove(index)}
+                          aria-label={`Remove education ${index + 1}`}
                         >
                           <Trash2 className="size-4" />
                         </Button>
@@ -535,47 +590,52 @@ export default function ResumePage() {
 
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="grid gap-2">
-                          <Label>University</Label>
-                          <Input {...form.register(`payload.education.${index}.university`)} />
+                          <label className={labelClassName}>University</label>
+                          <Input className={inputClassName} {...form.register(`payload.education.${index}.university`)} />
                         </div>
+
                         <div className="grid gap-2">
-                          <Label>Degree</Label>
-                          <Input {...form.register(`payload.education.${index}.degree`)} />
+                          <label className={labelClassName}>Degree</label>
+                          <Input className={inputClassName} {...form.register(`payload.education.${index}.degree`)} />
                         </div>
+
                         <div className="grid gap-2">
-                          <Label>Field</Label>
-                          <Input {...form.register(`payload.education.${index}.field`)} />
+                          <label className={labelClassName}>Field</label>
+                          <Input className={inputClassName} {...form.register(`payload.education.${index}.field`)} />
                         </div>
+
                         <div className="grid gap-2">
-                          <Label>Time Period</Label>
-                          <Input {...form.register(`payload.education.${index}.time_period`)} />
+                          <label className={labelClassName}>Time Period</label>
+                          <Input className={inputClassName} {...form.register(`payload.education.${index}.time_period`)} />
                         </div>
+
                         <div className="grid gap-2">
-                          <Label>GPA (optional)</Label>
-                          <Input {...form.register(`payload.education.${index}.gpa`)} />
+                          <label className={labelClassName}>GPA (optional)</label>
+                          <Input className={inputClassName} {...form.register(`payload.education.${index}.gpa`)} />
                         </div>
+
                         <div className="grid gap-2">
-                          <Label>Location (optional)</Label>
-                          <Input {...form.register(`payload.education.${index}.location`)} />
+                          <label className={labelClassName}>Location (optional)</label>
+                          <Input className={inputClassName} {...form.register(`payload.education.${index}.location`)} />
                         </div>
+
                         <div className="grid gap-2 md:col-span-2">
-                          <Label>Relevant Coursework (optional)</Label>
-                          <Textarea rows={3} {...form.register(`payload.education.${index}.relevant_coursework`)} />
+                          <label className={labelClassName}>Relevant Coursework (optional)</label>
+                          <TextArea rows={3} className={inputClassName} {...form.register(`payload.education.${index}.relevant_coursework`)} />
                         </div>
                       </div>
-                    </CardContent>
+                    </Card.Content>
                   </Card>
                 ))}
-              </TabsContent>
+              </Tabs.Panel>
 
-              <TabsContent value="projects" className="mt-0 space-y-4">
+              <Tabs.Panel id="projects" className="space-y-4 px-2 pb-2 md:px-3">
                 <div className="flex items-center justify-between">
                   <h2 className="font-heading text-2xl text-primary">Projects</h2>
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => projects.append({ ...emptyProject })}
-                    className="rounded-lg border-border/70 bg-background/85"
+                    onPress={() => projects.append({ ...emptyProject })}
                   >
                     <Plus className="size-4" />
                     Add Project
@@ -583,21 +643,25 @@ export default function ResumePage() {
                 </div>
 
                 {projects.fields.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-border/70 bg-background/80 px-4 py-5 text-sm text-muted-foreground">
-                    No project entries yet.
-                  </p>
+                  <Card className="rounded-xl border border-dashed border-border/70 bg-card/60">
+                    <Card.Content className="px-4 py-5 text-sm text-muted-foreground">
+                      No project entries yet.
+                    </Card.Content>
+                  </Card>
                 ) : null}
 
                 {projects.fields.map((field, index) => (
-                  <Card key={field.id} className="rounded-xl border-border/65 bg-background/92 shadow-sm">
-                    <CardContent className="space-y-4 p-5">
+                  <Card key={field.id} className={editorCardClassName}>
+                    <Card.Content className="space-y-4 p-5">
                       <div className="flex items-center justify-between">
                         <h3 className="font-heading text-xl text-primary">Project #{index + 1}</h3>
                         <Button
                           type="button"
-                          variant="destructive"
-                          size="icon-sm"
-                          onClick={() => projects.remove(index)}
+                          variant="danger-soft"
+                          size="sm"
+                          isIconOnly
+                          onPress={() => projects.remove(index)}
+                          aria-label={`Remove project ${index + 1}`}
                         >
                           <Trash2 className="size-4" />
                         </Button>
@@ -605,39 +669,46 @@ export default function ResumePage() {
 
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="grid gap-2">
-                          <Label>Title</Label>
-                          <Input {...form.register(`payload.projects.${index}.title`)} />
+                          <label className={labelClassName}>Title</label>
+                          <Input className={inputClassName} {...form.register(`payload.projects.${index}.title`)} />
                         </div>
+
                         <div className="grid gap-2">
-                          <Label>Date Range</Label>
-                          <Input {...form.register(`payload.projects.${index}.date_range`)} />
+                          <label className={labelClassName}>Date Range</label>
+                          <Input className={inputClassName} {...form.register(`payload.projects.${index}.date_range`)} />
                         </div>
+
                         <div className="grid gap-2 md:col-span-2">
-                          <Label>GitHub URL (optional)</Label>
-                          <Input placeholder="https://github.com/org/repo" {...form.register(`payload.projects.${index}.github_url`)} />
+                          <label className={labelClassName}>GitHub URL (optional)</label>
+                          <Input
+                            className={inputClassName}
+                            placeholder="https://github.com/org/repo"
+                            {...form.register(`payload.projects.${index}.github_url`)}
+                          />
                         </div>
+
                         <div className="grid gap-2 md:col-span-2">
-                          <Label>Tech Stack (optional)</Label>
-                          <Input {...form.register(`payload.projects.${index}.tech_stack`)} />
+                          <label className={labelClassName}>Tech Stack (optional)</label>
+                          <Input className={inputClassName} {...form.register(`payload.projects.${index}.tech_stack`)} />
                         </div>
+
                         <div className="grid gap-2 md:col-span-2">
-                          <Label>Bullets (one line per bullet)</Label>
-                          <Textarea rows={5} {...form.register(`payload.projects.${index}.bullets_text`)} />
+                          <label className={labelClassName}>Bullets (one line per bullet)</label>
+                          <TextArea rows={5} className={inputClassName} {...form.register(`payload.projects.${index}.bullets_text`)} />
                         </div>
                       </div>
-                    </CardContent>
+                    </Card.Content>
                   </Card>
                 ))}
-              </TabsContent>
+              </Tabs.Panel>
 
-              <TabsContent value="skills" className="mt-0 space-y-4">
+              <Tabs.Panel id="skills" className="space-y-4 px-2 pb-2 md:px-3">
                 <div className="flex items-center justify-between">
                   <h2 className="font-heading text-2xl text-primary">Skills</h2>
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => skills.append({ ...emptySkill })}
-                    className="rounded-lg border-border/70 bg-background/85"
+                    onPress={() => skills.append({ ...emptySkill })}
                   >
                     <Plus className="size-4" />
                     Add Skill Group
@@ -645,87 +716,129 @@ export default function ResumePage() {
                 </div>
 
                 {skills.fields.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-border/70 bg-background/80 px-4 py-5 text-sm text-muted-foreground">
-                    No skills added yet.
-                  </p>
+                  <Card className="rounded-xl border border-dashed border-border/70 bg-card/60">
+                    <Card.Content className="px-4 py-5 text-sm text-muted-foreground">
+                      No skills added yet.
+                    </Card.Content>
+                  </Card>
                 ) : null}
 
                 {skills.fields.map((field, index) => (
-                  <Card key={field.id} className="rounded-xl border-border/65 bg-background/92 shadow-sm">
-                    <CardContent className="space-y-4 p-5">
+                  <Card key={field.id} className={editorCardClassName}>
+                    <Card.Content className="space-y-4 p-5">
                       <div className="flex items-center justify-between">
                         <h3 className="font-heading text-xl text-primary">Skill Group #{index + 1}</h3>
                         <Button
                           type="button"
-                          variant="destructive"
-                          size="icon-sm"
-                          onClick={() => skills.remove(index)}
+                          variant="danger-soft"
+                          size="sm"
+                          isIconOnly
+                          onPress={() => skills.remove(index)}
+                          aria-label={`Remove skill group ${index + 1}`}
                         >
                           <Trash2 className="size-4" />
                         </Button>
                       </div>
+
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="grid gap-2">
-                          <Label>Label</Label>
-                          <Input placeholder="Languages" {...form.register(`payload.skills.${index}.label`)} />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label>Values</Label>
+                          <label className={labelClassName}>Label</label>
                           <Input
+                            className={inputClassName}
+                            placeholder="Languages"
+                            {...form.register(`payload.skills.${index}.label`)}
+                          />
+                        </div>
+
+                        <div className="grid gap-2">
+                          <label className={labelClassName}>Values</label>
+                          <Input
+                            className={inputClassName}
                             placeholder="Python, TypeScript, SQL"
                             {...form.register(`payload.skills.${index}.values`)}
                           />
                         </div>
                       </div>
-                    </CardContent>
+                    </Card.Content>
                   </Card>
                 ))}
-              </TabsContent>
+              </Tabs.Panel>
+            </Tabs>
 
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
-                <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                  <Save className="size-3.5" />
-                  Draft autosaves in your browser. Signed in as {profile?.full_name || me?.email || "your account"}.
-                </div>
-                <Button
-                  size="lg"
-                  disabled={isGenerating}
-                  onClick={form.handleSubmit(onGenerate)}
-                  className="rounded-lg bg-linear-to-br from-primary via-primary to-primary/70 text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
-                >
-                  {isGenerating ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Download className="size-4" />
-                  )}
-                  Export Doc
-                </Button>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/55 pt-4">
+              <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                <Save className="size-3.5" />
+                Draft autosaves in your browser. Signed in as {profile?.full_name || me?.email || "your account"}.
               </div>
 
-              {hasValidationErrors ? (
-                <p className="text-xs text-destructive">
-                  Please review fields in each tab and fix validation issues before exporting.
-                </p>
-              ) : null}
+              <Button
+                type="button"
+                variant="primary"
+                isDisabled={isGenerating}
+                onPress={() => {
+                  void form.handleSubmit(onGenerate)();
+                }}
+                className="ce-primary-gradient rounded-lg text-primary-foreground"
+              >
+                {isGenerating ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Download className="size-4" />
+                )}
+                Export Doc
+              </Button>
             </div>
-          </Tabs>
+
+            {hasValidationErrors ? (
+              <p className="text-xs text-destructive">
+                Please review fields in each tab and fix validation issues before exporting.
+              </p>
+            ) : null}
+          </div>
         </section>
 
-        <section className="hidden w-1/2 flex-col overflow-y-auto bg-[linear-gradient(165deg,color-mix(in_oklab,var(--muted)_62%,white_38%)_0%,color-mix(in_oklab,var(--secondary)_75%,white_25%)_100%)] p-6 lg:flex">
-          <div className="sticky top-0 z-10 mb-5 flex w-fit items-center gap-2 rounded-full border border-border/65 bg-background/70 px-3 py-1.5 backdrop-blur">
-            <button type="button" className="inline-flex size-8 items-center justify-center rounded-full bg-card text-primary shadow-sm transition-transform hover:scale-105" aria-label="Zoom in">
-              <ZoomIn className="size-4" />
-            </button>
-            <button type="button" className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-primary" aria-label="Zoom out">
-              <ZoomOut className="size-4" />
-            </button>
-            <span className="mx-1 h-5 w-px bg-border" />
-            <button type="button" className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-primary" aria-label="Print preview">
-              <Printer className="size-4" />
-            </button>
-          </div>
+        <section className="hidden w-1/2 flex-col overflow-y-auto bg-[linear-gradient(165deg,color-mix(in_oklab,var(--muted)_62%,white_38%)_0%,color-mix(in_oklab,var(--secondary)_76%,white_24%)_100%)] p-6 lg:flex">
+          <Card className="mb-5 w-fit rounded-full border border-border/65 bg-background/74 backdrop-blur">
+            <Card.Content className="flex items-center gap-1 p-1.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                isIconOnly
+                aria-label="Zoom in"
+                className="rounded-full"
+              >
+                <ZoomIn className="size-4" />
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                aria-label="Zoom out"
+                className="rounded-full"
+              >
+                <ZoomOut className="size-4" />
+              </Button>
+
+              <span className="mx-1 h-5 w-px bg-border" />
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                isIconOnly
+                aria-label="Print preview"
+                className="rounded-full"
+              >
+                <Printer className="size-4" />
+              </Button>
+            </Card.Content>
+          </Card>
 
           <ResumePreview draft={previewDraft} />
+
           <p className="mt-6 text-center text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
             Rendering in Real-Time Engine v4.2
           </p>
