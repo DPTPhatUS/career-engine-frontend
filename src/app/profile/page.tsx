@@ -5,13 +5,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Eye,
+  History,
   Info,
-  Loader2,
   Save,
   ShieldCheck,
-  Sparkles,
   UserRound,
 } from "lucide-react";
+import { Button, Card, Input, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import {
   ApiError,
@@ -20,14 +21,6 @@ import {
   type ProfilePayload,
 } from "@/lib/api";
 import { useAuth } from "@/components/app-shell";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const profileSchema = z.object({
   full_name: z.string().trim().min(1, "Full name is required."),
@@ -48,6 +41,28 @@ const emptyValues: ProfileFormValues = {
   github_label: "GitHub",
   github_url: "",
 };
+
+const inputClassName = "ce-ghost-border rounded-xl bg-card";
+const labelClassName =
+  "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
+
+const profileInsights = [
+  {
+    title: "Identity Verified",
+    description: "Last verified: Oct 24, 2023",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Profile Visibility",
+    description: "Currently set to: Private",
+    icon: Eye,
+  },
+  {
+    title: "Activity Log",
+    description: "View revision history",
+    icon: History,
+  },
+] as const;
 
 export default function ProfilePage() {
   const { me, setProfileInContext } = useAuth();
@@ -142,61 +157,67 @@ export default function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
-      <section className="mb-12 max-w-4xl">
-        <div className="mb-2 flex items-center gap-3">
-          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+      <section className="mb-12 max-w-4xl space-y-4">
+        <div className="flex items-center gap-3">
+          <p className="text-[11px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
             Account Settings
           </p>
-          <span className="h-px w-10 bg-border" />
+          <span className="h-px w-10 bg-border/80" />
         </div>
-        <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
+        <h1 className="font-heading text-5xl leading-tight text-primary">
           Profile Management
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-          Curate your professional identity. This information powers resume generation and profile-based drafting across the app.
+        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+          Curate your professional identity. The information provided here becomes the foundation
+          for resume generation and profile-aware drafting.
         </p>
       </section>
 
       {errorMessage ? (
-        <Alert variant="destructive" className="mb-4">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
+        <Card className="mb-6 border border-destructive/35 bg-destructive/10">
+          <Card.Content className="p-4 text-sm text-destructive">{errorMessage}</Card.Content>
+        </Card>
       ) : null}
 
-      <Card className="ce-card relative overflow-hidden rounded-xl">
-        <div className="pointer-events-none absolute -top-10 -right-8 opacity-20">
-          <UserRound className="size-36 text-primary" />
+      <Card className="ce-card relative overflow-hidden rounded-2xl">
+        <div className="pointer-events-none absolute -top-11 -right-9 opacity-20">
+          <UserRound className="size-40 text-primary" />
         </div>
 
-        <CardContent className="relative p-6 md:p-8 lg:p-10">
+        <Card.Content className="relative p-6 md:p-8 lg:p-10">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="size-5 animate-spin text-muted-foreground" />
+              <Spinner aria-label="Loading profile" color="accent" />
             </div>
           ) : (
             <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label
-                    htmlFor="full_name"
-                    className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-                  >
+                  <label htmlFor="full_name" className={labelClassName}>
                     Full Name
-                  </Label>
-                  <Input id="full_name" className="h-10 border-border/80 bg-card" {...form.register("full_name")} />
+                  </label>
+                  <Input
+                    id="full_name"
+                    className={inputClassName}
+                    placeholder="e.g. Julian Montgomery Vance"
+                    {...form.register("full_name")}
+                  />
                   {form.formState.errors.full_name ? (
                     <p className="text-xs text-destructive">{form.formState.errors.full_name.message}</p>
                   ) : null}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label
-                    htmlFor="email"
-                    className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-                  >
+                  <label htmlFor="email" className={labelClassName}>
                     Email Address
-                  </Label>
-                  <Input id="email" type="email" className="h-10 border-border/80 bg-card" {...form.register("email")} />
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    className={inputClassName}
+                    placeholder="julian.vance@executive.edu"
+                    {...form.register("email")}
+                  />
                   {form.formState.errors.email ? (
                     <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>
                   ) : null}
@@ -205,58 +226,61 @@ export default function ProfilePage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label
-                    htmlFor="phone"
-                    className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-                  >
+                  <label htmlFor="phone" className={labelClassName}>
                     Phone Number
-                  </Label>
-                  <Input id="phone" className="h-10 border-border/80 bg-card" {...form.register("phone")} />
+                  </label>
+                  <Input
+                    id="phone"
+                    className={inputClassName}
+                    placeholder="+1 (555) 012-3456"
+                    {...form.register("phone")}
+                  />
                   {form.formState.errors.phone ? (
                     <p className="text-xs text-destructive">{form.formState.errors.phone.message}</p>
                   ) : null}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label
-                    htmlFor="address"
-                    className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-                  >
+                  <label htmlFor="address" className={labelClassName}>
                     Current Address
-                  </Label>
-                  <Input id="address" className="h-10 border-border/80 bg-card" {...form.register("address")} />
+                  </label>
+                  <Input
+                    id="address"
+                    className={inputClassName}
+                    placeholder="Manhattan, New York"
+                    {...form.register("address")}
+                  />
                   {form.formState.errors.address ? (
                     <p className="text-xs text-destructive">{form.formState.errors.address.message}</p>
                   ) : null}
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 pt-1">
+              <div className="flex items-center gap-3 pt-2">
                 <h2 className="font-heading text-xl italic text-primary">Professional Networks</h2>
-                <span className="h-px flex-1 bg-border/70" />
+                <span className="h-px flex-1 bg-border/55" />
               </div>
 
               <div className="grid gap-6 md:grid-cols-3">
                 <div className="grid gap-2">
-                  <Label
-                    htmlFor="github_label"
-                    className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-                  >
+                  <label htmlFor="github_label" className={labelClassName}>
                     GitHub Label
-                  </Label>
-                  <Input id="github_label" className="h-10 border-border/80 bg-card" {...form.register("github_label")} />
+                  </label>
+                  <Input
+                    id="github_label"
+                    className={inputClassName}
+                    placeholder="Engineering Portfolio"
+                    {...form.register("github_label")}
+                  />
                 </div>
 
                 <div className="grid gap-2 md:col-span-2">
-                  <Label
-                    htmlFor="github_url"
-                    className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-                  >
+                  <label htmlFor="github_url" className={labelClassName}>
                     GitHub Link
-                  </Label>
+                  </label>
                   <Input
                     id="github_url"
-                    className="h-10 border-border/80 bg-card"
+                    className={inputClassName}
                     placeholder="https://github.com/username"
                     {...form.register("github_url")}
                   />
@@ -266,72 +290,52 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-5 border-t border-border/70 pt-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-4 border-t border-border/55 pt-7 md:flex-row md:items-center md:justify-between">
                 <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
                   <Info className="size-3.5" />
-                  Changes are reflected across resume drafting and profile-assisted autofill.
+                  All changes are reflected instantly across your active resumes.
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => form.reset(lastLoadedValues)}
-                    disabled={saving}
+                    onPress={() => form.reset(lastLoadedValues)}
+                    isDisabled={saving}
+                    className="px-5"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    disabled={saving}
-                    className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
+                    isDisabled={saving}
+                    className="ce-primary-gradient rounded-xl px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-foreground"
                   >
-                    {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+                    {saving ? <Spinner aria-label="Saving profile" size="sm" /> : <Save className="size-4" />}
                     Save Changes
                   </Button>
                 </div>
               </div>
             </form>
           )}
-        </CardContent>
+        </Card.Content>
       </Card>
 
       <section className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
-          <CardContent className="space-y-2 p-5">
-            <span className="inline-flex rounded-lg bg-secondary p-2 text-primary">
-              <ShieldCheck className="size-4" />
-            </span>
-            <h3 className="font-heading text-xl text-primary">Identity Snapshot</h3>
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              Core profile values are available for resume generation and personal details autofill.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
-          <CardContent className="space-y-2 p-5">
-            <span className="inline-flex rounded-lg bg-secondary p-2 text-primary">
-              <Sparkles className="size-4" />
-            </span>
-            <h3 className="font-heading text-xl text-primary">Draft Readiness</h3>
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              A complete profile helps generate cleaner resume drafts with fewer manual edits.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
-          <CardContent className="space-y-2 p-5">
-            <span className="inline-flex rounded-lg bg-secondary p-2 text-primary">
-              <Info className="size-4" />
-            </span>
-            <h3 className="font-heading text-xl text-primary">Profile Status</h3>
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              Keep your contact and location current so exported resumes stay accurate.
-            </p>
-          </CardContent>
-        </Card>
+        {profileInsights.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Card key={item.title} className="rounded-xl border-0 bg-secondary/55">
+              <Card.Content className="space-y-3 p-5">
+                <span className="inline-flex w-fit rounded-lg bg-background/75 p-2 text-primary">
+                  <Icon className="size-4" />
+                </span>
+                <h3 className="font-heading text-2xl leading-none text-primary">{item.title}</h3>
+                <p className="text-xs text-muted-foreground">{item.description}</p>
+              </Card.Content>
+            </Card>
+          );
+        })}
       </section>
     </main>
   );
