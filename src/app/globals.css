@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@heroui/styles";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -61,8 +62,8 @@
   --secondary-foreground: oklch(0.35 0.03 252);
   --muted: oklch(0.95 0.008 245);
   --muted-foreground: oklch(0.48 0.018 252);
-  --accent: oklch(0.91 0.018 250);
-  --accent-foreground: oklch(0.31 0.03 252);
+  --accent: oklch(0.31 0.09 254);
+  --accent-foreground: oklch(0.99 0.002 260);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.87 0.015 246);
   --input: oklch(0.87 0.015 246);
@@ -96,8 +97,8 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.922 0 0);
+  --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);

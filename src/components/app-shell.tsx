@@ -17,11 +17,12 @@ import {
   GraduationCap,
   House,
   Loader2,
+  Search,
   Settings,
   User,
 } from "lucide-react";
+import { Avatar, Button, InputGroup, TextField } from "@heroui/react";
 import { toast } from "sonner";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ApiError,
@@ -43,20 +44,21 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const navItems = [
-  { href: "/", label: "Home", icon: House },
-  { href: "/profile", label: "Profile", icon: User },
-  { href: "/educations", label: "Educations", icon: GraduationCap },
-  { href: "/projects", label: "Projects", icon: FolderKanban },
-  { href: "/resume", label: "Resume", icon: FileText },
+  { href: "/", label: "Home", mobileLabel: "Home", icon: House },
+  { href: "/profile", label: "Profile", mobileLabel: "Profile", icon: User },
+  { href: "/educations", label: "Education", mobileLabel: "Education", icon: GraduationCap },
+  { href: "/projects", label: "Projects", mobileLabel: "Projects", icon: FolderKanban },
+  { href: "/resume", label: "Resume Builder", mobileLabel: "Resume", icon: FileText },
 ] as const;
 
 const protectedRoutes = new Set([
   "/",
-  "/home",
-  "/profile",
-  "/educations",
-  "/projects",
-  "/resume",
+  // Commented out for now
+  // "/home",
+  // "/profile",
+  // "/educations",
+  // "/projects",
+  // "/resume",
 ]);
 
 export function useAuth() {
@@ -144,6 +146,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     [authLoading, me, profile, refreshAuth]
   );
 
+  const isNavActive = useCallback(
+    (href: string) => {
+      if (href === "/") {
+        return pathname === "/" || pathname === "/home";
+      }
+      return pathname === href;
+    },
+    [pathname]
+  );
+
+  const avatarFallback = useMemo(() => {
+    const name = displayName.trim();
+    if (!name) return "CE";
+
+    const tokens = name.split(/\s+/).filter(Boolean);
+    if (tokens.length === 1) {
+      return tokens[0].slice(0, 2).toUpperCase();
+    }
+
+    return `${tokens[0]?.[0] ?? ""}${tokens[1]?.[0] ?? ""}`.toUpperCase();
+  }, [displayName]);
+
   const showProtectedLoader = authLoading && protectedRoutes.has(pathname);
   const shouldHideContent = !authLoading && !me && protectedRoutes.has(pathname);
   const showChrome = pathname !== "/login";
@@ -153,22 +177,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-background">
         {showChrome ? (
           <>
-            <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-md">
-              <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-3 md:px-8">
-                <div className="flex items-center gap-10">
-                  <Link href="/" className="font-heading text-xl font-bold tracking-tight text-primary">
-                    Career Engine
+            <header className="fixed inset-x-0 top-0 z-50 border-b border-border/45 bg-background/78 backdrop-blur-xl">
+              <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8 md:py-3.5">
+                <div className="flex min-w-0 items-center gap-7 lg:gap-10">
+                  <Link href="/" className="group inline-flex items-center">
+                    <span className="font-heading text-3xl leading-none tracking-tight text-primary transition-opacity group-hover:opacity-80">
+                      Career Engine
+                    </span>
                   </Link>
 
-                  <nav className="hidden items-center gap-6 md:flex">
+                  <nav className="hidden items-center gap-5 md:flex lg:gap-7">
                     {navItems.map((item) => {
-                      const active = pathname === item.href;
+                      const active = isNavActive(item.href);
                       return (
                         <Link
                           key={item.href}
                           href={item.href}
                           className={cn(
-                            "border-b-2 pb-1 text-sm font-medium transition-colors",
+                            "border-b-2 pb-1 text-sm font-semibold transition-colors",
                             active
                               ? "border-primary text-primary"
                               : "border-transparent text-muted-foreground hover:text-primary"
@@ -181,40 +207,70 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </nav>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {me ? (
-                    <>
-                      <Button variant="ghost" size="icon-sm" aria-label="Notifications" className="hidden md:inline-flex">
-                        <Bell className="size-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Settings" className="hidden md:inline-flex">
-                        <Settings className="size-4" />
-                      </Button>
-                    </>
-                  ) : null}
+                <div className="flex shrink-0 items-center gap-2 md:gap-2.5">
+                  <TextField aria-label="Search resources" className="hidden sm:block">
+                    <InputGroup
+                      variant="secondary"
+                      className="w-44 rounded-full border border-border/55 bg-card/80 px-2 shadow-none md:w-56 lg:w-72"
+                    >
+                      <InputGroup.Prefix className="text-muted-foreground">
+                        <Search className="size-3.5" />
+                      </InputGroup.Prefix>
+                      <InputGroup.Input
+                        placeholder="Search resources..."
+                        className="bg-transparent text-sm placeholder:text-muted-foreground/80"
+                      />
+                    </InputGroup>
+                  </TextField>
 
                   {authLoading ? (
                     <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
                   ) : me ? (
                     <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        isIconOnly
+                        aria-label="Notifications"
+                        className="hidden rounded-full text-muted-foreground hover:bg-secondary/70 md:inline-flex"
+                      >
+                        <Bell className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        isIconOnly
+                        aria-label="Settings"
+                        className="hidden rounded-full text-muted-foreground hover:bg-secondary/70 md:inline-flex"
+                      >
+                        <Settings className="size-4" />
+                      </Button>
+
                       <Link
                         href="/profile"
-                        className="inline-flex h-8 items-center rounded-full border border-border/70 bg-card px-3 text-xs font-medium text-foreground/90"
+                        aria-label="Open profile"
+                        className="inline-flex"
                       >
-                        {displayName || "My profile"}
+                        <Avatar size="sm" className="border border-border/70 bg-card shadow-sm">
+                          <Avatar.Fallback className="text-xs font-semibold uppercase text-foreground">
+                            {avatarFallback}
+                          </Avatar.Fallback>
+                        </Avatar>
                       </Link>
+
                       <Button
                         variant="secondary"
                         size="sm"
-                        disabled={isLoggingOut}
-                        onClick={handleLogout}
+                        isDisabled={isLoggingOut}
+                        onPress={handleLogout}
+                        className="hidden lg:inline-flex"
                       >
                         {isLoggingOut ? <Loader2 className="size-4 animate-spin" /> : null}
                         Logout
                       </Button>
                     </>
                   ) : (
-                    <Link href="/login" className={cn(buttonVariants({ size: "sm" }))}>
+                    <Link href="/login" className="button button--primary button--sm">
                       Login
                     </Link>
                   )}
@@ -222,21 +278,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </header>
 
-            <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-border/60 bg-card/96 py-2 md:hidden">
+            <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-border/60 bg-background/94 py-2.5 backdrop-blur-lg md:hidden">
               {navItems.map((item) => {
                 const Icon = item.icon;
-                const active = pathname === item.href;
+                const active = isNavActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex min-w-16 flex-col items-center gap-1 rounded-md px-2 py-1 text-[11px]",
-                      active ? "text-primary" : "text-muted-foreground"
+                      "flex min-w-16 flex-col items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-primary"
                     )}
                   >
                     <Icon className="size-4" />
-                    <span>{item.label}</span>
+                    <span>{item.mobileLabel}</span>
                   </Link>
                 );
               })}

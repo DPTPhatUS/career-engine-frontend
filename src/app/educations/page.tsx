@@ -2,15 +2,24 @@
 
 import { useEffect, useState } from "react";
 import {
-  ArrowRight,
+  CheckCircle2,
   GraduationCap,
   Lightbulb,
-  Loader2,
   Plus,
   Save,
   Sparkles,
   Trash2,
 } from "lucide-react";
+import {
+  Avatar,
+  Button,
+  Card,
+  Chip,
+  Input,
+  ProgressBar,
+  Spinner,
+  TextArea,
+} from "@heroui/react";
 import { toast } from "sonner";
 import {
   ApiError,
@@ -20,15 +29,6 @@ import {
   updateEducation,
   type EducationRecord,
 } from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type EducationDraft = {
   id: string | null;
@@ -77,6 +77,7 @@ export default function EducationsPage() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [items, setItems] = useState<EducationDraft[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -88,10 +89,11 @@ export default function EducationsPage() {
         const data = await listEducations();
         if (!active) return;
         setItems(data.map(toDraft));
+        setActiveIndex(0);
       } catch (error) {
         if (!active) return;
         setErrorMessage(
-          error instanceof Error ? error.message : "Failed to load educations."
+          error instanceof Error ? error.message : "Failed to load education entries."
         );
       } finally {
         if (active) setLoading(false);
@@ -105,6 +107,16 @@ export default function EducationsPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (items.length === 0 && activeIndex !== 0) {
+      setActiveIndex(0);
+      return;
+    }
+    if (items.length > 0 && activeIndex > items.length - 1) {
+      setActiveIndex(items.length - 1);
+    }
+  }, [activeIndex, items.length]);
+
   function patchItem(index: number, patch: Partial<EducationDraft>) {
     setItems((prev) =>
       prev.map((item, i) => (i === index ? { ...item, ...patch } : item))
@@ -113,6 +125,18 @@ export default function EducationsPage() {
 
   function addDraft() {
     setItems((prev) => [...prev, emptyDraft()]);
+    setActiveIndex(items.length);
+  }
+
+  function removeDraftFromState(index: number) {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+    setActiveIndex((current) => {
+      const nextLength = Math.max(items.length - 1, 0);
+      if (nextLength === 0) return 0;
+      if (current === index) return Math.min(index, nextLength - 1);
+      if (current > index) return current - 1;
+      return current;
+    });
   }
 
   async function saveItem(index: number) {
@@ -167,7 +191,7 @@ export default function EducationsPage() {
     if (!item) return;
 
     if (!item.id) {
-      setItems((prev) => prev.filter((_, i) => i !== index));
+      removeDraftFromState(index);
       return;
     }
 
@@ -175,7 +199,7 @@ export default function EducationsPage() {
 
     try {
       await deleteEducation(item.id);
-      setItems((prev) => prev.filter((_, i) => i !== index));
+      removeDraftFromState(index);
       toast.success("Education removed.");
     } catch (error) {
       patchItem(index, { deleting: false });
@@ -183,28 +207,27 @@ export default function EducationsPage() {
     }
   }
 
-  const primaryItem = items[0] ?? null;
-  const secondaryItems = items.slice(1);
+  const activeItem = items[activeIndex] ?? null;
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 md:py-12 lg:py-14">
       <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+          <p className="text-[11px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
             Curation Hub
           </p>
           <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
             Academic History
           </h1>
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-            Organize your educational credentials with the precision of a curated portfolio. Each entry strengthens your professional narrative.
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+            Organize your educational credentials like a curated portfolio. Each entry sharpens
+            your professional narrative.
           </p>
         </div>
 
         <Button
-          onClick={addDraft}
-          size="lg"
-          className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
+          onPress={addDraft}
+          className="ce-primary-gradient rounded-xl px-6 py-3 text-primary-foreground"
         >
           <Plus className="size-4" />
           Add Education
@@ -212,342 +235,289 @@ export default function EducationsPage() {
       </header>
 
       {errorMessage ? (
-        <Alert variant="destructive" className="mb-4">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
+        <Card className="mb-6 border border-destructive/35 bg-destructive/10">
+          <Card.Content className="p-4 text-sm text-destructive">{errorMessage}</Card.Content>
+        </Card>
       ) : null}
 
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+        <div className="flex justify-center py-16">
+          <Spinner aria-label="Loading education entries" color="accent" />
         </div>
       ) : items.length === 0 ? (
-        <Card className="ce-card rounded-xl">
-          <CardContent className="space-y-4 py-12 text-center">
+        <Card className="ce-card rounded-2xl">
+          <Card.Content className="space-y-4 py-12 text-center">
             <p className="text-sm text-muted-foreground">No education entries yet.</p>
             <Button
-              onClick={addDraft}
-              className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
+              onPress={addDraft}
+              className="ce-primary-gradient rounded-xl text-primary-foreground"
             >
               <Plus className="size-4" />
               Add your first education
             </Button>
-          </CardContent>
+          </Card.Content>
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
-          <div className="space-y-6 md:col-span-8">
-            {primaryItem ? (
-              <Card className="ce-card rounded-xl">
-                <CardContent className="p-6 md:p-8 lg:p-9">
-                  <div className="mb-8 flex items-center justify-between gap-4">
+          <section className="space-y-6 md:col-span-8">
+            {activeItem ? (
+              <Card className="ce-card rounded-2xl">
+                <Card.Content className="p-6 md:p-8 lg:p-10">
+                  <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+                      <p className="text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
                         Primary Credential
                       </p>
                       <h2 className="mt-2 font-heading text-3xl text-primary">
-                        {primaryItem.university.trim() || "Education #1"}
+                        {activeItem.university.trim() || `Education #${activeIndex + 1}`}
                       </h2>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-primary" />
-                      <span className="h-2 w-2 rounded-full bg-border" />
-                    </div>
+
+                    <Chip size="sm" variant="soft" color="accent" className="w-fit">
+                      Editing Entry {activeIndex + 1}
+                    </Chip>
                   </div>
 
                   <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div className="md:col-span-2">
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         University Name
-                      </Label>
+                      </p>
                       <Input
-                        value={primaryItem.university}
-                        onChange={(event) => patchItem(0, { university: event.target.value })}
-                        className="h-10 border-border/80 bg-card"
+                        aria-label="University name"
+                        value={activeItem.university}
+                        onChange={(event) =>
+                          patchItem(activeIndex, { university: event.target.value })
+                        }
+                        className="bg-card"
+                        placeholder="Stanford University"
                       />
                     </div>
 
-                    <div className="grid gap-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div>
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         Degree
-                      </Label>
+                      </p>
                       <Input
-                        value={primaryItem.degree}
-                        onChange={(event) => patchItem(0, { degree: event.target.value })}
-                        className="h-10 border-border/80 bg-card"
+                        aria-label="Degree"
+                        value={activeItem.degree}
+                        onChange={(event) => patchItem(activeIndex, { degree: event.target.value })}
+                        className="bg-card"
+                        placeholder="Master of Science"
                       />
                     </div>
 
-                    <div className="grid gap-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div>
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         Field of Study
-                      </Label>
+                      </p>
                       <Input
-                        value={primaryItem.field}
-                        onChange={(event) => patchItem(0, { field: event.target.value })}
-                        className="h-10 border-border/80 bg-card"
+                        aria-label="Field of study"
+                        value={activeItem.field}
+                        onChange={(event) => patchItem(activeIndex, { field: event.target.value })}
+                        className="bg-card"
+                        placeholder="Computer Science"
                       />
                     </div>
 
-                    <div className="grid gap-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div className="md:col-span-2">
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         Time Period
-                      </Label>
+                      </p>
                       <Input
-                        value={primaryItem.time_period}
-                        onChange={(event) => patchItem(0, { time_period: event.target.value })}
-                        className="h-10 border-border/80 bg-card"
+                        aria-label="Education time period"
+                        value={activeItem.time_period}
+                        onChange={(event) =>
+                          patchItem(activeIndex, { time_period: event.target.value })
+                        }
+                        className="bg-card"
                         placeholder="e.g. 2018 - 2020"
                       />
                     </div>
 
-                    <div className="grid gap-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div>
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         GPA (optional)
-                      </Label>
+                      </p>
                       <Input
-                        value={primaryItem.gpa}
-                        onChange={(event) => patchItem(0, { gpa: event.target.value })}
-                        className="h-10 border-border/80 bg-card"
+                        aria-label="Grade point average"
+                        value={activeItem.gpa}
+                        onChange={(event) => patchItem(activeIndex, { gpa: event.target.value })}
+                        className="bg-card"
+                        placeholder="3.92"
                       />
                     </div>
 
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div>
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         Location (optional)
-                      </Label>
+                      </p>
                       <Input
-                        value={primaryItem.location}
-                        onChange={(event) => patchItem(0, { location: event.target.value })}
-                        className="h-10 border-border/80 bg-card"
+                        aria-label="Education location"
+                        value={activeItem.location}
+                        onChange={(event) => patchItem(activeIndex, { location: event.target.value })}
+                        className="bg-card"
+                        placeholder="Stanford, CA"
                       />
                     </div>
 
-                    <div className="grid gap-2 md:col-span-2">
-                      <Label className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+                    <div className="md:col-span-2">
+                      <p className="mb-2 text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                         Relevant Coursework (optional)
-                      </Label>
-                      <Textarea
+                      </p>
+                      <TextArea
+                        aria-label="Relevant coursework"
                         rows={4}
-                        value={primaryItem.relevant_coursework}
+                        value={activeItem.relevant_coursework}
                         onChange={(event) =>
-                          patchItem(0, { relevant_coursework: event.target.value })
+                          patchItem(activeIndex, { relevant_coursework: event.target.value })
                         }
-                        className="border-border/80 bg-card"
+                        className="bg-card"
+                        placeholder="Advanced Machine Learning, Distributed Systems..."
                       />
                     </div>
                   </div>
 
-                  <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
+                  <div className="mt-7 flex flex-wrap items-center justify-end gap-2">
                     <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => removeItem(0)}
-                      disabled={primaryItem.saving || primaryItem.deleting}
+                      variant="ghost"
+                      onPress={() => removeItem(activeIndex)}
+                      isDisabled={activeItem.saving || activeItem.deleting}
+                      className="text-destructive"
                     >
-                      {primaryItem.deleting ? (
-                        <Loader2 className="size-4 animate-spin" />
+                      {activeItem.deleting ? (
+                        <Spinner aria-label="Deleting education" size="sm" />
                       ) : (
                         <Trash2 className="size-4" />
                       )}
                       Delete Entry
                     </Button>
+
                     <Button
-                      onClick={() => saveItem(0)}
-                      disabled={primaryItem.saving || primaryItem.deleting}
-                      className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
+                      onPress={() => saveItem(activeIndex)}
+                      isDisabled={activeItem.saving || activeItem.deleting}
+                      className="ce-primary-gradient rounded-xl text-primary-foreground"
                     >
-                      {primaryItem.saving ? (
-                        <Loader2 className="size-4 animate-spin" />
+                      {activeItem.saving ? (
+                        <Spinner aria-label="Saving education" size="sm" />
                       ) : (
                         <Save className="size-4" />
                       )}
-                      {primaryItem.id ? "Save Changes" : "Save Entry"}
+                      {activeItem.id ? "Save Changes" : "Save Entry"}
                     </Button>
                   </div>
-                </CardContent>
+                </Card.Content>
               </Card>
             ) : null}
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
-                <CardContent className="space-y-2 p-5">
-                  <div className="inline-flex rounded-lg bg-secondary p-2 text-primary">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Card className="rounded-2xl border border-border/70 bg-card/95 shadow-sm">
+                <Card.Content className="space-y-2 p-5">
+                  <span className="inline-flex w-fit rounded-lg bg-secondary p-2 text-primary">
                     <Lightbulb className="size-4" />
-                  </div>
+                  </span>
                   <h3 className="font-heading text-xl text-primary">Curator Tip</h3>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    Keep coursework concise and relevant to the roles you target most often.
+                    Highlight coursework connected to your target role to improve ATS keyword
+                    coverage.
                   </p>
-                </CardContent>
+                </Card.Content>
               </Card>
 
-              <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
-                <CardContent className="space-y-2 p-5">
-                  <div className="inline-flex rounded-lg bg-secondary p-2 text-primary">
+              <Card className="rounded-2xl border border-border/70 bg-card/95 shadow-sm">
+                <Card.Content className="space-y-2 p-5">
+                  <span className="inline-flex w-fit rounded-lg bg-secondary p-2 text-primary">
                     <Sparkles className="size-4" />
-                  </div>
-                  <h3 className="font-heading text-xl text-primary">Profile Strength</h3>
+                  </span>
+                  <h3 className="font-heading text-xl text-primary">Verification</h3>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    Use consistent time periods and complete location fields for stronger resume parsing.
+                    Keep institution and date values consistent with your transcript to avoid
+                    verification friction.
                   </p>
-                </CardContent>
+                </Card.Content>
               </Card>
             </div>
-          </div>
+          </section>
 
           <aside className="space-y-5 md:col-span-4">
-            <Card className="rounded-xl border-border/70 bg-card/95 shadow-sm">
-              <CardContent className="p-5">
+            <Card className="rounded-2xl border border-border/70 bg-card/95 shadow-sm">
+              <Card.Content className="p-5">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                     Your Curriculum
                   </h3>
-                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold text-secondary-foreground">
+                  <Chip size="sm" variant="soft" color="accent">
                     {items.length} Entries
-                  </span>
+                  </Chip>
                 </div>
 
                 <div className="space-y-3">
                   {items.map((item, index) => {
-                    const isPrimary = index === 0;
+                    const isActive = index === activeIndex;
                     return (
-                      <div
-                        key={item.id ?? `sidebar-${index}`}
+                      <button
+                        key={item.id ?? `curriculum-${index}`}
+                        type="button"
+                        onClick={() => setActiveIndex(index)}
                         className={
-                          isPrimary
-                            ? "rounded-xl border border-primary/20 bg-primary/5 p-4"
-                            : "rounded-xl border border-border/70 bg-background/80 p-4"
+                          isActive
+                            ? "w-full rounded-xl border border-primary/25 bg-primary/5 p-4 text-left"
+                            : "w-full rounded-xl border border-border/70 bg-background/80 p-4 text-left transition-colors hover:bg-card"
                         }
                       >
                         <div className="mb-3 flex items-center justify-between">
-                          <span className="inline-flex size-8 items-center justify-center rounded-lg bg-secondary text-primary">
-                            <GraduationCap className="size-4" />
-                          </span>
-                          {isPrimary ? (
-                            <span className="text-[10px] font-semibold tracking-wide text-primary uppercase">
-                              Active
-                            </span>
-                          ) : null}
+                          <Avatar size="sm" className="border border-border/70 bg-card">
+                            <Avatar.Fallback className="text-xs font-semibold text-primary">
+                              {index + 1}
+                            </Avatar.Fallback>
+                          </Avatar>
+                          {isActive ? <CheckCircle2 className="size-4 text-primary" /> : null}
                         </div>
-                        <h4 className="font-heading text-xl leading-tight text-primary">
+
+                        <h4 className="font-heading text-2xl leading-tight text-primary">
                           {item.university.trim() || `Education #${index + 1}`}
                         </h4>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {item.degree.trim() || "Degree"}
                           {item.field.trim() ? ` in ${item.field.trim()}` : ""}
                         </p>
-                        <p className="mt-3 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                          {item.time_period.trim() || "No time period"}
+                        <p className="mt-3 text-[10px] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+                          {item.time_period.trim() || "No date range yet"}
                         </p>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
-              </CardContent>
+              </Card.Content>
             </Card>
 
-            {secondaryItems.length > 0 ? (
-              <div className="space-y-3">
-                {secondaryItems.map((item, offset) => {
-                  const realIndex = offset + 1;
-                  return (
-                    <Card key={item.id ?? `secondary-${realIndex}`} className="ce-card rounded-xl">
-                      <CardContent className="space-y-4 p-4">
-                        <div>
-                          <p className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                            Entry {realIndex + 1}
-                          </p>
-                          <h4 className="mt-1 font-heading text-2xl text-primary">
-                            {item.university.trim() || "New Education"}
-                          </h4>
-                        </div>
+            <Card className="ce-primary-gradient overflow-hidden rounded-2xl border-0 text-primary-foreground">
+              <Card.Content className="space-y-4 p-6">
+                <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.12em]">
+                  <GraduationCap className="size-3.5" />
+                  Strength Profile
+                </div>
 
-                        <div className="grid gap-3">
-                          <Input
-                            value={item.university}
-                            onChange={(event) =>
-                              patchItem(realIndex, { university: event.target.value })
-                            }
-                            placeholder="University"
-                            className="h-9 border-border/80 bg-card"
-                          />
-                          <Input
-                            value={item.degree}
-                            onChange={(event) =>
-                              patchItem(realIndex, { degree: event.target.value })
-                            }
-                            placeholder="Degree"
-                            className="h-9 border-border/80 bg-card"
-                          />
-                          <Input
-                            value={item.field}
-                            onChange={(event) =>
-                              patchItem(realIndex, { field: event.target.value })
-                            }
-                            placeholder="Field"
-                            className="h-9 border-border/80 bg-card"
-                          />
-                          <Input
-                            value={item.time_period}
-                            onChange={(event) =>
-                              patchItem(realIndex, { time_period: event.target.value })
-                            }
-                            placeholder="Time period"
-                            className="h-9 border-border/80 bg-card"
-                          />
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Button
-                            onClick={() => saveItem(realIndex)}
-                            disabled={item.saving || item.deleting}
-                            className="ce-primary-gradient rounded-lg text-primary-foreground shadow-sm transition-opacity hover:opacity-95"
-                          >
-                            {item.saving ? (
-                              <Loader2 className="size-4 animate-spin" />
-                            ) : (
-                              <ArrowRight className="size-4" />
-                            )}
-                            {item.id ? "Update" : "Save"}
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            onClick={() => removeItem(realIndex)}
-                            disabled={item.saving || item.deleting}
-                          >
-                            {item.deleting ? (
-                              <Loader2 className="size-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="size-4" />
-                            )}
-                            Remove
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            ) : (
-              <Card className="rounded-xl border-border/70 bg-card/95">
-                <CardContent className="space-y-3 p-5">
-                  <h3 className="font-heading text-xl text-primary">Need More Entries?</h3>
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    Add certifications, bootcamps, or additional degrees to strengthen your academic profile.
+                <div>
+                  <h3 className="font-heading text-2xl">Education Scoring</h3>
+                  <p className="mt-1 text-xs text-primary-foreground/80">
+                    Your education section ranks strongly for your target market.
                   </p>
-                  <Button
-                    onClick={addDraft}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Plus className="size-4" />
-                    Add Another Entry
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+                </div>
+
+                <ProgressBar
+                  aria-label="Education strength"
+                  value={85}
+                  className="mt-1 gap-0"
+                >
+                  <ProgressBar.Track className="h-1.5 rounded-full bg-white/20">
+                    <ProgressBar.Fill className="rounded-full bg-blue-100" />
+                  </ProgressBar.Track>
+                </ProgressBar>
+
+                <p className="text-right text-[11px] text-primary-foreground/70">Top 5% for your industry</p>
+              </Card.Content>
+            </Card>
           </aside>
         </div>
       )}
