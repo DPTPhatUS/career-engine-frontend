@@ -175,9 +175,9 @@ export default function ProjectsPage() {
 
   const linkedRepositories = items.filter((item) => item.github_url.trim()).length;
   const impactBulletsCount = items.reduce((sum, item) => sum + bulletsFromText(item.bullets_text).length, 0);
-  const fieldClassName = "ce-ghost-border rounded-xl bg-card";
+  const fieldClassName = "rounded-xl";
   const labelClassName =
-    "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
+    "mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
@@ -192,7 +192,8 @@ export default function ProjectsPage() {
         </div>
         <Button
           onPress={addDraft}
-          className="ce-primary-gradient rounded-xl px-5 py-3 text-[11px] font-semibold tracking-[0.16em] text-primary-foreground uppercase"
+          variant="primary"
+          className="rounded-xl px-5 py-3"
         >
           <Plus className="size-4" />
           New Entry
@@ -200,7 +201,7 @@ export default function ProjectsPage() {
       </header>
 
       <section className="mb-12 grid grid-cols-1 gap-5 md:grid-cols-3">
-        <Card className="rounded-2xl border-0 bg-secondary/50">
+        <Card className="rounded-2xl border border-border/60 bg-secondary/40">
           <Card.Content className="flex h-full flex-col justify-between p-6">
             <Code2 className="size-7 text-primary" />
             <div className="mt-6">
@@ -212,7 +213,7 @@ export default function ProjectsPage() {
           </Card.Content>
         </Card>
 
-        <Card className="ce-primary-gradient rounded-2xl text-primary-foreground">
+        <Card className="rounded-2xl border border-border/60 bg-primary text-primary-foreground">
           <Card.Content className="flex h-full flex-col justify-between p-6">
             <FolderGit2 className="size-7 text-primary-foreground/90" />
             <div className="mt-6">
@@ -224,7 +225,7 @@ export default function ProjectsPage() {
           </Card.Content>
         </Card>
 
-        <Card className="rounded-2xl border-0 bg-secondary/50">
+        <Card className="rounded-2xl border border-border/60 bg-secondary/40">
           <Card.Content className="flex h-full flex-col justify-between p-6">
             <Hammer className="size-7 text-primary" />
             <div className="mt-6">
@@ -261,7 +262,8 @@ export default function ProjectsPage() {
             </div>
             <Button
               onPress={addDraft}
-              className="ce-primary-gradient rounded-xl px-5 py-3 text-[11px] font-semibold tracking-[0.16em] text-primary-foreground uppercase"
+              variant="primary"
+              className="rounded-xl px-5 py-3"
             >
               <Plus className="size-4" />
               Add Project
@@ -276,7 +278,7 @@ export default function ProjectsPage() {
             const projectName = item.title.trim() || `project ${index + 1}`;
 
             return (
-              <Card key={item.id ?? `draft-${index}`} className="ce-card overflow-hidden rounded-2xl">
+              <Card key={item.id ?? `draft-${index}`} className="overflow-hidden rounded-2xl border border-border/60 bg-card/95">
                 <Card.Content className="space-y-6 p-6 md:p-8">
                   <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                     <div className="grid flex-1 gap-4">
@@ -408,7 +410,7 @@ export default function ProjectsPage() {
                   </div>
 
                   {bullets.length > 0 ? (
-                    <div className="space-y-3 rounded-xl bg-secondary/35 p-4 ce-ghost-border">
+                    <div className="space-y-3 rounded-xl border border-border/60 bg-secondary/30 p-4">
                       {bullets.map((bullet, bulletIndex) => (
                         <div key={`${item.id ?? index}-bullet-${bulletIndex}`} className="flex gap-3">
                           <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
@@ -440,7 +442,8 @@ export default function ProjectsPage() {
                       <Button
                         onPress={() => saveItem(index)}
                         isDisabled={item.saving || item.deleting}
-                        className="ce-primary-gradient rounded-xl px-5 text-[11px] font-semibold tracking-[0.14em] text-primary-foreground uppercase"
+                        variant="primary"
+                        className="rounded-xl px-5"
                       >
                         {item.saving ? <Spinner aria-label="Saving project" size="sm" color="current" /> : <Save className="size-4" />}
                         {item.id ? "Save Changes" : "Save Entry"}

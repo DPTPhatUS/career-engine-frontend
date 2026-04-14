@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import {
-  ArrowRight,
   ArrowUpRight,
   BriefcaseBusiness,
+  ChevronRight,
   CirclePlus,
   Download,
   Eye,
@@ -17,7 +17,7 @@ import {
   Pencil,
   UserRound,
 } from "lucide-react";
-import { Button, Card, Chip, ProgressBar } from "@heroui/react";
+import { Button, Card, Chip, ProgressBar, Spinner } from "@heroui/react";
 import { useAuth } from "@/components/app-shell";
 
 const shortcuts = [
@@ -93,150 +93,146 @@ export default function DashboardHomePage() {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-10 md:px-8 md:py-12 lg:py-14">
-      <section className="mb-12 grid items-end gap-6 md:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="max-w-3xl space-y-2">
-          <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">{welcomeLine}</p>
-          <h1 className="font-heading text-4xl leading-tight text-primary md:text-6xl">
-            Curate your professional legacy
-            <br />
-            with precision.
-          </h1>
-        </div>
+      <section className="mb-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <Card className="border border-border/60 bg-card/90">
+          <Card.Content className="space-y-5 p-6 md:p-8">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+                {welcomeLine}
+              </p>
+              <h1 className="font-heading text-4xl leading-tight text-primary md:text-5xl">
+                Your career workspace dashboard
+              </h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                Build profile, education, projects, and resume drafts from one unified workspace.
+              </p>
+            </div>
 
-        <Card className="rounded-xl bg-card/86 backdrop-blur-md">
-          <Card.Content className="space-y-3 p-6">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+            <div className="flex flex-wrap gap-2">
+              <Link href="/resume">
+                <Button variant="primary" className="rounded-full">
+                  Open Resume Builder
+                  <ChevronRight className="size-4" />
+                </Button>
+              </Link>
+              <Link href="/profile">
+                <Button variant="secondary" className="rounded-full">
+                  Edit Profile
+                </Button>
+              </Link>
+            </div>
+          </Card.Content>
+        </Card>
+
+        <Card className="border border-border/60 bg-card/90">
+          <Card.Content className="space-y-4 p-6">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase">
                 Profile Completion
-              </span>
-              <span className="text-lg font-bold text-primary">{profileCompletion}%</span>
+              </p>
+              <Chip variant="soft" color="accent">{profileCompletion}%</Chip>
             </div>
 
             <ProgressBar aria-label="Profile completion" value={profileCompletion} className="gap-0">
-              <ProgressBar.Track className="h-1.5 rounded-full bg-muted">
+              <ProgressBar.Track className="h-2 rounded-full bg-muted">
                 <ProgressBar.Fill className="rounded-full bg-primary" />
               </ProgressBar.Track>
             </ProgressBar>
 
-            <p className="text-xs text-muted-foreground">Add your latest project to reach 100%.</p>
+            {authLoading ? (
+              <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                <Spinner aria-label="Loading profile completion" color="accent" size="sm" />
+                Syncing account context
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">Add your latest project to reach full completion.</p>
+            )}
           </Card.Content>
         </Card>
       </section>
 
-      <section className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-4">
-        <Link href="/resume" className="group md:col-span-2">
-          <Card className="ce-primary-gradient relative min-h-80 overflow-hidden rounded-xl text-primary-foreground">
-            <Card.Content className="flex h-full flex-col p-8">
-              <FileText className="mb-5 size-8" />
-              <h2 className="font-heading text-4xl leading-tight">Resume Builder</h2>
-              <p className="mt-3 max-w-60 text-sm text-primary-foreground/80">
-                Design your executive resume using curator-approved templates.
-              </p>
-              <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold">
-                Begin Drafting
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+      <section className="mb-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <Link href="/resume" className="xl:col-span-2">
+          <Card className="h-full border border-border/60 bg-card/95">
+            <Card.Content className="flex h-full flex-col gap-4 p-6">
+              <span className="inline-flex w-fit rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary">
+                Core Workflow
               </span>
-
-              <FileText className="pointer-events-none absolute -right-12 -bottom-16 size-60 text-white/8 transition-transform duration-700 group-hover:rotate-6" />
+              <div className="inline-flex items-center gap-2 text-primary">
+                <FileText className="size-4" />
+                <p className="font-heading text-3xl">Resume Builder</p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Draft resume content, preview formatting, and export to Google Docs in one flow.
+              </p>
+              <Button variant="secondary" className="mt-auto w-fit rounded-full">
+                Continue
+                <ArrowUpRight className="size-4" />
+              </Button>
             </Card.Content>
           </Card>
         </Link>
 
-        {shortcuts.slice(0, 2).map((item) => {
+        {shortcuts.map((item) => {
           const Icon = item.icon;
           return (
-            <Link key={item.href} href={item.href} className="group">
-              <Card className="h-full rounded-xl bg-card/92 transition-colors group-hover:bg-card">
-                <Card.Content className="flex h-full flex-col justify-between p-8">
-                  <div>
-                    <span className="mb-5 inline-flex rounded-md bg-secondary p-2 text-primary">
-                      <Icon className="size-4" />
-                    </span>
-                    <h3 className="font-heading text-4xl leading-tight text-primary">{item.title}</h3>
-                    <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
-                  </div>
-                  <ArrowUpRight className="ml-auto size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            <Link key={item.href} href={item.href}>
+              <Card className="h-full border border-border/60 bg-card/95">
+                <Card.Content className="flex h-full flex-col gap-3 p-6">
+                  <span className="inline-flex w-fit rounded-lg bg-secondary p-2 text-primary">
+                    <Icon className="size-4" />
+                  </span>
+                  <h2 className="font-heading text-2xl text-primary">{item.title}</h2>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                  <Button variant="ghost" className="mt-auto w-fit rounded-full text-muted-foreground">
+                    Open
+                    <ArrowUpRight className="size-4" />
+                  </Button>
                 </Card.Content>
               </Card>
             </Link>
           );
         })}
+      </section>
 
-        <Link href={projectsShortcut.href} className="group md:col-span-2">
-          <Card className="h-full overflow-hidden rounded-xl bg-secondary/50 transition-colors group-hover:bg-secondary/65">
-            <Card.Content className="flex h-full items-center justify-between gap-6 p-8">
-              <div className="max-w-sm">
-                <span className="mb-4 inline-flex rounded-md bg-background/70 p-2 text-primary">
-                  <FolderKanban className="size-4" />
-                </span>
-                <h3 className="font-heading text-3xl text-primary">{projectsShortcut.title}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{projectsShortcut.description}</p>
-              </div>
+      <section className="mb-8 grid gap-5 md:grid-cols-2">
+        <Card className="border border-border/60 bg-card/92">
+          <Card.Content className="space-y-3 p-6">
+            <Chip variant="soft" color="accent" className="w-fit">Active Application</Chip>
+            <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+              <BriefcaseBusiness className="size-4" />
+              Senior PM @ TechFlow
+            </div>
+            <p className="text-sm text-muted-foreground">Interview scheduled and prep checklist available.</p>
+          </Card.Content>
+        </Card>
 
-              <div className="relative hidden h-32 w-32 rotate-6 translate-x-3 overflow-hidden rounded-lg bg-card p-2 sm:block">
-                <Image
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK2ef4RWYAgaFwjiH1b1mLjFRhkN4vBVMEAsJ9FyAQy5IJpY6MxeVFqiy4CshGDiF0tjaWqpKKru1VhhZepf4agUVFgCh7RbIcGIwh-FRlmemNyWOVX9ULg-pnqQdPu4UN4cINYrIL1MD4YRNKBV7xB-yQMhfV53m9oaVoHfftxVN4QF01GV65lrS7H4W1pT1igIdDgvkddO82gON827XAUA48aF_cnOWEz3zloCFLGbFG-ZDP7b-n83pof8zC8GGMI-KTFj8IDA"
-                  alt="Project preview"
-                  fill
-                  sizes="128px"
-                  className="h-full w-full rounded object-cover"
-                />
-              </div>
-            </Card.Content>
-          </Card>
-        </Link>
-
-        <div className="grid gap-6 md:col-span-2 md:grid-cols-2">
-          <Card className="rounded-xl bg-card/90">
-            <Card.Content className="flex h-full flex-col gap-2 p-6">
-              <span className="text-[10px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-                Active Application
-              </span>
-              <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                <BriefcaseBusiness className="size-4" />
-                Senior PM @ TechFlow
-              </div>
-              <Chip size="sm" variant="soft" color="accent" className="w-fit">
-                Interview Scheduled
-              </Chip>
-            </Card.Content>
-          </Card>
-
-          <Card className="rounded-xl bg-amber-100/80">
-            <Card.Content className="flex h-full flex-col gap-2 p-6">
-              <span className="text-[10px] font-semibold tracking-[0.16em] text-amber-900/75 uppercase">
-                Daily Tip
-              </span>
-              <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-950">
-                <Lightbulb className="size-4" />
-                Lead with action verbs
-              </div>
-              <p className="text-xs leading-relaxed text-amber-900/80">
-                Use active verbs like Led and Orchestrated for stronger impact.
-              </p>
-            </Card.Content>
-          </Card>
-        </div>
+        <Card className="border border-amber-200/70 bg-amber-50/75">
+          <Card.Content className="space-y-3 p-6">
+            <Chip variant="soft" color="warning" className="w-fit">Daily Tip</Chip>
+            <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-950">
+              <Lightbulb className="size-4" />
+              Lead with action verbs
+            </div>
+            <p className="text-sm text-amber-900/85">Use active verbs like Led and Orchestrated for stronger impact statements.</p>
+          </Card.Content>
+        </Card>
       </section>
 
       <section>
-        <div className="mb-8 flex items-center justify-between gap-4">
-          <h2 className="font-heading text-4xl text-primary">Recent Resumes</h2>
-          <Link
-            href="/resume"
-            className="text-xs font-semibold tracking-[0.16em] text-primary uppercase transition-opacity hover:opacity-70"
-          >
-            View All
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <h2 className="font-heading text-3xl text-primary">Recent Resumes</h2>
+          <Link href="/resume">
+            <Button variant="ghost" size="sm" className="rounded-full text-muted-foreground">
+              View All
+            </Button>
           </Link>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {recentResumes.map((resume) => (
-            <Card
-              key={resume.title}
-              className="group overflow-hidden rounded-xl bg-card/96 p-1 transition-transform duration-300 hover:-translate-y-1"
-            >
-              <div className="relative aspect-3/4 overflow-hidden rounded-lg bg-secondary/50">
+            <Card key={resume.title} className="overflow-hidden border border-border/60 bg-card/96">
+              <div className="relative aspect-3/4 overflow-hidden border-b border-border/60 bg-secondary/40">
                 <Image
                   src={resume.image}
                   alt={resume.title}
@@ -244,50 +240,49 @@ export default function DashboardHomePage() {
                   sizes="(min-width: 1024px) 28vw, (min-width: 768px) 32vw, 92vw"
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute inset-0 flex items-center justify-center gap-3 bg-primary/35 opacity-0 transition-opacity group-hover:opacity-100">
-                  <Button
-                    aria-label={`Preview ${resume.title}`}
-                    isIconOnly
-                    size="sm"
-                    variant="secondary"
-                    className="rounded-full bg-background/95"
-                  >
+                <div className="absolute inset-x-0 bottom-2 flex justify-center gap-2">
+                  <Button aria-label={`Preview ${resume.title}`} isIconOnly size="sm" variant="secondary" className="rounded-full">
                     <Eye className="size-4" />
                   </Button>
-                  <Button
-                    aria-label={`Download ${resume.title}`}
-                    isIconOnly
-                    size="sm"
-                    variant="secondary"
-                    className="rounded-full bg-background/95"
-                  >
+                  <Button aria-label={`Download ${resume.title}`} isIconOnly size="sm" variant="secondary" className="rounded-full">
                     <Download className="size-4" />
                   </Button>
                 </div>
               </div>
 
-              <Card.Content className="p-4">
-                <h3 className="text-sm font-semibold text-primary">{resume.title}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {resume.updated} • {resume.style}
-                </p>
+              <Card.Content className="space-y-1 p-4">
+                <p className="text-sm font-semibold text-primary">{resume.title}</p>
+                <p className="text-xs text-muted-foreground">{resume.updated}</p>
+                <Chip size="sm" variant="soft" color="accent" className="w-fit">
+                  {resume.style}
+                </Chip>
               </Card.Content>
             </Card>
           ))}
 
-          <Link href="/resume" className="group">
-            <Card className="flex aspect-3/4 items-center justify-center rounded-xl border-2 border-dashed border-border/70 bg-card/72 text-muted-foreground transition-all duration-300 hover:border-primary/35 hover:text-primary">
-              <Card.Content className="flex flex-col items-center gap-4">
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="secondary"
-                  className="rounded-full"
-                  aria-label="Create new resume version"
-                >
+          <Link href={projectsShortcut.href}>
+            <Card className="h-full border border-border/60 bg-card/96">
+              <Card.Content className="flex h-full flex-col gap-3 p-6">
+                <span className="inline-flex w-fit rounded-lg bg-secondary p-2 text-primary">
+                  <FolderKanban className="size-4" />
+                </span>
+                <h3 className="font-heading text-2xl text-primary">{projectsShortcut.title}</h3>
+                <p className="text-sm text-muted-foreground">{projectsShortcut.description}</p>
+                <Button variant="ghost" className="mt-auto w-fit rounded-full text-muted-foreground">
+                  Open Projects
+                  <ArrowUpRight className="size-4" />
+                </Button>
+              </Card.Content>
+            </Card>
+          </Link>
+
+          <Link href="/resume">
+            <Card className="flex min-h-64 items-center justify-center border border-dashed border-border/70 bg-card/70">
+              <Card.Content className="flex flex-col items-center gap-3 p-8 text-center">
+                <Button isIconOnly variant="secondary" className="rounded-full" aria-label="Create new resume version">
                   <CirclePlus className="size-5" />
                 </Button>
-                <span className="text-[11px] font-semibold tracking-[0.16em] uppercase">New Version</span>
+                <p className="text-sm font-semibold text-primary">Create New Resume Version</p>
               </Card.Content>
             </Card>
           </Link>
@@ -299,11 +294,7 @@ export default function DashboardHomePage() {
         aria-label="Open resume builder"
         className="fixed right-6 bottom-24 z-40 md:right-8 md:bottom-8"
       >
-        <Button
-          isIconOnly
-          size="lg"
-          className="ce-primary-gradient rounded-full text-primary-foreground shadow-2xl"
-        >
+        <Button isIconOnly size="lg" variant="primary" className="rounded-full shadow-xl">
           <Pencil className="size-5" />
         </Button>
       </Link>

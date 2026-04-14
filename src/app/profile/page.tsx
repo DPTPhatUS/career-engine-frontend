@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
-import { Button, Card, Input, Spinner } from "@heroui/react";
+import { Button, Card, Chip, Input, Label, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import {
   ApiError,
@@ -42,9 +42,9 @@ const emptyValues: ProfileFormValues = {
   github_url: "",
 };
 
-const inputClassName = "ce-ghost-border rounded-xl bg-card";
+const inputClassName = "rounded-xl";
 const labelClassName =
-  "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
+  "mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
 
 const profileInsights = [
   {
@@ -157,30 +157,22 @@ export default function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
-      <section className="mb-12 max-w-4xl space-y-4">
-        <div className="flex items-center gap-3">
-          <p className="text-[11px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
-            Account Settings
-          </p>
-          <span className="h-px w-10 bg-border/80" />
-        </div>
-        <h1 className="font-heading text-5xl leading-tight text-primary">
-          Profile Management
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
-          Curate your professional identity. The information provided here becomes the foundation
-          for resume generation and profile-aware drafting.
+      <section className="mb-8 max-w-4xl space-y-3">
+        <Chip variant="soft" color="accent" className="w-fit">Account Settings</Chip>
+        <h1 className="font-heading text-5xl leading-tight text-primary">Profile Management</h1>
+        <p className="max-w-2xl text-sm text-muted-foreground md:text-[15px]">
+          Curate your professional identity. This information powers resume generation and editor autofill.
         </p>
       </section>
 
       {errorMessage ? (
-        <Card className="mb-6 border border-destructive/35 bg-destructive/10">
+        <Card className="mb-6 border border-destructive/40 bg-destructive/10">
           <Card.Content className="p-4 text-sm text-destructive">{errorMessage}</Card.Content>
         </Card>
       ) : null}
 
-      <Card className="ce-card relative overflow-hidden rounded-2xl">
-        <div className="pointer-events-none absolute -top-11 -right-9 opacity-20">
+      <Card className="relative overflow-hidden border border-border/60 bg-card/95">
+        <div className="pointer-events-none absolute -top-11 -right-9 opacity-10">
           <UserRound className="size-40 text-primary" />
         </div>
 
@@ -191,106 +183,119 @@ export default function ProfilePage() {
             </div>
           ) : (
             <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <label htmlFor="full_name" className={labelClassName}>
-                    Full Name
-                  </label>
-                  <Input
-                    id="full_name"
-                    className={inputClassName}
-                    placeholder="e.g. Julian Montgomery Vance"
-                    {...form.register("full_name")}
-                  />
-                  {form.formState.errors.full_name ? (
-                    <p className="text-xs text-destructive">{form.formState.errors.full_name.message}</p>
-                  ) : null}
-                </div>
+              <Card className="border border-border/60 bg-card/95">
+                <Card.Content className="space-y-6 p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="font-heading text-2xl text-primary">Personal Details</h2>
+                    <Chip size="sm" variant="soft" color="accent">Core Identity</Chip>
+                  </div>
 
-                <div className="grid gap-2">
-                  <label htmlFor="email" className={labelClassName}>
-                    Email Address
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    className={inputClassName}
-                    placeholder="julian.vance@executive.edu"
-                    {...form.register("email")}
-                  />
-                  {form.formState.errors.email ? (
-                    <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>
-                  ) : null}
-                </div>
-              </div>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="grid gap-2">
+                      <Label htmlFor="full_name" className={labelClassName}>
+                        Full Name
+                      </Label>
+                      <Input
+                        id="full_name"
+                        className={inputClassName}
+                        placeholder="e.g. Julian Montgomery Vance"
+                        {...form.register("full_name")}
+                      />
+                      {form.formState.errors.full_name ? (
+                        <p className="text-xs text-destructive">{form.formState.errors.full_name.message}</p>
+                      ) : null}
+                    </div>
 
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <label htmlFor="phone" className={labelClassName}>
-                    Phone Number
-                  </label>
-                  <Input
-                    id="phone"
-                    className={inputClassName}
-                    placeholder="+1 (555) 012-3456"
-                    {...form.register("phone")}
-                  />
-                  {form.formState.errors.phone ? (
-                    <p className="text-xs text-destructive">{form.formState.errors.phone.message}</p>
-                  ) : null}
-                </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="email" className={labelClassName}>
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        className={inputClassName}
+                        placeholder="julian.vance@executive.edu"
+                        {...form.register("email")}
+                      />
+                      {form.formState.errors.email ? (
+                        <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>
+                      ) : null}
+                    </div>
+                  </div>
 
-                <div className="grid gap-2">
-                  <label htmlFor="address" className={labelClassName}>
-                    Current Address
-                  </label>
-                  <Input
-                    id="address"
-                    className={inputClassName}
-                    placeholder="Manhattan, New York"
-                    {...form.register("address")}
-                  />
-                  {form.formState.errors.address ? (
-                    <p className="text-xs text-destructive">{form.formState.errors.address.message}</p>
-                  ) : null}
-                </div>
-              </div>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="grid gap-2">
+                      <Label htmlFor="phone" className={labelClassName}>
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="phone"
+                        className={inputClassName}
+                        placeholder="+1 (555) 012-3456"
+                        {...form.register("phone")}
+                      />
+                      {form.formState.errors.phone ? (
+                        <p className="text-xs text-destructive">{form.formState.errors.phone.message}</p>
+                      ) : null}
+                    </div>
 
-              <div className="flex items-center gap-3 pt-2">
-                <h2 className="font-heading text-xl italic text-primary">Professional Networks</h2>
-                <span className="h-px flex-1 bg-border/55" />
-              </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="address" className={labelClassName}>
+                        Current Address
+                      </Label>
+                      <Input
+                        id="address"
+                        className={inputClassName}
+                        placeholder="Manhattan, New York"
+                        {...form.register("address")}
+                      />
+                      {form.formState.errors.address ? (
+                        <p className="text-xs text-destructive">{form.formState.errors.address.message}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                </Card.Content>
+              </Card>
 
-              <div className="grid gap-6 md:grid-cols-3">
-                <div className="grid gap-2">
-                  <label htmlFor="github_label" className={labelClassName}>
-                    GitHub Label
-                  </label>
-                  <Input
-                    id="github_label"
-                    className={inputClassName}
-                    placeholder="Engineering Portfolio"
-                    {...form.register("github_label")}
-                  />
-                </div>
+              <Card className="border border-border/60 bg-card/95">
+                <Card.Content className="space-y-6 p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="font-heading text-2xl text-primary">Professional Networks</h2>
+                    <Chip size="sm" variant="soft" color="accent">Optional</Chip>
+                  </div>
 
-                <div className="grid gap-2 md:col-span-2">
-                  <label htmlFor="github_url" className={labelClassName}>
-                    GitHub Link
-                  </label>
-                  <Input
-                    id="github_url"
-                    className={inputClassName}
-                    placeholder="https://github.com/username"
-                    {...form.register("github_url")}
-                  />
-                  {form.formState.errors.github_url ? (
-                    <p className="text-xs text-destructive">{form.formState.errors.github_url.message}</p>
-                  ) : null}
-                </div>
-              </div>
+                  <div className="grid gap-6 md:grid-cols-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="github_label" className={labelClassName}>
+                        GitHub Label
+                      </Label>
+                      <Input
+                        id="github_label"
+                        className={inputClassName}
+                        placeholder="Engineering Portfolio"
+                        {...form.register("github_label")}
+                      />
+                    </div>
 
-              <div className="flex flex-col gap-4 border-t border-border/55 pt-7 md:flex-row md:items-center md:justify-between">
+                    <div className="grid gap-2 md:col-span-2">
+                      <Label htmlFor="github_url" className={labelClassName}>
+                        GitHub Link
+                      </Label>
+                      <Input
+                        id="github_url"
+                        className={inputClassName}
+                        placeholder="https://github.com/username"
+                        {...form.register("github_url")}
+                      />
+                      {form.formState.errors.github_url ? (
+                        <p className="text-xs text-destructive">{form.formState.errors.github_url.message}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                </Card.Content>
+              </Card>
+
+              <div className="flex flex-col gap-4 border-t border-border/55 pt-5 md:flex-row md:items-center md:justify-between">
                 <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
                   <Info className="size-3.5" />
                   All changes are reflected instantly across your active resumes.
@@ -308,8 +313,9 @@ export default function ProfilePage() {
                   </Button>
                   <Button
                     type="submit"
+                    variant="primary"
                     isDisabled={saving}
-                    className="ce-primary-gradient rounded-xl px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-foreground"
+                    className="rounded-xl px-6"
                   >
                     {saving ? <Spinner aria-label="Saving profile" size="sm" /> : <Save className="size-4" />}
                     Save Changes
@@ -325,13 +331,13 @@ export default function ProfilePage() {
         {profileInsights.map((item) => {
           const Icon = item.icon;
           return (
-            <Card key={item.title} className="rounded-xl border-0 bg-secondary/55">
+            <Card key={item.title} className="border border-border/60 bg-secondary/45">
               <Card.Content className="space-y-3 p-5">
                 <span className="inline-flex w-fit rounded-lg bg-background/75 p-2 text-primary">
                   <Icon className="size-4" />
                 </span>
-                <h3 className="font-heading text-2xl leading-none text-primary">{item.title}</h3>
-                <p className="text-xs text-muted-foreground">{item.description}</p>
+                <h3 className="font-heading text-xl leading-none text-primary">{item.title}</h3>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
               </Card.Content>
             </Card>
           );

@@ -121,10 +121,10 @@ const emptySkill = {
   values: "",
 };
 
-const editorCardClassName = "ce-card rounded-2xl";
-const inputClassName = "ce-ghost-border rounded-xl bg-card";
+const editorCardClassName = "rounded-2xl border border-border/60 bg-card/95";
+const inputClassName = "rounded-xl";
 const labelClassName =
-  "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
+  "mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
 
 function toResumeDraft(values: ResumeFormValues): ResumeDraft {
   return {
@@ -437,7 +437,7 @@ export default function ResumePage() {
                   onPress={() => {
                     void form.handleSubmit(onGenerate)();
                   }}
-                  className="ce-primary-gradient rounded-lg text-primary-foreground"
+                  className="rounded-lg"
                 >
                   {isGenerating ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -778,7 +778,7 @@ export default function ResumePage() {
                 onPress={() => {
                   void form.handleSubmit(onGenerate)();
                 }}
-                className="ce-primary-gradient rounded-lg text-primary-foreground"
+                className="rounded-lg"
               >
                 {isGenerating ? (
                   <Loader2 className="size-4 animate-spin" />

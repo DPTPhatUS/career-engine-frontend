@@ -12,16 +12,16 @@ import {
 } from "react";
 import {
   Bell,
+  ChevronRight,
   FileText,
   FolderKanban,
   GraduationCap,
   House,
   Loader2,
-  Search,
   Settings,
   User,
 } from "lucide-react";
-import { Avatar, Button, InputGroup, TextField } from "@heroui/react";
+import { Avatar, Button, Card, Chip, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -177,134 +177,130 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-background">
         {showChrome ? (
           <>
-            <header className="fixed inset-x-0 top-0 z-50 border-b border-border/45 bg-background/78 backdrop-blur-xl">
-              <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8 md:py-3.5">
-                <div className="flex min-w-0 items-center gap-7 lg:gap-10">
-                  <Link href="/" className="group inline-flex items-center">
-                    <span className="font-heading text-3xl leading-none tracking-tight text-primary transition-opacity group-hover:opacity-80">
-                      Career Engine
-                    </span>
-                  </Link>
-
-                  <nav className="hidden items-center gap-5 md:flex lg:gap-7">
-                    {navItems.map((item) => {
-                      const active = isNavActive(item.href);
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={cn(
-                            "border-b-2 pb-1 text-sm font-semibold transition-colors",
-                            active
-                              ? "border-primary text-primary"
-                              : "border-transparent text-muted-foreground hover:text-primary"
-                          )}
-                        >
-                          {item.label}
-                        </Link>
-                      );
-                    })}
-                  </nav>
-                </div>
-
-                <div className="flex shrink-0 items-center gap-2 md:gap-2.5">
-                  <TextField aria-label="Search resources" className="hidden sm:block">
-                    <InputGroup
-                      variant="secondary"
-                      className="w-44 rounded-full border border-border/55 bg-card/80 px-2 shadow-none md:w-56 lg:w-72"
-                    >
-                      <InputGroup.Prefix className="text-muted-foreground">
-                        <Search className="size-3.5" />
-                      </InputGroup.Prefix>
-                      <InputGroup.Input
-                        placeholder="Search resources..."
-                        className="bg-transparent text-sm placeholder:text-muted-foreground/80"
-                      />
-                    </InputGroup>
-                  </TextField>
-
-                  {authLoading ? (
-                    <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
-                  ) : me ? (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        isIconOnly
-                        aria-label="Notifications"
-                        className="hidden rounded-full text-muted-foreground hover:bg-secondary/70 md:inline-flex"
-                      >
-                        <Bell className="size-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        isIconOnly
-                        aria-label="Settings"
-                        className="hidden rounded-full text-muted-foreground hover:bg-secondary/70 md:inline-flex"
-                      >
-                        <Settings className="size-4" />
-                      </Button>
-
-                      <Link
-                        href="/profile"
-                        aria-label="Open profile"
-                        className="inline-flex"
-                      >
-                        <Avatar size="sm" className="border border-border/70 bg-card shadow-sm">
-                          <Avatar.Fallback className="text-xs font-semibold uppercase text-foreground">
-                            {avatarFallback}
-                          </Avatar.Fallback>
-                        </Avatar>
+            <header className="fixed inset-x-0 top-0 z-50 border-b border-border/55 bg-background/86 backdrop-blur-lg">
+              <div className="mx-auto w-full max-w-7xl px-4 py-3 md:px-8 md:py-3.5">
+                <Card className="border border-border/55 bg-card/90">
+                  <Card.Content className="flex flex-row! flex-nowrap items-center justify-between gap-3 p-3 md:p-3.5">
+                    <div className="flex min-w-0 items-center gap-3 md:gap-6">
+                      <Link href="/" className="inline-flex items-center">
+                        <span className="font-heading text-2xl leading-none text-primary md:text-3xl">
+                          Career Engine
+                        </span>
                       </Link>
 
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        isDisabled={isLoggingOut}
-                        onPress={handleLogout}
-                        className="hidden lg:inline-flex"
-                      >
-                        {isLoggingOut ? <Loader2 className="size-4 animate-spin" /> : null}
-                        Logout
-                      </Button>
-                    </>
-                  ) : (
-                    <Link href="/login" className="button button--primary button--sm">
-                      Login
-                    </Link>
-                  )}
-                </div>
+                      <nav className="hidden items-center gap-1.5 md:flex">
+                        {navItems.map((item) => {
+                          const active = isNavActive(item.href);
+                          return (
+                            <Link key={item.href} href={item.href}>
+                              <Button
+                                size="sm"
+                                variant={active ? "secondary" : "ghost"}
+                                className={cn(
+                                  "rounded-full px-3 whitespace-nowrap",
+                                  active ? "text-primary" : "text-muted-foreground"
+                                )}
+                              >
+                                {item.label}
+                              </Button>
+                            </Link>
+                          );
+                        })}
+                      </nav>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2 md:gap-2.5">
+                      {authLoading ? (
+                        <Spinner aria-label="Loading account" color="accent" size="sm" />
+                      ) : me ? (
+                        <>
+                          <Chip
+                            variant="soft"
+                            color="accent"
+                            className="hidden lg:inline-flex"
+                          >
+                            Signed in
+                          </Chip>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            isIconOnly
+                            aria-label="Notifications"
+                            className="hidden rounded-full text-muted-foreground md:inline-flex"
+                          >
+                            <Bell className="size-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            isIconOnly
+                            aria-label="Settings"
+                            className="hidden rounded-full text-muted-foreground md:inline-flex"
+                          >
+                            <Settings className="size-4" />
+                          </Button>
+
+                          <Link href="/profile" aria-label="Open profile" className="inline-flex">
+                            <Avatar size="sm" className="border border-border/70 bg-card">
+                              <Avatar.Fallback className="text-xs font-semibold uppercase text-foreground">
+                                {avatarFallback}
+                              </Avatar.Fallback>
+                            </Avatar>
+                          </Link>
+
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            isDisabled={isLoggingOut}
+                            onPress={handleLogout}
+                            className="hidden lg:inline-flex"
+                          >
+                            {isLoggingOut ? <Loader2 className="size-4 animate-spin" /> : null}
+                            Logout
+                          </Button>
+                        </>
+                      ) : (
+                        <Link href="/login">
+                          <Button variant="primary" size="sm" className="rounded-full">
+                            Login
+                            <ChevronRight className="size-4" />
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  </Card.Content>
+                </Card>
               </div>
             </header>
 
-            <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-border/60 bg-background/94 py-2.5 backdrop-blur-lg md:hidden">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const active = isNavActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex min-w-16 flex-col items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors",
-                      active
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-primary"
-                    )}
-                  >
-                    <Icon className="size-4" />
-                    <span>{item.mobileLabel}</span>
-                  </Link>
-                );
-              })}
+            <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-background/92 px-3 py-2 backdrop-blur-lg md:hidden">
+              <Card className="border border-border/55 bg-card/90">
+                <Card.Content className="grid grid-cols-5 gap-1 p-1.5">
+                  {navItems.map((item) => {
+                    const Icon = item.icon;
+                    const active = isNavActive(item.href);
+                    return (
+                      <Link key={item.href} href={item.href} className="min-w-0">
+                        <Button
+                          variant={active ? "secondary" : "ghost"}
+                          className="h-auto w-full flex-col gap-1 rounded-xl px-1 py-2 text-[11px]"
+                        >
+                          <Icon className="size-4" />
+                          <span className="truncate">{item.mobileLabel}</span>
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </Card.Content>
+              </Card>
             </nav>
           </>
         ) : null}
 
         {showProtectedLoader ? (
           <main className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-7xl items-center justify-center px-6 py-10 md:px-8">
-            <Loader2 className="size-6 animate-spin text-muted-foreground" />
+            <Spinner aria-label="Loading protected route" color="accent" />
           </main>
         ) : shouldHideContent ? null : (
           <div className={cn(showChrome ? "pb-20 pt-16 md:pb-0 md:pt-20" : "")}>{children}</div>

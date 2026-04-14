@@ -264,9 +264,9 @@ export default function EducationsPage() {
   }
 
   const activeItem = items[activeIndex] ?? null;
-  const fieldClassName = "ce-ghost-border rounded-xl bg-secondary/45";
+  const fieldClassName = "rounded-xl";
   const labelClassName =
-    "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
+    "mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
@@ -286,7 +286,8 @@ export default function EducationsPage() {
 
         <Button
           onPress={addDraft}
-          className="ce-primary-gradient rounded-xl px-6 py-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-foreground"
+          variant="primary"
+          className="rounded-xl px-6 py-3.5"
         >
           <Plus className="size-4" />
           Add Education
@@ -306,7 +307,7 @@ export default function EducationsPage() {
       ) : items.length === 0 ? (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <section className="space-y-7 lg:col-span-8">
-            <Card className="overflow-hidden rounded-2xl border-0 bg-card/96 shadow-[0_28px_60px_-38px_rgba(0,32,69,0.45)]">
+            <Card className="overflow-hidden rounded-2xl border border-border/60 bg-card/95">
               <Card.Content className="p-7 md:p-8 lg:p-9">
                 <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -325,7 +326,7 @@ export default function EducationsPage() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-secondary/40 p-6 ce-ghost-border">
+                <div className="rounded-2xl border border-border/60 bg-secondary/35 p-6">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                     No entries added yet
                   </p>
@@ -335,7 +336,8 @@ export default function EducationsPage() {
 
                   <Button
                     onPress={addDraft}
-                    className="ce-primary-gradient mt-5 rounded-xl px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-foreground"
+                    variant="primary"
+                    className="mt-5 rounded-xl px-6 py-3"
                   >
                     <Plus className="size-4" />
                     Add your first education
@@ -345,7 +347,7 @@ export default function EducationsPage() {
             </Card>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <Card className="rounded-2xl border-0 bg-secondary/55">
+              <Card className="rounded-2xl border border-border/60 bg-secondary/40">
                 <Card.Content className="space-y-3 p-5">
                   <span className="inline-flex w-fit rounded-lg bg-background/75 p-2 text-primary">
                     <Lightbulb className="size-4" />
@@ -358,7 +360,7 @@ export default function EducationsPage() {
                 </Card.Content>
               </Card>
 
-              <Card className="rounded-2xl border-0 bg-secondary/55">
+              <Card className="rounded-2xl border border-border/60 bg-secondary/40">
                 <Card.Content className="space-y-3 p-5">
                   <span className="inline-flex w-fit rounded-lg bg-background/75 p-2 text-primary">
                     <Sparkles className="size-4" />
@@ -383,7 +385,7 @@ export default function EducationsPage() {
               </Chip>
             </div>
 
-            <Card className="rounded-2xl border-0 bg-secondary/45">
+            <Card className="rounded-2xl border border-border/60 bg-secondary/35">
               <Card.Content className="space-y-4 p-5">
                 <div className="flex items-start gap-3">
                   <Avatar size="sm" className="border border-border/70 bg-background/75">
@@ -404,7 +406,7 @@ export default function EducationsPage() {
               </Card.Content>
             </Card>
 
-            <Card className="ce-primary-gradient relative overflow-hidden rounded-2xl border-0 text-primary-foreground">
+            <Card className="relative overflow-hidden rounded-2xl border border-border/60 bg-primary text-primary-foreground">
               <div className="pointer-events-none absolute -top-14 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
               <div className="pointer-events-none absolute -bottom-10 -left-8 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
               <Card.Content className="relative z-10 space-y-4 p-6">
@@ -437,7 +439,7 @@ export default function EducationsPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <section className="space-y-7 lg:col-span-8">
             {activeItem ? (
-              <Card className="overflow-hidden rounded-2xl border-0 bg-card/96 shadow-[0_28px_60px_-38px_rgba(0,32,69,0.45)]">
+              <Card className="overflow-hidden rounded-2xl border border-border/60 bg-card/95">
                 <Card.Content className="p-7 md:p-8 lg:p-9">
                   <div className="mb-10 flex flex-wrap items-start justify-between gap-4">
                     <div>
@@ -576,7 +578,8 @@ export default function EducationsPage() {
                     <Button
                       onPress={() => saveItem(activeIndex)}
                       isDisabled={activeItem.saving || activeItem.deleting}
-                      className="ce-primary-gradient rounded-xl px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-foreground"
+                      variant="primary"
+                      className="rounded-xl px-6"
                     >
                       {activeItem.saving ? (
                         <Spinner aria-label="Saving education" size="sm" />
@@ -591,7 +594,7 @@ export default function EducationsPage() {
             ) : null}
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <Card className="rounded-2xl border-0 bg-secondary/55">
+              <Card className="rounded-2xl border border-border/60 bg-secondary/40">
                 <Card.Content className="space-y-3 p-5">
                   <span className="inline-flex w-fit rounded-lg bg-background/75 p-2 text-primary">
                     <Lightbulb className="size-4" />
@@ -604,7 +607,7 @@ export default function EducationsPage() {
                 </Card.Content>
               </Card>
 
-              <Card className="rounded-2xl border-0 bg-secondary/55">
+              <Card className="rounded-2xl border border-border/60 bg-secondary/40">
                 <Card.Content className="space-y-3 p-5">
                   <span className="inline-flex w-fit rounded-lg bg-background/75 p-2 text-primary">
                     <Sparkles className="size-4" />
@@ -639,7 +642,7 @@ export default function EducationsPage() {
                     onClick={() => setActiveIndex(index)}
                     className={
                       isActive
-                        ? "w-full rounded-2xl border-l-[3px] border-l-primary bg-card p-5 text-left ce-ghost-border shadow-[0_12px_32px_-24px_rgba(0,32,69,0.65)]"
+                        ? "w-full rounded-2xl border border-primary/50 bg-card p-5 text-left"
                         : "w-full rounded-2xl bg-secondary/50 p-5 text-left transition-colors hover:bg-card/90"
                     }
                   >
@@ -674,7 +677,7 @@ export default function EducationsPage() {
               })}
             </div>
 
-            <Card className="ce-primary-gradient relative overflow-hidden rounded-2xl border-0 text-primary-foreground">
+            <Card className="relative overflow-hidden rounded-2xl border border-border/60 bg-primary text-primary-foreground">
               <div className="pointer-events-none absolute -top-14 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
               <div className="pointer-events-none absolute -bottom-10 -left-8 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
               <Card.Content className="relative z-10 space-y-4 p-6">
