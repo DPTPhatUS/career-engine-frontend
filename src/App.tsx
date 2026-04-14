@@ -1,10 +1,10 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import EducationScreen from './screens/EducationScreen'
-import HomeScreen from './screens/HomeScreen'
-import LoginScreen from './screens/LoginScreen'
-import ProfileScreen from './screens/ProfileScreen'
-import ProjectsScreen from './screens/ProjectsScreen'
-import ResumeScreen from './screens/ResumeScreen'
+import EducationScreen from './screens/EducationScreen.tsx'
+import HomeScreen from './screens/HomeScreen.tsx'
+import LoginScreen from './screens/LoginScreen.tsx'
+import ProfileScreen from './screens/ProfileScreen.tsx'
+import ProjectsScreen from './screens/ProjectsScreen.tsx'
+import ResumeScreen from './screens/ResumeScreen.tsx'
 
 function App() {
   return (
