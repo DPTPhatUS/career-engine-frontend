@@ -269,8 +269,8 @@ export default function EducationsPage() {
     "mb-2 ml-0.5 block text-[10px] font-semibold uppercase tracking-[0.17em] text-muted-foreground";
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8 md:py-12 lg:py-14">
-      <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
+      <header className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl space-y-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
             Curation Hub

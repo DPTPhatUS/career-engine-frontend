@@ -51,9 +51,9 @@ const navItems = [
   { href: "/resume", label: "Resume Builder", mobileLabel: "Resume", icon: FileText },
 ] as const;
 
-const protectedRoutes = new Set([
-  "/",
+const protectedRoutes = new Set<string>([
   // Commented out for now
+  // "/",
   // "/home",
   // "/profile",
   // "/educations",

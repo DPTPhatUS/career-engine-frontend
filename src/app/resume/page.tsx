@@ -387,7 +387,7 @@ export default function ResumePage() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-375 flex-1 px-4 py-5 md:px-8 md:py-8">
+    <main className="mx-auto flex w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
       <div className="flex min-h-[calc(100vh-10.5rem)] w-full overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-xl shadow-primary/5">
         <section className="w-full overflow-y-auto bg-[linear-gradient(180deg,color-mix(in_oklab,var(--card)_82%,white_18%)_0%,color-mix(in_oklab,var(--muted)_54%,white_46%)_100%)] lg:w-1/2">
           <div className="sticky top-0 z-20 border-b border-border/45 bg-background/82 px-5 py-5 backdrop-blur-md md:px-8">
