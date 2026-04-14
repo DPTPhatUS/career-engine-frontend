@@ -15,7 +15,6 @@ type AppTopNavProps = {
   actionLabel: string
   actionTo?: string
   actionType?: 'link' | 'button'
-  searchPlaceholder?: string
   fixed?: boolean
   marketingLinks?: string[]
 }
@@ -25,7 +24,6 @@ function AppTopNav({
   actionLabel,
   actionTo = '/login',
   actionType = 'link',
-  searchPlaceholder,
   fixed = false,
   marketingLinks = defaultMarketingLinks,
 }: AppTopNavProps) {
@@ -35,9 +33,9 @@ function AppTopNav({
 
   return (
     <header className={containerClass}>
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-3">
-        <div className="flex items-center gap-8">
-          <Link to="/home" className="text-xl font-black tracking-tight text-base-content">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-start px-6 py-3">
+        <div className="flex min-w-0 flex-1 items-center gap-8">
+          <Link to="/home" className="text-xl font-black tracking-tight text-(--on-surface)">
             Career Engine
           </Link>
 
@@ -68,25 +66,18 @@ function AppTopNav({
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
-          {searchPlaceholder ? (
-            <label className="input input-sm hidden w-64 items-center gap-2 rounded-full border-0 bg-base-200 sm:flex">
-              <span className="text-xs font-bold text-(--on-surface-variant)">S</span>
-              <input type="text" className="grow" placeholder={searchPlaceholder} />
-            </label>
-          ) : null}
-
+        <div className="ml-auto flex items-center gap-4">
           {actionType === 'button' ? (
             <button
               type="button"
-              className="btn primary-cta h-10 min-h-10 border-0 px-5 text-sm font-semibold normal-case"
+              className="btn primary-cta inline-flex h-10 min-h-10 w-30 items-center justify-center border-0 px-5 text-center text-sm font-semibold normal-case"
             >
               {actionLabel}
             </button>
           ) : (
             <NavLink
               to={actionTo}
-              className="btn primary-cta h-10 min-h-10 border-0 px-5 text-sm font-semibold normal-case"
+              className="btn primary-cta inline-flex h-10 min-h-10 w-30 items-center justify-center border-0 px-5 text-center text-sm font-semibold normal-case"
             >
               {actionLabel}
             </NavLink>

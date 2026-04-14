@@ -30,10 +30,10 @@ function LoginAuthCard() {
         Curate your professional legacy
       </p>
 
-      <div className="space-y-4">
+      <div className="flex w-full justify-center">
         <button
           type="button"
-          className="btn h-14 min-h-14 w-full rounded-xl border border-(--outline-variant)/30 bg-base-100 px-6 text-base font-semibold normal-case text-(--on-surface) hover:bg-base-200"
+          className="btn mx-auto inline-flex h-14 min-h-14 w-65 max-w-full items-center justify-center gap-2 rounded-xl border border-(--outline-variant)/30 bg-base-100 px-6 text-base font-semibold normal-case text-(--on-surface)"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
             {googleIconPaths.map((path) => (
