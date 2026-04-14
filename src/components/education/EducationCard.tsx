@@ -1,0 +1,78 @@
+type EducationItem = {
+  school: string
+  degree: string
+  period: string
+  location: string
+  gpa: string
+  field: string
+  coursework?: string[]
+  imageUrl: string
+}
+
+type EducationCardProps = {
+  item: EducationItem
+}
+
+function EducationCard({ item }: EducationCardProps) {
+  return (
+    <article className="group rounded-xl border border-transparent bg-base-100 p-6 shadow-sm transition-all hover:border-primary/10 hover:shadow-md">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex gap-4">
+          <div className="h-14 w-14 overflow-hidden rounded-xl bg-base-300">
+            <img src={item.imageUrl} alt={item.school} className="h-full w-full object-cover" />
+          </div>
+
+          <div>
+            <h3 className="text-3xl font-bold tracking-tight text-(--on-surface)">{item.school}</h3>
+            <p className="font-medium text-primary">{item.degree}</p>
+
+            <p className="mt-1 text-sm text-(--on-surface-variant)">
+              {item.period} | {item.location}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-base-200">
+            Edit
+          </button>
+          <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-error-container hover:text-error">
+            Del
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-4 border-t border-base-300 pt-4">
+        <div className="mb-4 grid grid-cols-3 gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">GPA</p>
+            <p className="mt-1 font-semibold text-(--on-surface)">{item.gpa}</p>
+          </div>
+
+          <div className="col-span-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">Field of Study</p>
+            <p className="mt-1 font-semibold text-(--on-surface)">{item.field}</p>
+          </div>
+        </div>
+
+        {item.coursework && item.coursework.length > 0 ? (
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+              Relevant Coursework
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {item.coursework.map((course) => (
+                <span key={course} className="rounded-full bg-base-300 px-3 py-1 text-xs text-(--on-surface-variant)">
+                  {course}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </article>
+  )
+}
+
+export type { EducationItem }
+export default EducationCard

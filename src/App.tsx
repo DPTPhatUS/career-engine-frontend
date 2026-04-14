@@ -58,13 +58,13 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/home" element={<HomeScreen />} />
+      <Route path="/profile" element={<ProfileScreen />} />
+      <Route path="/education" element={<EducationScreen />} />
+      <Route path="/projects" element={<ProjectsScreen />} />
+      <Route path="/resume" element={<ResumeScreen />} />
 
       <Route element={<AppShell />}>
-        <Route path="/profile" element={<ProfileScreen />} />
-        <Route path="/education" element={<EducationScreen />} />
-        <Route path="/projects" element={<ProjectsScreen />} />
         <Route path="/skills" element={<SkillsScreen />} />
-        <Route path="/resume" element={<ResumeScreen />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/home" replace />} />

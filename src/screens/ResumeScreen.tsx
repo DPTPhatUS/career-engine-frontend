@@ -1,17 +1,20 @@
-import ScreenTemplate from './ScreenTemplate'
+import ResumeEditorPane from '../components/resume/ResumeEditorPane'
+import ResumeFooter from '../components/resume/ResumeFooter'
+import ResumePreviewPane from '../components/resume/ResumePreviewPane'
+import ResumeTopNav from '../components/resume/ResumeTopNav'
 
 function ResumeScreen() {
   return (
-    <ScreenTemplate
-      section="Resume Template"
-      title="Resume Builder Placeholder"
-      summary="Use this route for resume composition, preview, and export actions once section data and API workflows are wired."
-      nextTasks={[
-        'Build section tabs and editable resume fields.',
-        'Render a live resume preview panel.',
-        'Integrate save, generate, and export actions.',
-      ]}
-    />
+    <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
+      <ResumeTopNav />
+
+      <main className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 overflow-hidden lg:grid-cols-12">
+        <ResumeEditorPane />
+        <ResumePreviewPane />
+      </main>
+
+      <ResumeFooter />
+    </div>
   )
 }
 
