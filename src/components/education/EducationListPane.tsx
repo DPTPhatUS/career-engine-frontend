@@ -14,8 +14,6 @@ const educations: EducationItem[] = [
       'Distributed Systems',
       'Computer Vision',
     ],
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDza-vTYqOmXbDcyDTDEAIZCWxFQO5NzV38A16X3vE8IbS0Xwf07_gSxK1n8H7ImVrEfIfGzMtGxCQogQpm3QRcFQgVbwi9b5EPuf7JvZJTAPzrH7-fKObmB2tiZpdYQsCIaZXg47jUw2jx79QazwMcWXp69Q9aRVpF_kaOUvQv7H9yk06oSQJrkqrkiIXVtXbSOZf453SsDaeT8Nv3YzrnWJArNdwY3DuIS3MEXDo0nQJOYzvTJWocIq8ccUt3QVDbT-6P2GInfg',
   },
   {
     school: 'University of Michigan',
@@ -24,8 +22,6 @@ const educations: EducationItem[] = [
     location: 'Ann Arbor, MI',
     gpa: '3.85 / 4.0',
     field: 'Software Engineering',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAVPZUuvkDe_8-nauZ25iBNsfxv9RLwwBlrW9Is2qzvGsHsRNopEGCkxDgqi19tN_jLE90q00Z4R0Xtl4PxCfjF9rVpmj7XIe4sI3l1hpe9-SuLkH36jHnwJE0yvwMBIv09gYcfi7uzNhaYFzw2IrvquFL1ThrxpakNh3ebc474zIa07qmQDU_BnfgwIh7f9-vI138SEBhnEglTr5To70IUarQgiy3POHTadKKEbgGPJhventUdAcppBZnm2OOswxdjnTGbpE9eqQ',
   },
 ]
 

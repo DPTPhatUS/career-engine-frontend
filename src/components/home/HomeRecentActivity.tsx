@@ -1,8 +1,10 @@
+import { FilePenLine, FolderPlus, type LucideIcon } from 'lucide-react'
+
 type ActivityItem = {
   title: string
   description: string
   timestamp: string
-  icon: string
+  icon: LucideIcon
 }
 
 const activityItems: ActivityItem[] = [
@@ -10,13 +12,13 @@ const activityItems: ActivityItem[] = [
     title: 'Updated Resume',
     description: "Applied 'Modern Minimalist' template to Main CV",
     timestamp: '2H AGO',
-    icon: 'R',
+    icon: FilePenLine,
   },
   {
     title: 'New Project Added',
     description: "Added 'Social Media API' to showcase skills",
     timestamp: 'YESTERDAY',
-    icon: 'P',
+    icon: FolderPlus,
   },
 ]
 
@@ -37,10 +39,10 @@ function HomeRecentActivity() {
             className="flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-colors hover:bg-base-200"
           >
             <div className="grid h-12 w-12 place-content-center rounded-lg bg-base-300 text-sm font-bold text-primary">
-              {item.icon}
+              <item.icon className="h-5 w-5" aria-hidden="true" />
             </div>
 
-            <div className="flex-grow">
+            <div className="grow">
               <h3 className="font-bold text-(--on-surface)">{item.title}</h3>
               <p className="text-sm text-(--on-surface-variant)">{item.description}</p>
             </div>

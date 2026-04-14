@@ -1,10 +1,17 @@
+import { FolderKanban, GraduationCap, House, UserRound, type LucideIcon } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
-const mobileItems = [
-  { path: '/home', label: 'Home', code: 'H' },
-  { path: '/education', label: 'Education', code: 'E' },
-  { path: '/projects', label: 'Projects', code: 'P' },
-  { path: '/profile', label: 'Profile', code: 'R' },
+type MobileItem = {
+  path: string
+  label: string
+  icon: LucideIcon
+}
+
+const mobileItems: MobileItem[] = [
+  { path: '/home', label: 'Home', icon: House },
+  { path: '/education', label: 'Education', icon: GraduationCap },
+  { path: '/projects', label: 'Projects', icon: FolderKanban },
+  { path: '/profile', label: 'Profile', icon: UserRound },
 ]
 
 function EducationMobileBottomNav() {
@@ -21,7 +28,7 @@ function EducationMobileBottomNav() {
           }
         >
           <span className="grid h-6 w-6 place-content-center rounded-full bg-base-200 text-[10px] font-bold">
-            {item.code}
+            <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
           {item.label}
         </NavLink>

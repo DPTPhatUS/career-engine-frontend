@@ -3,7 +3,6 @@ import ProfileFormActions from '../components/profile/ProfileFormActions'
 import ProfileGeneralInfoSection from '../components/profile/ProfileGeneralInfoSection'
 import ProfileGithubSection from '../components/profile/ProfileGithubSection'
 import ProfilePageHeader from '../components/profile/ProfilePageHeader'
-import ProfileSidebar from '../components/profile/ProfileSidebar'
 import ProfileTopNav from '../components/profile/ProfileTopNav'
 
 function ProfileScreen() {
@@ -12,19 +11,15 @@ function ProfileScreen() {
       <ProfileTopNav />
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 md:px-8 lg:pl-14 lg:pr-20">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-          <ProfileSidebar />
+        <section className="mx-auto w-full max-w-5xl">
+          <ProfilePageHeader />
 
-          <section className="lg:col-span-9">
-            <ProfilePageHeader />
-
-            <div className="tonal-card space-y-12 p-8">
-              <ProfileGeneralInfoSection />
-              <ProfileGithubSection />
-              <ProfileFormActions />
-            </div>
-          </section>
-        </div>
+          <div className="tonal-card space-y-12 p-8">
+            <ProfileGeneralInfoSection />
+            <ProfileGithubSection />
+            <ProfileFormActions />
+          </div>
+        </section>
       </main>
 
       <ProfileFooter />

@@ -1,8 +1,16 @@
+import {
+  FileText,
+  FolderKanban,
+  GraduationCap,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react'
+
 type StatCard = {
   label: string
   value: string
   detail: string
-  icon: string
+  icon: LucideIcon
   progress?: number
 }
 
@@ -11,26 +19,26 @@ const statCards: StatCard[] = [
     label: 'Profile Strength',
     value: '88%',
     detail: '',
-    icon: 'P',
+    icon: UserRound,
     progress: 88,
   },
   {
     label: 'Education Credits',
     value: '124',
     detail: '+4 since last month',
-    icon: 'E',
+    icon: GraduationCap,
   },
   {
     label: 'Active Projects',
     value: '06',
     detail: '2 nearing completion',
-    icon: 'A',
+    icon: FolderKanban,
   },
   {
     label: 'Resume Views',
     value: '342',
     detail: 'Top 5% in your field',
-    icon: 'R',
+    icon: FileText,
   },
 ]
 
@@ -42,7 +50,7 @@ function HomeStatsGrid() {
           <div className="mb-4 flex items-center justify-between">
             <p className="blueprint-label text-primary">{card.label}</p>
             <span className="grid h-6 w-6 place-content-center rounded bg-base-200 text-xs font-bold text-primary">
-              {card.icon}
+              <card.icon className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
           </div>
 

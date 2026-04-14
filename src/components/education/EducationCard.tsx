@@ -1,3 +1,5 @@
+import { GraduationCap, Pencil, Trash2 } from 'lucide-react'
+
 type EducationItem = {
   school: string
   degree: string
@@ -6,7 +8,6 @@ type EducationItem = {
   gpa: string
   field: string
   coursework?: string[]
-  imageUrl: string
 }
 
 type EducationCardProps = {
@@ -18,8 +19,8 @@ function EducationCard({ item }: EducationCardProps) {
     <article className="group rounded-xl bg-base-100 p-6 shadow-(--ambient-shadow) transition-colors hover:bg-base-200">
       <div className="flex items-start justify-between gap-4">
         <div className="flex gap-4">
-          <div className="h-14 w-14 overflow-hidden rounded-xl bg-base-300">
-            <img src={item.imageUrl} alt={item.school} className="h-full w-full object-cover" />
+          <div className="grid h-14 w-14 place-content-center rounded-xl bg-base-300 text-primary">
+            <GraduationCap className="h-6 w-6" aria-hidden="true" />
           </div>
 
           <div>
@@ -33,11 +34,19 @@ function EducationCard({ item }: EducationCardProps) {
         </div>
 
         <div className="flex gap-2">
-          <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-base-200">
-            Edit
+          <button
+            type="button"
+            aria-label="Edit education"
+            className="btn btn-ghost btn-sm btn-square border-0 text-(--on-surface-variant) hover:bg-base-200"
+          >
+            <Pencil className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-error/15 hover:text-error">
-            Del
+          <button
+            type="button"
+            aria-label="Delete education"
+            className="btn btn-ghost btn-sm btn-square border-0 text-(--on-surface-variant) hover:bg-error/15 hover:text-error"
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
       </div>

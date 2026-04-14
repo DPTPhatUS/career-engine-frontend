@@ -1,12 +1,15 @@
+import { Minus, Plus, Printer } from 'lucide-react'
+
 function ResumePreviewControls() {
   return (
-    <div className="mb-8 flex w-full max-w-[816px] flex-wrap items-center justify-between gap-3">
+    <div className="mb-8 flex w-full max-w-204 flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3 rounded-full bg-base-100 px-4 py-2 shadow-(--ambient-shadow)">
         <button
           type="button"
           className="btn btn-ghost h-7 min-h-7 w-7 rounded-full border-0 p-0 text-sm text-(--on-surface-variant) hover:text-primary"
+          aria-label="Zoom out"
         >
-          -
+          <Minus className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
 
         <span className="text-xs font-bold text-(--on-surface-variant)">100%</span>
@@ -14,8 +17,9 @@ function ResumePreviewControls() {
         <button
           type="button"
           className="btn btn-ghost h-7 min-h-7 w-7 rounded-full border-0 p-0 text-sm text-(--on-surface-variant) hover:text-primary"
+          aria-label="Zoom in"
         >
-          +
+          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
 
         <span className="h-1.5 w-1.5 rounded-full bg-base-300" />
@@ -24,6 +28,7 @@ function ResumePreviewControls() {
           type="button"
           className="btn btn-ghost h-7 min-h-7 rounded-full border-0 px-3 text-xs font-medium normal-case text-(--on-surface-variant) hover:text-primary"
         >
+          <Printer className="h-3.5 w-3.5" aria-hidden="true" />
           Print
         </button>
       </div>

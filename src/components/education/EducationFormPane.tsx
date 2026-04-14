@@ -1,10 +1,12 @@
+import { Plus } from 'lucide-react'
+
 function EducationFormPane() {
   return (
     <aside className="lg:sticky lg:top-24 lg:col-span-5">
       <div className="rounded-xl bg-base-200 p-8 shadow-(--ambient-shadow)">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid h-10 w-10 place-content-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
-            +
+            <Plus className="h-4 w-4" aria-hidden="true" />
           </div>
           <h2 className="text-4xl font-bold tracking-tight text-(--on-surface)">Add Education</h2>
         </div>

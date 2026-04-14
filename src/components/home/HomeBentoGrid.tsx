@@ -1,19 +1,34 @@
+import {
+  Braces,
+  Database,
+  FileCode2,
+  GraduationCap,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const resumeImage =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuCcwgqWpi6HaK0ZoDQG5WkM2YsFDZvRSDUJj5Oq5ycXsDhYPLMcDgFUFrEOXQGO0QFowHWSnNgLYijQWqlUQu99fgkkEcUnjU18AN3sFiNDWokypnPrF3UMWWsx3iU38vrdOyxno9GVu8m0ZrYGDtGS42hMZxoWLZHO29pgvLDaMd39m87gIoB5WsWlkLt4YkKr0qpYhC5w8VQU5gbTXDIRsxbbGzt8F0BFJuz_bou1MNRkfAPtieoXUzd9btJKkujhoC_Jr57Ntg'
 
-const shortcuts = [
+type Shortcut = {
+  title: string
+  description: string
+  icon: LucideIcon
+  to: string
+}
+
+const shortcuts: Shortcut[] = [
   {
     title: 'Profile',
     description: 'Update your bio, skills, and social links.',
-    icon: 'P',
+    icon: UserRound,
     to: '/profile',
   },
   {
     title: 'Education',
     description: 'Manage your degrees and certifications.',
-    icon: 'E',
+    icon: GraduationCap,
     to: '/education',
   },
 ]
@@ -60,7 +75,7 @@ function HomeBentoGrid() {
           <div className="flex h-full flex-col justify-between">
             <div className="flex items-start justify-between">
               <span className="grid h-12 w-12 place-content-center rounded-lg bg-base-200 text-sm font-bold text-primary">
-                {shortcut.icon}
+                <shortcut.icon className="h-5 w-5" aria-hidden="true" />
               </span>
               <span className="text-xs font-bold uppercase tracking-wider text-(--on-surface-variant) opacity-0 transition-opacity group-hover:opacity-100">
                 Open
@@ -80,13 +95,19 @@ function HomeBentoGrid() {
           <div className="flex items-center gap-6">
             <div className="avatar-group -space-x-4 rtl:space-x-reverse">
               <div className="avatar">
-                <div className="w-12 rounded bg-primary text-center text-sm font-bold leading-[3rem] text-white">JS</div>
+                <div className="grid w-12 place-content-center rounded bg-primary text-white">
+                  <Braces className="h-5 w-5" aria-hidden="true" />
+                </div>
               </div>
               <div className="avatar">
-                <div className="w-12 rounded bg-success text-center text-sm font-bold leading-[3rem] text-white">PY</div>
+                <div className="grid w-12 place-content-center rounded bg-success text-white">
+                  <Database className="h-5 w-5" aria-hidden="true" />
+                </div>
               </div>
               <div className="avatar">
-                <div className="w-12 rounded bg-warning text-center text-sm font-bold leading-[3rem] text-white">TS</div>
+                <div className="grid w-12 place-content-center rounded bg-warning text-white">
+                  <FileCode2 className="h-5 w-5" aria-hidden="true" />
+                </div>
               </div>
             </div>
 

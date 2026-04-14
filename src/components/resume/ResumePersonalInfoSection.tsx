@@ -1,3 +1,4 @@
+import { CircleAlert } from 'lucide-react'
 import ResumeTextField from './ResumeTextField'
 
 function ResumePersonalInfoSection() {
@@ -27,7 +28,7 @@ function ResumePersonalInfoSection() {
 
       <div className="flex items-start gap-3 rounded-xl bg-primary/10 px-4 py-4">
         <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-          i
+          <CircleAlert className="h-3.5 w-3.5" aria-hidden="true" />
         </span>
         <p className="text-sm font-medium text-primary">
           Use active verbs like \"Architected\" or \"Spearheaded\" to highlight leadership.

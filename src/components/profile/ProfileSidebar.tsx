@@ -1,8 +1,23 @@
-const sidebarItems = [
-  { label: 'Personal Information', code: 'P', active: true },
-  { label: 'Experience', code: 'X', active: false },
-  { label: 'Education Settings', code: 'E', active: false },
-  { label: 'Security', code: 'S', active: false },
+import {
+  BriefcaseBusiness,
+  GraduationCap,
+  Pencil,
+  ShieldCheck,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react'
+
+type SidebarItem = {
+  label: string
+  icon: LucideIcon
+  active: boolean
+}
+
+const sidebarItems: SidebarItem[] = [
+  { label: 'Personal Information', icon: UserRound, active: true },
+  { label: 'Experience', icon: BriefcaseBusiness, active: false },
+  { label: 'Education Settings', icon: GraduationCap, active: false },
+  { label: 'Security', icon: ShieldCheck, active: false },
 ]
 
 const profileAvatar =
@@ -23,7 +38,7 @@ function ProfileSidebar() {
               type="button"
               className="absolute bottom-0 right-0 grid h-8 w-8 place-content-center rounded-full bg-primary text-xs font-bold text-white shadow-lg transition-transform hover:scale-105"
             >
-              E
+              <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
           </div>
 
@@ -43,7 +58,7 @@ function ProfileSidebar() {
               }`}
             >
               <span className="grid h-5 w-5 place-content-center rounded bg-base-100 text-[10px] font-bold text-primary">
-                {item.code}
+                <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
               </span>
               {item.label}
             </button>

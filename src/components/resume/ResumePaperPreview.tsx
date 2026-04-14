@@ -43,7 +43,7 @@ const skills = [
 
 function ResumePaperPreview() {
   return (
-    <article className="relative flex w-full max-w-[816px] flex-col space-y-8 rounded-sm bg-white p-[10%] shadow-[0_20px_50px_rgba(0,74,198,0.08)] aspect-[1/1.414]">
+    <article className="relative flex w-full max-w-204 flex-col space-y-8 rounded-sm bg-white p-[10%] shadow-[0_20px_50px_rgba(0,74,198,0.08)] aspect-[1/1.414]">
       <header className="space-y-4 text-center">
         <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">Alexander Sterling</h2>
 
