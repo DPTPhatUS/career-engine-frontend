@@ -36,7 +36,7 @@ function EducationListPane() {
         <EducationCard key={item.school} item={item} />
       ))}
 
-      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--outline-variant) p-8 text-center opacity-70">
+      <div className="flex flex-col items-center justify-center rounded-xl bg-base-200/70 p-8 text-center opacity-80">
         <p className="text-sm font-medium text-(--on-surface-variant)">
           Adding more credentials strengthens your profile
         </p>

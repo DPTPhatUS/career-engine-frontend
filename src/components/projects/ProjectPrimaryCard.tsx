@@ -11,7 +11,7 @@ const bullets = [
 
 function ProjectPrimaryCard() {
   return (
-    <article className="group rounded-xl border border-transparent bg-base-200 p-6 transition-all duration-300 hover:border-(--outline-variant)/10 hover:bg-base-300">
+    <article className="group rounded-xl bg-base-200 p-6 shadow-(--ambient-shadow) transition-colors duration-300 hover:bg-base-300">
       <div className="mb-4 flex items-start justify-between">
         <div>
           <h3 className="text-3xl font-bold tracking-tight text-(--on-surface) transition-colors group-hover:text-primary">
@@ -47,7 +47,7 @@ function ProjectPrimaryCard() {
         ))}
       </ul>
 
-      <div className="flex items-center justify-between border-t border-(--outline-variant)/10 pt-4">
+      <div className="mt-2 flex items-center justify-between rounded-lg bg-base-100/70 px-3 py-3">
         <button type="button" className="btn btn-ghost btn-sm border-0 gap-2 px-0 text-xs font-bold uppercase tracking-wide text-primary hover:bg-transparent">
           View Repository
           <span>{'->'}</span>
@@ -56,13 +56,13 @@ function ProjectPrimaryCard() {
         <div className="avatar-group -space-x-2 rtl:space-x-reverse">
           {avatars.map((avatar) => (
             <div className="avatar" key={avatar}>
-              <div className="w-6 border border-base-100">
+              <div className="w-6 rounded-full">
                 <img src={avatar} alt="Contributor" />
               </div>
             </div>
           ))}
           <div className="avatar placeholder">
-            <div className="w-6 border border-base-100 bg-primary text-[10px] text-white">+2</div>
+            <div className="w-6 rounded-full bg-primary text-[10px] text-white">+2</div>
           </div>
         </div>
       </div>

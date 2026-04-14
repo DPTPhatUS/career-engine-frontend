@@ -19,7 +19,7 @@ const googleIconPaths = [
 
 function LoginAuthCard() {
   return (
-    <article className="rounded-xl border border-(--outline-variant)/10 bg-base-100 p-8 text-center shadow-(--ambient-shadow) md:p-12">
+    <article className="rounded-xl bg-base-100 p-8 text-center shadow-(--ambient-shadow) md:p-12">
       <div className="mb-10 inline-flex h-16 w-16 items-center justify-center rounded-full bg-base-200 text-primary">
         <span className="text-2xl font-black tracking-tight">CE</span>
       </div>
@@ -33,7 +33,7 @@ function LoginAuthCard() {
       <div className="flex w-full justify-center">
         <button
           type="button"
-          className="btn mx-auto inline-flex h-14 min-h-14 w-65 max-w-full items-center justify-center gap-2 rounded-xl border border-(--outline-variant)/30 bg-base-100 px-6 text-base font-semibold normal-case text-(--on-surface)"
+          className="btn mx-auto inline-flex h-14 min-h-14 w-65 max-w-full items-center justify-center gap-2 rounded-xl border-0 bg-base-200 px-6 text-base font-semibold normal-case text-(--on-surface) hover:bg-base-300"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
             {googleIconPaths.map((path) => (

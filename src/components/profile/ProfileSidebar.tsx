@@ -17,7 +17,7 @@ function ProfileSidebar() {
             <img
               src={profileAvatar}
               alt="Profile avatar"
-              className="h-24 w-24 rounded-full border-4 border-base-100 object-cover shadow-xl"
+              className="h-24 w-24 rounded-full object-cover shadow-(--ambient-shadow)"
             />
             <button
               type="button"

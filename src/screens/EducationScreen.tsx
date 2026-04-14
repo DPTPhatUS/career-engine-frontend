@@ -10,7 +10,7 @@ function EducationScreen() {
     <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <EducationTopNav />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 pb-28 md:pb-12">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 pb-28 md:px-8 md:pb-12 lg:pl-14 lg:pr-20">
         <EducationHeader />
 
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">

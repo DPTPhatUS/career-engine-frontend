@@ -21,7 +21,7 @@ function ProfileGithubSection() {
         />
       </div>
 
-      <div className="alert mt-6 border border-secondary/30 bg-secondary/20 text-secondary-content">
+      <div className="alert mt-6 border-0 bg-secondary/20 text-secondary-content">
         <span className="grid h-5 w-5 place-content-center rounded-full bg-secondary text-[10px] font-bold text-secondary-content">
           I
         </span>

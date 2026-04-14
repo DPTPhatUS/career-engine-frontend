@@ -28,8 +28,8 @@ function AppTopNav({
   marketingLinks = defaultMarketingLinks,
 }: AppTopNavProps) {
   const containerClass = fixed
-    ? 'fixed top-0 z-50 w-full bg-base-100/80 shadow-[0_20px_25px_-5px_rgba(0,74,198,0.04)] backdrop-blur-md'
-    : 'sticky top-0 z-50 w-full bg-base-100/80 shadow-[0_20px_25px_-5px_rgba(0,74,198,0.04)] backdrop-blur-md'
+    ? 'fixed top-0 z-50 w-full glass-shell bg-base-100/78'
+    : 'sticky top-0 z-50 w-full glass-shell bg-base-100/78'
 
   return (
     <header className={containerClass}>
@@ -47,8 +47,8 @@ function AppTopNav({
                     to={item.path}
                     className={({ isActive }) =>
                       isActive
-                        ? 'rounded-lg border-b-2 border-primary px-3 py-2 text-sm font-bold text-primary'
-                        : 'rounded-lg px-3 py-2 text-sm text-(--on-surface-variant) transition-colors hover:bg-base-200 hover:text-primary'
+                        ? 'route-pill route-pill-active text-primary'
+                        : 'route-pill hover:text-primary'
                     }
                   >
                     {item.label}
@@ -58,7 +58,7 @@ function AppTopNav({
                   <a
                     key={item}
                     href="#"
-                    className="rounded-lg px-3 py-2 text-sm text-(--on-surface-variant) transition-colors hover:bg-base-200 hover:text-primary"
+                    className="route-pill hover:text-primary"
                   >
                     {item}
                   </a>

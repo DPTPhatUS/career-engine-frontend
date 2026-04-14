@@ -1,7 +1,7 @@
 function ResumePreviewControls() {
   return (
     <div className="mb-8 flex w-full max-w-[816px] flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center gap-3 rounded-full border border-(--outline-variant)/20 bg-base-100 px-4 py-2 shadow-sm">
+      <div className="flex items-center gap-3 rounded-full bg-base-100 px-4 py-2 shadow-(--ambient-shadow)">
         <button
           type="button"
           className="btn btn-ghost h-7 min-h-7 w-7 rounded-full border-0 p-0 text-sm text-(--on-surface-variant) hover:text-primary"
@@ -18,7 +18,7 @@ function ResumePreviewControls() {
           +
         </button>
 
-        <div className="h-4 w-px bg-(--outline-variant)/50" />
+        <span className="h-1.5 w-1.5 rounded-full bg-base-300" />
 
         <button
           type="button"
@@ -28,7 +28,7 @@ function ResumePreviewControls() {
         </button>
       </div>
 
-      <span className="rounded-md border border-(--outline-variant)/20 bg-base-100 px-3 py-1 text-xs font-medium text-(--on-surface-variant)">
+      <span className="rounded-md bg-base-100 px-3 py-1 text-xs font-medium text-(--on-surface-variant) shadow-[0_8px_16px_-14px_rgba(0,74,198,0.45)]">
         Draft Saved 2m ago
       </span>
     </div>

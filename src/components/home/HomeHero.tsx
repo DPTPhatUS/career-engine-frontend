@@ -1,7 +1,8 @@
 function HomeHero() {
   return (
     <header className="mb-12">
-      <h1 className="text-4xl font-extrabold tracking-tight text-(--on-surface)">
+      <p className="blueprint-label mb-3">Dashboard Overview</p>
+      <h1 className="text-4xl font-extrabold tracking-[-0.02em] text-(--on-surface)">
         Welcome back, Alex.
       </h1>
       <p className="mt-2 text-lg text-(--on-surface-variant)">

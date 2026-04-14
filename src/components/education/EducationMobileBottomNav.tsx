@@ -9,14 +9,14 @@ const mobileItems = [
 
 function EducationMobileBottomNav() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-around border-t border-base-300 bg-base-100/90 px-6 py-3 backdrop-blur-lg md:hidden">
+    <div className="glass-shell fixed bottom-0 left-0 right-0 z-50 flex justify-around bg-base-100/88 px-6 py-3 md:hidden">
       {mobileItems.map((item) => (
         <NavLink
           key={item.path}
           to={item.path}
           className={({ isActive }) =>
-            `flex flex-col items-center gap-1 text-[10px] font-bold uppercase tracking-wide ${
-              isActive ? 'text-primary' : 'text-(--on-surface-variant)'
+            `flex flex-col items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors ${
+              isActive ? 'bg-base-200 text-primary' : 'text-(--on-surface-variant)'
             }`
           }
         >

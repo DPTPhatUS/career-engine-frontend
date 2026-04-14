@@ -11,14 +11,14 @@ function ProfileScreen() {
     <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <ProfileTopNav />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 md:px-8 lg:pl-14 lg:pr-20">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           <ProfileSidebar />
 
           <section className="lg:col-span-9">
             <ProfilePageHeader />
 
-            <div className="space-y-12 rounded-xl bg-base-100 p-8 shadow-(--ambient-shadow)">
+            <div className="tonal-card space-y-12 p-8">
               <ProfileGeneralInfoSection />
               <ProfileGithubSection />
               <ProfileFormActions />

@@ -78,10 +78,37 @@
     color: rgb(67 70 85 / 75%);
   }
 
+  .form-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(67 70 85 / 75%);
+  }
+
   .glass-shell {
     background: rgb(255 255 255 / 72%);
+    border: 1px solid rgb(195 198 215 / 15%);
     backdrop-filter: blur(12px);
     box-shadow: var(--ambient-shadow);
+  }
+
+  .tonal-card {
+    border-radius: 0.75rem;
+    background: var(--surface-container-lowest);
+    box-shadow: var(--ambient-shadow);
+  }
+
+  .tonal-card-soft {
+    border-radius: 0.75rem;
+    background: var(--surface-container-low);
+  }
+
+  .soft-divider {
+    height: 4px;
+    width: 50%;
+    border-radius: 999px;
+    background: rgb(217 227 246 / 80%);
   }
 
   .primary-cta {

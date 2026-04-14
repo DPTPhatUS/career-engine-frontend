@@ -10,7 +10,7 @@ function LoginScreen() {
       <LoginBackground />
       <LoginTopNav />
 
-      <main className="relative z-10 mx-auto flex w-full max-w-md flex-1 items-center px-6 py-28 md:py-32">
+      <main className="relative z-10 mx-auto flex w-full max-w-md flex-1 items-center px-6 py-28 md:px-8 md:py-32">
         <section className="w-full">
           <LoginAuthCard />
           <LoginLegalLinks />

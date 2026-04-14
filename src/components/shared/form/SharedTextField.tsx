@@ -19,7 +19,7 @@ function SharedTextField({
 }: SharedTextFieldProps) {
   return (
     <label className="block space-y-2">
-      <span className="ml-1 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+      <span className="form-label ml-1 block">
         {label}
       </span>
 
@@ -28,7 +28,7 @@ function SharedTextField({
           defaultValue={defaultValue}
           rows={rows}
           placeholder={placeholder}
-          className="ghost-field w-full resize-none rounded-xl px-4 py-3"
+          className="ghost-field w-full resize-none rounded-xl px-4 py-3 text-base"
         />
       ) : (
         <div className="relative">
@@ -42,7 +42,7 @@ function SharedTextField({
             type={type}
             placeholder={placeholder}
             defaultValue={defaultValue}
-            className={`ghost-field h-12 w-full rounded-xl px-4 ${prefix ? 'pl-23' : ''}`}
+            className={`ghost-field h-12 w-full rounded-xl px-4 text-base ${prefix ? 'pl-24' : ''}`}
           />
         </div>
       )}

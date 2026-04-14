@@ -1,6 +1,6 @@
 function ProfileFormActions() {
   return (
-    <div className="flex justify-end gap-4 border-t border-(--outline-variant)/10 pt-8">
+    <div className="mt-10 flex justify-end gap-4">
       <button
         type="button"
         className="btn btn-ghost border-0 px-6 font-semibold normal-case text-(--on-surface-variant) hover:bg-base-200"

@@ -15,7 +15,7 @@ type EducationCardProps = {
 
 function EducationCard({ item }: EducationCardProps) {
   return (
-    <article className="group rounded-xl border border-transparent bg-base-100 p-6 shadow-sm transition-all hover:border-primary/10 hover:shadow-md">
+    <article className="group rounded-xl bg-base-100 p-6 shadow-(--ambient-shadow) transition-colors hover:bg-base-200">
       <div className="flex items-start justify-between gap-4">
         <div className="flex gap-4">
           <div className="h-14 w-14 overflow-hidden rounded-xl bg-base-300">
@@ -36,28 +36,28 @@ function EducationCard({ item }: EducationCardProps) {
           <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-base-200">
             Edit
           </button>
-          <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-error-container hover:text-error">
+          <button type="button" className="btn btn-ghost btn-sm border-0 text-(--on-surface-variant) hover:bg-error/15 hover:text-error">
             Del
           </button>
         </div>
       </div>
 
-      <div className="mt-4 border-t border-base-300 pt-4">
+      <div className="mt-5 rounded-lg bg-base-100/70 p-4">
         <div className="mb-4 grid grid-cols-3 gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">GPA</p>
+            <p className="form-label">GPA</p>
             <p className="mt-1 font-semibold text-(--on-surface)">{item.gpa}</p>
           </div>
 
           <div className="col-span-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">Field of Study</p>
+            <p className="form-label">Field of Study</p>
             <p className="mt-1 font-semibold text-(--on-surface)">{item.field}</p>
           </div>
         </div>
 
         {item.coursework && item.coursework.length > 0 ? (
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+            <p className="form-label">
               Relevant Coursework
             </p>
             <div className="mt-2 flex flex-wrap gap-2">

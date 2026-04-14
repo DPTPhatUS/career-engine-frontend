@@ -13,7 +13,7 @@ function ScreenHeader({
 }: ScreenHeaderProps) {
   return (
     <header className={className}>
-      <h1 className="text-5xl font-extrabold tracking-tight text-(--on-surface)">{title}</h1>
+      <h1 className="text-5xl font-extrabold tracking-[-0.02em] text-(--on-surface)">{title}</h1>
       <p className={descriptionClassName}>{description}</p>
     </header>
   )

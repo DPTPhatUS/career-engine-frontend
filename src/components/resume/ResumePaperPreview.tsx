@@ -60,7 +60,7 @@ function ResumePaperPreview() {
         </div>
       </header>
 
-      <div className="h-px w-full bg-slate-100" />
+      <div className="mx-auto h-1 w-24 rounded-full bg-slate-100" />
 
       <section className="space-y-3">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">

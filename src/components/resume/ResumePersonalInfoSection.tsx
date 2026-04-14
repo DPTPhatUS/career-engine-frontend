@@ -25,7 +25,7 @@ function ResumePersonalInfoSection() {
         defaultValue="Results-driven Software Engineer with over 8 years of experience building scalable web applications. Expert in React, Node.js, and Cloud Infrastructure. Passionate about precision functionalism in UI/UX."
       />
 
-      <div className="flex items-start gap-3 rounded-xl border border-primary/10 bg-primary/10 px-4 py-4">
+      <div className="flex items-start gap-3 rounded-xl bg-primary/10 px-4 py-4">
         <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
           i
         </span>

@@ -11,50 +11,50 @@ function ProjectsFormPane() {
 
         <form className="space-y-6">
           <label className="block">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+            <span className="form-label mb-2 block">
               Project Title
             </span>
             <input
               type="text"
               placeholder="e.g. Neural Link Dashboard"
-              className="input h-12 w-full rounded-lg border-(--outline-variant)/15 bg-base-100"
+              className="ghost-field h-12 w-full rounded-lg px-4 text-base"
             />
           </label>
 
           <div className="grid grid-cols-2 gap-4">
             <label className="block">
-              <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+              <span className="form-label mb-2 block">
                 Start Date
               </span>
-              <input type="date" className="input h-12 w-full rounded-lg border-(--outline-variant)/15 bg-base-100" />
+              <input type="date" className="ghost-field h-12 w-full rounded-lg px-4 text-base" />
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+              <span className="form-label mb-2 block">
                 End Date
               </span>
-              <input type="date" className="input h-12 w-full rounded-lg border-(--outline-variant)/15 bg-base-100" />
+              <input type="date" className="ghost-field h-12 w-full rounded-lg px-4 text-base" />
             </label>
           </div>
 
           <label className="block">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+            <span className="form-label mb-2 block">
               GitHub Repository URL
             </span>
-            <div className="flex">
-              <span className="flex items-center rounded-l-lg border border-r-0 border-(--outline-variant)/15 bg-base-300 px-4 text-sm text-(--on-surface-variant)">
+            <div className="relative">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-(--on-surface-variant)">
                 github.com/
               </span>
               <input
                 type="text"
                 placeholder="username/repo"
-                className="input h-12 w-full rounded-l-none rounded-r-lg border-(--outline-variant)/15 bg-base-100"
+                className="ghost-field h-12 w-full rounded-lg px-4 pl-28 text-base"
               />
             </div>
           </label>
 
           <div>
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+            <span className="form-label mb-2 block">
               Tech Stack
             </span>
 
@@ -73,18 +73,18 @@ function ProjectsFormPane() {
             <input
               type="text"
               placeholder="Add technology..."
-              className="input h-12 w-full rounded-lg border-(--outline-variant)/15 bg-base-100"
+              className="ghost-field h-12 w-full rounded-lg px-4 text-base"
             />
           </div>
 
           <label className="block">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-(--on-surface-variant)">
+            <span className="form-label mb-2 block">
               Key Accomplishments
             </span>
             <textarea
               rows={4}
               placeholder="Bullet points detailing your impact..."
-              className="textarea w-full rounded-lg border-(--outline-variant)/15 bg-base-100"
+              className="ghost-field w-full rounded-lg px-4 py-3 text-base"
             />
             <p className="mt-1 text-[11px] italic text-(--on-surface-variant)">
               Use markdown or plain text bullet points.
