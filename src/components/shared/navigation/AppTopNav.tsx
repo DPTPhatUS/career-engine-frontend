@@ -37,16 +37,15 @@ function AppTopNav({
         <ul className="menu menu-horizontal px-1">
           {mode === 'app'
             ? appLinks.map((item) => (
-              // Active link is active button, others are ghost
               <li key={item.path}>
-                <NavLink to={item.path} className={({ isActive }) => (isActive ? 'btn btn-active' : 'btn btn-ghost')}>
+                <NavLink to={item.path}>
                   {item.label}
                 </NavLink>
               </li>
             ))
             : marketingLinks.map((item) => (
               <li key={item}>
-                <a> {item} </a>
+                <a>{item}</a>
               </li>
             ))}
         </ul>
