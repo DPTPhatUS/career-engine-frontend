@@ -13,6 +13,10 @@ const educations: EducationItem[] = [
       'Natural Language Processing',
       'Distributed Systems',
       'Computer Vision',
+      'Reinforcement Learning',
+      'Deep Learning',
+      'AI Ethics',
+      'Data Mining',
     ],
   },
   {
@@ -22,22 +26,62 @@ const educations: EducationItem[] = [
     location: 'Ann Arbor, MI',
     gpa: '3.85 / 4.0',
     field: 'Software Engineering',
+    coursework: [
+      'Data Structures and Algorithms',
+      'Operating Systems',
+      'Database Systems',
+      'Software Design and Architecture',
+      'Computer Networks',
+      'Web Development',
+      'Mobile App Development',
+      'Cloud Computing',
+    ],
   },
+  {
+    school: 'Massachusetts Institute of Technology',
+    degree: 'Ph.D. in Computer Science',
+    period: '2023 - Present',
+    location: 'Cambridge, MA',
+    gpa: '4.0 / 4.0',
+    field: 'Human-Computer Interaction',
+    coursework: [
+      'User-Centered Design',
+      'Usability Testing',
+      'Interaction Design',
+      'Cognitive Psychology for HCI',
+      'HCI Research Methods',
+      'Augmented Reality',
+      'Virtual Reality',
+      'HCI and Accessibility',
+    ],
+  },
+  {
+    school: 'University of California, Berkeley',
+    degree: 'Master of Science in Data Science',
+    period: '2020 - 2022',
+    location: 'Berkeley, CA',
+    gpa: '3.88 / 4.0',
+    field: 'Data Science',
+    coursework: [
+      'Statistical Inference',
+      'Data Visualization',
+      'Big Data Analytics',
+      'Machine Learning for Data Science',
+      'Data Ethics and Privacy',
+      'Time Series Analysis',
+      'Natural Language Processing for Data Science',
+      'Data Science Capstone Project',
+    ],
+  }
 ]
 
 function EducationListPane() {
   return (
-    <section className="space-y-6 lg:col-span-7">
+    <div className="space-y-8 lg:col-span-7">
       {educations.map((item) => (
         <EducationCard key={item.school} item={item} />
       ))}
-
-      <div className="flex flex-col items-center justify-center rounded-xl bg-base-200/70 p-8 text-center opacity-80">
-        <p className="text-sm font-medium text-(--on-surface-variant)">
-          Adding more credentials strengthens your profile
-        </p>
-      </div>
-    </section>
+    </div>
   )
 }
 

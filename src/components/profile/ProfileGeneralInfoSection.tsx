@@ -52,7 +52,7 @@ function ProfileGeneralInfoSection() {
       </div>
       
       <div className="mt-4 flex justify-end gap-4">
-        <button className="btn btn-ghost">
+        <button className="btn btn-outline">
           Clear
         </button>
         <button className="btn btn-neutral">

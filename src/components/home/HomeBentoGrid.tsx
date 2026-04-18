@@ -33,7 +33,7 @@ const shortcuts: Shortcut[] = [
 
 function HomeBentoGrid() {
   return (
-    <section className="grid auto-rows-[200px] grid-cols-1 gap-6 md:grid-cols-12">
+    <section className="grid grid-cols-1 gap-6 md:grid-cols-12">
       <div className="card card-xl bg-neutral text-neutral-content md:col-span-8 md:row-span-2">
         <div className="card-body">
           <h2 className="card-title">Resume Builder</h2>
@@ -42,7 +42,7 @@ function HomeBentoGrid() {
             <NavLink to="/resume" className="btn btn-primary">
               Open Builder
             </NavLink>
-            <button className="btn btn-ghost">
+            <button className="btn btn-outline">
               View Templates
             </button>
           </div>
@@ -53,7 +53,7 @@ function HomeBentoGrid() {
         <NavLink
           key={shortcut.title}
           to={shortcut.to}
-          className="card card-lg shadow-sm md:col-span-4 md:row-span-1"
+          className="card card-lg border border-base-300 md:col-span-4 md:row-span-1"
         >
           <div className="card-body">
             <h2 className="card-title">{shortcut.title}</h2>

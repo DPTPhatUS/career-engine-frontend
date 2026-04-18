@@ -1,7 +1,7 @@
 import EducationFormPane from '../components/education/EducationFormPane'
-import EducationHeader from '../components/education/EducationHeader'
 import EducationListPane from '../components/education/EducationListPane'
 import EducationTopNav from '../components/education/EducationTopNav'
+import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
 
 function EducationScreen() {
@@ -9,10 +9,13 @@ function EducationScreen() {
     <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <EducationTopNav />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 pb-28 md:px-8 md:pb-12 lg:pl-14 lg:pr-20">
-        <EducationHeader />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+        <ScreenHeader
+          title="Education History"
+          description="Manage your academic achievements and credentials to optimize your career trajectory."
+        />
 
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div className="grid grid-cols-12 items-start gap-8">
           <EducationListPane />
           <EducationFormPane />
         </div>

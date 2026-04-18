@@ -7,8 +7,8 @@ import {
 
 function HomeStatsGrid() {
   return (
-    <div className="stats w-full my-8">
-      <div className="stat shadow-sm">
+    <div className="stats border border-base-300 w-full mb-6">
+      <div className="stat border-r">
         <div className="stat-figure text-primary">
           <UserRound className="h-8 w-8" />
         </div>
@@ -17,7 +17,7 @@ function HomeStatsGrid() {
         <div className="stat-desc">+4% since last month</div>
       </div>
 
-      <div className="stat shadow-sm">
+      <div className="stat border-r">
         <div className="stat-figure text-primary">
           <GraduationCap className="h-8 w-8" />
         </div>
@@ -26,7 +26,7 @@ function HomeStatsGrid() {
         <div className="stat-desc">+4 since last month</div>
       </div>
 
-      <div className="stat shadow-sm">
+      <div className="stat border-r">
         <div className="stat-figure text-primary">
           <FolderKanban className="h-8 w-8" />
         </div>
@@ -35,7 +35,7 @@ function HomeStatsGrid() {
         <div className="stat-desc">2 nearing completion</div>
       </div>
 
-      <div className="stat shadow-sm">
+      <div className="stat">
         <div className="stat-figure text-primary">
           <FileText className="h-8 w-8" />
         </div>
