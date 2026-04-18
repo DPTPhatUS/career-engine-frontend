@@ -8,14 +8,18 @@ type ScreenHeaderProps = {
 function ScreenHeader({
   title,
   description,
-  className = 'mb-10',
-  descriptionClassName = 'mt-2 max-w-2xl text-lg text-(--on-surface-variant)',
 }: ScreenHeaderProps) {
   return (
-    <header className={className}>
-      <h1 className="text-5xl font-extrabold tracking-[-0.02em] text-(--on-surface)">{title}</h1>
-      <p className={descriptionClassName}>{description}</p>
-    </header>
+    <div className="hero place-items-start">
+      <div className="hero-content">
+        <div>
+          <h1 className="text-5xl font-bold">{title}</h1>
+          <p className="py-6">
+            {description}
+          </p>
+        </div>
+      </div>
+    </div>
   )
 }
 

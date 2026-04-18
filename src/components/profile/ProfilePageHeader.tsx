@@ -5,7 +5,6 @@ function ProfilePageHeader() {
     <ScreenHeader
       title="Profile Management"
       description="Manage your public information and developer presence across the Career Engine platform."
-      descriptionClassName="mt-2 text-lg text-(--on-surface-variant)"
     />
   )
 }

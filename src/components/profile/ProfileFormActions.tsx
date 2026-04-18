@@ -8,7 +8,7 @@ function ProfileFormActions() {
         Discard Changes
       </button>
 
-      <button type="button" className="btn primary-cta border-0 px-8 font-bold normal-case">
+      <button type="button" className="btn btn-primary px-8 font-bold normal-case">
         Save Profile
       </button>
     </div>

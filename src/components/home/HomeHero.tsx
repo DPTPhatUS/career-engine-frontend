@@ -1,15 +1,11 @@
+import ScreenHeader from "../shared/layout/ScreenHeader"
+
 function HomeHero() {
   return (
-    <div className="hero place-items-start">
-      <div className="hero-content">
-        <div>
-          <h1 className="text-5xl font-bold">Welcome back, Alex.</h1>
-          <p className="py-6">
-            Your career roadmap is 75% complete. Ready for the next milestone?
-          </p>
-        </div>
-      </div>
-    </div>
+    <ScreenHeader
+      title="Welcome back, Developer!"
+      description="Discover your impact, explore opportunities, and connect with the developer ecosystem like never before."
+    />
   )
 }
 
