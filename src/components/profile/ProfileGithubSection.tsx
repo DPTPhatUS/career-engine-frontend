@@ -1,36 +1,46 @@
-import ProfileSectionHeading from './ProfileSectionHeading'
-import ProfileTextField from './ProfileTextField'
-
 function ProfileGithubSection() {
   return (
-    <section>
-      <ProfileSectionHeading title="GitHub Integration" accentClass="bg-secondary" />
+    <fieldset className="fieldset bg-base-200 border border-base-300 rounded-box p-4">
+      <legend className="fieldset-legend">
+        GitHub Integration
+      </legend>
 
-      <div className="grid grid-cols-1 items-end gap-8 md:grid-cols-2">
-        <ProfileTextField
-          label="GitHub Label"
-          value="Personal Portfolio"
-          placeholder="e.g. Primary Repo"
-        />
+      <div className="grid grid-cols-2 gap-6">
+        <div className="w-full">
+          <label className="label" htmlFor="github-label">GitHub Label</label>
+          <input
+            id="github-label"
+            type="text"
+            className="input w-full"
+            defaultValue="GitHub"
+            placeholder="e.g. Primary Repo"
+          />
+        </div>
 
-        <ProfileTextField
-          label="GitHub Profile Link"
-          value="arivera-dev"
-          placeholder="username"
-          prefix="github.com/"
-        />
+        <div className="w-full">
+          <label className="label" htmlFor="github-profile">GitHub Profile Link</label>
+          <label className="input w-full" htmlFor="github-profile">
+            <span className="text-base-content/60">github.com/</span>
+            <input
+              id="github-profile"
+              type="text"
+              className="grow"
+              defaultValue="arivera-dev"
+              placeholder="username"
+            />
+          </label>
+        </div>
       </div>
 
-      <div className="alert mt-6 border-0 bg-secondary/20 text-secondary-content">
-        <span className="grid h-5 w-5 place-content-center rounded-full bg-secondary text-[10px] font-bold text-secondary-content">
-          I
-        </span>
-        <span className="text-sm leading-relaxed">
-          Linking your GitHub allows Career Engine to automatically parse your top projects and
-          showcase your commit history to potential recruiters.
-        </span>
+      <div className="mt-4 flex justify-end gap-4">
+        <button className="btn btn-ghost">
+          Clear
+        </button>
+        <button className="btn btn-neutral">
+          Save
+        </button>
       </div>
-    </section>
+    </fieldset>
   )
 }
 

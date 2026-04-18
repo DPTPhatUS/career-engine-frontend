@@ -1,9 +1,9 @@
+import ProfileAlert from '../components/profile/ProfileAlert'
 import ProfileFooter from '../components/profile/ProfileFooter'
-import ProfileFormActions from '../components/profile/ProfileFormActions'
 import ProfileGeneralInfoSection from '../components/profile/ProfileGeneralInfoSection'
 import ProfileGithubSection from '../components/profile/ProfileGithubSection'
-import ProfilePageHeader from '../components/profile/ProfilePageHeader'
 import ProfileTopNav from '../components/profile/ProfileTopNav'
+import ScreenHeader from '../components/shared/layout/ScreenHeader'
 
 function ProfileScreen() {
   return (
@@ -11,15 +11,15 @@ function ProfileScreen() {
       <ProfileTopNav />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
-        <section className="mx-auto w-full max-w-5xl">
-          <ProfilePageHeader />
-
-          <div className="tonal-card space-y-12 p-8">
-            <ProfileGeneralInfoSection />
-            <ProfileGithubSection />
-            <ProfileFormActions />
-          </div>
-        </section>
+        <ScreenHeader
+          title="Profile Management"
+          description="Manage your public information and developer presence across the Career Engine platform."
+        />
+        <div className='space-y-8'>
+          <ProfileGeneralInfoSection />
+          <ProfileGithubSection />
+          <ProfileAlert />
+        </div>
       </main>
 
       <ProfileFooter />
