@@ -26,35 +26,37 @@ function AppTopNav({
   marketingLinks = defaultMarketingLinks,
 }: AppTopNavProps) {
   return (
-    <div className="navbar bg-base-100 shadow-sm sticky top-0 z-50">
-      <div className="navbar-start">
-        <Link to="/home" className="btn btn-ghost text-xl">
-          Career Engine
-        </Link>
-      </div>
+    <div className="bg-base-100 shadow-sm sticky top-0 z-50">
+      <div className="navbar mx-auto max-w-7xl">
+        <div className="navbar-start">
+          <Link to="/home" className="btn btn-ghost text-xl">
+            Career Engine
+          </Link>
+        </div>
 
-      <div className="navbar-center">
-        <ul className="menu menu-horizontal px-1">
-          {mode === 'app'
-            ? appLinks.map((item) => (
-              <li key={item.path}>
-                <NavLink to={item.path}>
-                  {item.label}
-                </NavLink>
-              </li>
-            ))
-            : marketingLinks.map((item) => (
-              <li key={item}>
-                <a>{item}</a>
-              </li>
-            ))}
-        </ul>
-      </div>
+        <div className="navbar-center">
+          <ul className="menu menu-horizontal px-1">
+            {mode === 'app'
+              ? appLinks.map((item) => (
+                <li key={item.path}>
+                  <NavLink to={item.path}>
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))
+              : marketingLinks.map((item) => (
+                <li key={item}>
+                  <a>{item}</a>
+                </li>
+              ))}
+          </ul>
+        </div>
 
-      <div className="navbar-end">
-        <NavLink to={actionTo} className="btn btn-primary">
-          {actionLabel}
-        </NavLink>
+        <div className="navbar-end">
+          <NavLink to={actionTo} className="btn btn-primary">
+            {actionLabel}
+          </NavLink>
+        </div>
       </div>
     </div>
   )
