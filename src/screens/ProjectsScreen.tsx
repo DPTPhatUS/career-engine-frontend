@@ -1,7 +1,7 @@
 import ProjectsFormPane from '../components/projects/ProjectsFormPane'
-import ProjectsHeader from '../components/projects/ProjectsHeader'
 import ProjectsListPane from '../components/projects/ProjectsListPane'
 import ProjectsTopNav from '../components/projects/ProjectsTopNav'
+import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
 
 function ProjectsScreen() {
@@ -9,8 +9,11 @@ function ProjectsScreen() {
     <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <ProjectsTopNav />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 pb-28 md:px-8 md:pb-12 lg:pl-14 lg:pr-20">
-        <ProjectsHeader />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+        <ScreenHeader
+          title="Your Projects"
+          description="Manage your projects, track progress, and collaborate with your team all in one place."
+        />
 
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
           <div className="lg:col-span-5">

@@ -5,7 +5,7 @@ function ProfileGithubSection() {
         GitHub Integration
       </legend>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-x-4">
         <div className="w-full">
           <label className="label" htmlFor="github-label">GitHub Label</label>
           <input

@@ -5,7 +5,7 @@ function ProfileGeneralInfoSection() {
         General Information
       </legend>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-x-4">
         <div className="w-full">
           <label className="label" htmlFor="profile-full-name">Full Name</label>
           <input
@@ -27,7 +27,9 @@ function ProfileGeneralInfoSection() {
             placeholder="name@company.com"
           />
         </div>
+      </div>
 
+      <div className="grid grid-cols-2 gap-x-4">
         <div className="w-full">
           <label className="label" htmlFor="profile-phone">Phone Number</label>
           <input

@@ -16,7 +16,7 @@ const defaultBullets = [
   'Implemented a custom DSL for logical branching that supports over 10k concurrent evaluations.',
 ]
 
-function ProjectPrimaryCard({
+function ProjectCard({
   title = 'Quantum Logic Engine',
   period = 'Jan 2024 - Present',
   tags = defaultTags,
@@ -78,4 +78,4 @@ function ProjectPrimaryCard({
   )
 }
 
-export default ProjectPrimaryCard
+export default ProjectCard

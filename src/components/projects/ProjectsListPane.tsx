@@ -1,4 +1,4 @@
-import ProjectPrimaryCard from './ProjectPrimaryCard'
+import ProjectCard from './ProjectCard'
 
 const portfolioEntries = [
   {
@@ -50,7 +50,7 @@ function ProjectsListPane() {
       </div>
 
       {portfolioEntries.map((entry) => (
-        <ProjectPrimaryCard key={entry.title} {...entry} />
+        <ProjectCard key={entry.title} {...entry} />
       ))}
     </section>
   )

@@ -11,7 +11,7 @@ function EducationScreen() {
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         <ScreenHeader
-          title="Education History"
+          title="Academic History"
           description="Manage your academic achievements and credentials to optimize your career trajectory."
         />
 
