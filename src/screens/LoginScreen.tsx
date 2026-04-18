@@ -1,8 +1,8 @@
 import LoginAuthCard from '../components/login/LoginAuthCard'
 import LoginBackground from '../components/login/LoginBackground'
-import LoginFooter from '../components/login/LoginFooter'
 import LoginLegalLinks from '../components/login/LoginLegalLinks'
 import LoginTopNav from '../components/login/LoginTopNav'
+import AppFooter from '../components/shared/navigation/AppFooter'
 
 function LoginScreen() {
   return (
@@ -17,7 +17,7 @@ function LoginScreen() {
         </section>
       </main>
 
-      <LoginFooter />
+      <AppFooter />
     </div>
   )
 }

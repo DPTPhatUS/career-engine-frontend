@@ -1,4 +1,4 @@
-import { GraduationCap, Pencil, Trash2 } from 'lucide-react'
+import { GraduationCap, MapPin, Pencil, Trash2 } from 'lucide-react'
 
 type EducationItem = {
   school: string
@@ -15,71 +15,64 @@ type EducationCardProps = {
 }
 
 function EducationCard({ item }: EducationCardProps) {
+  const hasCoursework = Boolean(item.coursework && item.coursework.length > 0)
+
   return (
-    <article className="group rounded-xl bg-base-100 p-6 shadow-(--ambient-shadow) transition-colors hover:bg-base-200">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex gap-4">
-          <div className="grid h-14 w-14 place-content-center rounded-xl bg-base-300 text-primary">
-            <GraduationCap className="h-6 w-6" aria-hidden="true" />
-          </div>
-
-          <div>
-            <h3 className="text-3xl font-bold tracking-tight text-(--on-surface)">{item.school}</h3>
-            <p className="font-medium text-primary">{item.degree}</p>
-
-            <p className="mt-1 text-sm text-(--on-surface-variant)">
-              {item.period} | {item.location}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            type="button"
-            aria-label="Edit education"
-            className="btn btn-ghost btn-sm btn-square border-0 text-(--on-surface-variant) hover:bg-base-200"
-          >
-            <Pencil className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            aria-label="Delete education"
-            className="btn btn-ghost btn-sm btn-square border-0 text-(--on-surface-variant) hover:bg-error/15 hover:text-error"
-          >
-            <Trash2 className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-5 rounded-lg bg-base-100/70 p-4">
-        <div className="mb-4 grid grid-cols-3 gap-4">
-          <div>
-            <p className="form-label">GPA</p>
-            <p className="mt-1 font-semibold text-(--on-surface)">{item.gpa}</p>
-          </div>
-
-          <div className="col-span-2">
-            <p className="form-label">Field of Study</p>
-            <p className="mt-1 font-semibold text-(--on-surface)">{item.field}</p>
-          </div>
-        </div>
-
-        {item.coursework && item.coursework.length > 0 ? (
-          <div>
-            <p className="form-label">
-              Relevant Coursework
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {item.coursework.map((course) => (
-                <span key={course} className="rounded-full bg-base-300 px-3 py-1 text-xs text-(--on-surface-variant)">
-                  {course}
-                </span>
-              ))}
+    <div className="card bg-base-100 shadow-xl border border-base-300">
+      <div className="card-body">
+        <div className="flex justify-between items-start">
+          <div className="avatar placeholder">
+            <div className="bg-primary/15 text-primary rounded-lg w-12">
+              <GraduationCap className="h-5 w-5" aria-hidden="true" />
             </div>
           </div>
-        ) : null}
+          <div className="badge badge-outline text-xs opacity-70">{item.period}</div>
+        </div>
+
+        <div className="mt-4">
+          <h2 className="card-title text-lg font-bold">{item.degree}</h2>
+          <p className="text-sm text-secondary font-medium">{item.school}</p>
+          <p className="mt-1 flex items-center gap-1.5 text-xs opacity-70">
+            <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+            {item.location}
+          </p>
+        </div>
+
+        <div className="divider my-1"></div>
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-semibold">GPA:</span>
+            <span className="badge badge-ghost badge-sm">{item.gpa}</span>
+            <span className="badge badge-neutral badge-sm">{item.field}</span>
+          </div>
+
+          {hasCoursework ? (
+            <div className="text-sm opacity-80">
+              <p>
+                <strong>Coursework:</strong> {item.coursework?.join(', ')}
+              </p>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="card-actions justify-between mt-4">
+          <div className="badge badge-success gap-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-success-content" aria-hidden="true" />
+            Added
+          </div>
+
+          <div className="join">
+            <button type="button" className="btn btn-ghost btn-sm join-item" aria-label="Edit education item">
+              <Pencil className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button type="button" className="btn btn-ghost btn-sm join-item" aria-label="Delete education item">
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
       </div>
-    </article>
+    </div>
   )
 }
 

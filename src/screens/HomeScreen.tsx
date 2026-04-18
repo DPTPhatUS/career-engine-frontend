@@ -1,8 +1,8 @@
 import HomeBentoGrid from '../components/home/HomeBentoGrid'
-import HomeFooter from '../components/home/HomeFooter'
 import HomeStatsGrid from '../components/home/HomeStatsGrid'
 import HomeTopNav from '../components/home/HomeTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
+import AppFooter from '../components/shared/navigation/AppFooter'
 
 function HomeScreen() {
   return (
@@ -18,7 +18,7 @@ function HomeScreen() {
         <HomeBentoGrid />
       </main>
 
-      <HomeFooter />
+      <AppFooter />
     </div>
   )
 }

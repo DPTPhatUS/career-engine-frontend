@@ -1,9 +1,8 @@
-import EducationFooter from '../components/education/EducationFooter'
 import EducationFormPane from '../components/education/EducationFormPane'
 import EducationHeader from '../components/education/EducationHeader'
 import EducationListPane from '../components/education/EducationListPane'
-import EducationMobileBottomNav from '../components/education/EducationMobileBottomNav'
 import EducationTopNav from '../components/education/EducationTopNav'
+import AppFooter from '../components/shared/navigation/AppFooter'
 
 function EducationScreen() {
   return (
@@ -19,8 +18,7 @@ function EducationScreen() {
         </div>
       </main>
 
-      <EducationFooter />
-      <EducationMobileBottomNav />
+      <AppFooter />
     </div>
   )
 }

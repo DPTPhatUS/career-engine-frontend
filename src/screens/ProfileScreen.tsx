@@ -1,9 +1,9 @@
 import ProfileAlert from '../components/profile/ProfileAlert'
-import ProfileFooter from '../components/profile/ProfileFooter'
 import ProfileGeneralInfoSection from '../components/profile/ProfileGeneralInfoSection'
 import ProfileGithubSection from '../components/profile/ProfileGithubSection'
 import ProfileTopNav from '../components/profile/ProfileTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
+import AppFooter from '../components/shared/navigation/AppFooter'
 
 function ProfileScreen() {
   return (
@@ -22,7 +22,7 @@ function ProfileScreen() {
         </div>
       </main>
 
-      <ProfileFooter />
+      <AppFooter />
     </div>
   )
 }

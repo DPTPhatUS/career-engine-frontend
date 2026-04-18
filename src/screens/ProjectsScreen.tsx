@@ -1,9 +1,8 @@
-import ProjectsFooter from '../components/projects/ProjectsFooter'
 import ProjectsFormPane from '../components/projects/ProjectsFormPane'
 import ProjectsHeader from '../components/projects/ProjectsHeader'
 import ProjectsListPane from '../components/projects/ProjectsListPane'
-import ProjectsMobileFab from '../components/projects/ProjectsMobileFab'
 import ProjectsTopNav from '../components/projects/ProjectsTopNav'
+import AppFooter from '../components/shared/navigation/AppFooter'
 
 function ProjectsScreen() {
   return (
@@ -24,8 +23,7 @@ function ProjectsScreen() {
         </div>
       </main>
 
-      <ProjectsFooter />
-      <ProjectsMobileFab />
+      <AppFooter />
     </div>
   )
 }
