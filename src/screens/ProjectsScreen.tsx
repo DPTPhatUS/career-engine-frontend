@@ -15,14 +15,9 @@ function ProjectsScreen() {
           description="Manage your projects, track progress, and collaborate with your team all in one place."
         />
 
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <ProjectsFormPane />
-          </div>
-
-          <div className="lg:col-span-7">
-            <ProjectsListPane />
-          </div>
+        <div className="grid grid-cols-12 items-start gap-8">
+          <ProjectsFormPane />
+          <ProjectsListPane />
         </div>
       </main>
 

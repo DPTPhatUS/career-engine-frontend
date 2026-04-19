@@ -44,7 +44,7 @@ function EducationCard({ item }: EducationCardProps) {
           </div>
 
           {hasCoursework ? (
-            <div className="text-sm opacity-80">
+            <div className="text-sm">
               <p>
                 <strong>Coursework:</strong> {item.coursework?.join(', ')}
               </p>
@@ -53,8 +53,8 @@ function EducationCard({ item }: EducationCardProps) {
         </div>
 
         <div className="card-actions justify-between mt-4">
-          <div className="badge badge-success gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-success-content" aria-hidden="true" />
+          <div className="badge badge-success">
+            <span className="inline-block size-2 rounded-full bg-success-content" aria-hidden="true" />
             Graduated
           </div>
 

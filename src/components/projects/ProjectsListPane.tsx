@@ -3,7 +3,7 @@ import ProjectCard from './ProjectCard'
 const portfolioEntries = [
   {
     title: 'Quantum Logic Engine',
-    period: 'Jan 2024 - Present',
+    period: 'Jan 2024 - Apr 2024',
     tags: ['Rust', 'WebAssembly', 'PostgreSQL'],
     bullets: [
       'Architected a high-performance computation engine reducing latency by 45% using Rust/WASM hooks.',
@@ -24,8 +24,8 @@ const portfolioEntries = [
     contributorCount: 3,
   },
   {
-    title: 'Terminal.ui Theme',
-    period: 'Jul 2023 - Open Source',
+    title: 'Long Project Name That Might Overflow in the UI and Needs to Be Tested for Responsiveness',
+    period: 'Jul 2023 - Dec 2023',
     tags: ['TypeScript', 'Design System', 'Open Source'],
     bullets: [
       'Designed a terminal-inspired UI theme package adopted by community contributors.',
@@ -38,17 +38,7 @@ const portfolioEntries = [
 
 function ProjectsListPane() {
   return (
-    <section className="space-y-6">
-      <div className="mb-4 flex items-end justify-between">
-        <h2 className="text-3xl font-bold tracking-tight text-(--on-surface)">
-          Active Portfolio <span className="ml-2 text-base font-normal text-(--on-surface-variant)">(3)</span>
-        </h2>
-
-        <button type="button" className="btn btn-ghost btn-sm border-0 gap-1 font-medium normal-case text-primary hover:bg-base-200">
-          Sort by Date
-        </button>
-      </div>
-
+    <section className="space-y-8 lg:col-span-7">
       {portfolioEntries.map((entry) => (
         <ProjectCard key={entry.title} {...entry} />
       ))}

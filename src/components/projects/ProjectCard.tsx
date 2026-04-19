@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react'
+import { FolderGit2, Pencil, Trash2 } from 'lucide-react'
 
 type ProjectPrimaryCardProps = {
   title?: string
@@ -24,57 +24,58 @@ function ProjectCard({
   repositoryLabel = 'View Repository',
 }: ProjectPrimaryCardProps) {
   return (
-    <article className="group rounded-xl bg-base-200 p-6 shadow-(--ambient-shadow) transition-colors duration-300 hover:bg-base-300">
-      <div className="mb-4 flex items-start justify-between">
-        <div>
-          <h3 className="text-3xl font-bold tracking-tight text-(--on-surface) transition-colors group-hover:text-primary">
-            {title}
-          </h3>
-          <p className="text-xs text-(--on-surface-variant)">{period}</p>
+    <div className="card border border-base-300 bg-base-100">
+      <div className="card-body">
+        <div className="flex items-start justify-between">
+          <FolderGit2 className="text-primary" aria-hidden="true" />
+          <div className="badge badge-outline text-xs opacity-70">{period}</div>
         </div>
 
-        <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-          <button
-            type="button"
-            aria-label="Edit project"
-            className="btn btn-ghost btn-sm btn-square border-0 text-(--on-surface-variant) hover:bg-base-100 hover:text-primary"
-          >
-            <Pencil className="h-4 w-4" aria-hidden="true" />
+        <h2 className="card-title">{title}</h2>
+
+        <div className="divider my-1"></div>
+
+        <div className="mb-2 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span key={tag} className="badge badge-ghost badge-sm">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <ul className="text-sm opacity-80">
+          {bullets.map((bullet) => (
+            <li key={bullet} className="flex gap-3">
+              <span className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="card-actions justify-between mt-2">
+          <button type="button" className="btn btn-ghost btn-sm text-primary">
+            {repositoryLabel}
           </button>
-          <button
-            type="button"
-            aria-label="Delete project"
-            className="btn btn-ghost btn-sm btn-square border-0 text-(--on-surface-variant) hover:bg-base-100 hover:text-error"
-          >
-            <Trash2 className="h-4 w-4" aria-hidden="true" />
-          </button>
+
+          <div>
+            <button
+              type="button"
+              aria-label="Edit project"
+              className="btn btn-ghost btn-sm"
+            >
+              <Pencil className="size-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-label="Delete project"
+              className="btn btn-ghost btn-sm"
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </div>
-
-      <div className="mb-6 flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <span key={tag} className="rounded px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-base-100 text-(--on-surface-variant)">
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <ul className="mb-6 space-y-3 text-sm text-(--on-surface-variant)">
-        {bullets.map((bullet) => (
-          <li key={bullet} className="flex gap-3">
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-            <span>{bullet}</span>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-2 flex items-center justify-between rounded-lg bg-base-100/70 px-3 py-3">
-        <button type="button" className="btn btn-ghost btn-sm border-0 gap-2 px-0 text-xs font-bold uppercase tracking-wide text-primary hover:bg-transparent">
-          {repositoryLabel}
-          <span>{'->'}</span>
-        </button>
-      </div>
-    </article>
+    </div>
   )
 }
 

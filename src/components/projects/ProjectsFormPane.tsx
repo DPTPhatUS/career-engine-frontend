@@ -2,101 +2,80 @@ const defaultStack = ['TypeScript', 'Next.js', 'Tailwind']
 
 function ProjectsFormPane() {
   return (
-    <section className="space-y-8">
-      <div className="rounded-xl bg-base-100 p-8 shadow-(--ambient-shadow)">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold tracking-tight text-(--on-surface)">Project Details</h2>
-          <p className="mt-1 text-sm text-(--on-surface-variant)">Capture project metadata and outcomes.</p>
+    <div className="lg:sticky lg:top-24 lg:col-span-5">
+      <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
+        <legend className="fieldset-legend">Project Editor</legend>
+
+        <div>
+          <label className="label">Project Title</label>
+          <input
+            type="text"
+            placeholder="e.g. Neural Link Dashboard"
+            className="input w-full"
+          />
         </div>
 
-        <form className="space-y-6">
-          <label className="block">
-            <span className="form-label mb-2 block">
-              Project Title
-            </span>
-            <input
-              type="text"
-              placeholder="e.g. Neural Link Dashboard"
-              className="ghost-field h-12 w-full rounded-lg px-4 text-base"
-            />
-          </label>
-
-          <div className="grid grid-cols-2 gap-4">
-            <label className="block">
-              <span className="form-label mb-2 block">
-                Start Date
-              </span>
-              <input type="date" className="ghost-field h-12 w-full rounded-lg px-4 text-base" />
-            </label>
-
-            <label className="block">
-              <span className="form-label mb-2 block">
-                End Date
-              </span>
-              <input type="date" className="ghost-field h-12 w-full rounded-lg px-4 text-base" />
-            </label>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="label">Start Date</label>
+            <input type="date" className="input w-full" />
           </div>
-
-          <label className="block">
-            <span className="form-label mb-2 block">
-              GitHub Repository URL
-            </span>
-            <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-(--on-surface-variant)">
-                github.com/
-              </span>
-              <input
-                type="text"
-                placeholder="username/repo"
-                className="ghost-field h-12 w-full rounded-lg px-4 pl-28 text-base"
-              />
-            </div>
-          </label>
 
           <div>
-            <span className="form-label mb-2 block">
-              Tech Stack
+            <label className="label">End Date</label>
+            <input type="date" className="input w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label className="label">Project Link</label>
+          <div className="relative">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-(--on-surface-variant)">
+              github.com/
             </span>
-
-            <div className="mb-3 flex flex-wrap gap-2">
-              {defaultStack.map((tech) => (
-                <span
-                  key={tech}
-                  className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-content"
-                >
-                  {tech}
-                  <span className="text-[11px]">x</span>
-                </span>
-              ))}
-            </div>
-
             <input
               type="text"
-              placeholder="Add technology..."
-              className="ghost-field h-12 w-full rounded-lg px-4 text-base"
+              placeholder="username/repo"
+              className="input w-full pl-28"
             />
           </div>
+        </div>
 
-          <label className="block">
-            <span className="form-label mb-2 block">
-              Key Accomplishments
-            </span>
-            <textarea
-              rows={4}
-              placeholder="Bullet points detailing your impact..."
-              className="ghost-field w-full rounded-lg px-4 py-3 text-base"
-            />
-            <p className="mt-1 text-[11px] italic text-(--on-surface-variant)">
-              Use markdown or plain text bullet points.
-            </p>
-          </label>
+        <div>
+          <label className="label">Tech Stack</label>
+          <div className="mb-1 flex flex-wrap gap-1">
+            {defaultStack.map((tech) => (
+              <div key={tech} className="badge badge-secondary badge-sm">
+                {tech}
+              </div>
+            ))}
+          </div>
+          <input
+            type="text"
+            placeholder="Add technology..."
+            className="input w-full"
+          />
+        </div>
 
-          <button type="submit" className="btn primary-cta h-14 w-full border-0 text-base font-bold normal-case">
+        <div>
+          <label className="label">Key Accomplishments</label>
+          <textarea
+            rows={4}
+            placeholder="Bullet points detailing your impact..."
+            className="textarea w-full"
+          />
+        </div>
+
+        <div className="mt-4 flex gap-4">
+          <button type="submit" className="btn btn-neutral flex-1">
             Save Project Entry
           </button>
-        </form>
-      </div>
-    </section>
+          <button type="button" className="btn btn-outline">
+            Cancel
+          </button>
+        </div>
+      </fieldset>
+    </div>
   )
 }
 
