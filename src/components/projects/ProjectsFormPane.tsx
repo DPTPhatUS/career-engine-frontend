@@ -27,18 +27,18 @@ function ProjectsFormPane() {
           </div>
         </div>
 
-        <div>
-          <label className="label">Project Link</label>
-          <div className="relative">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-(--on-surface-variant)">
-              github.com/
-            </span>
-            <input
-              type="text"
-              placeholder="username/repo"
-              className="input w-full pl-28"
-            />
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="label">Project Link</label>
+            <label className="input w-full">
+              <span className="label">github.com/</span>
+              <input type="text" placeholder="username/repo" />
+            </label>
           </div>
+
+          <button type="button" className="btn btn-primary self-end">
+            Autofill
+          </button>
         </div>
 
         <div>
@@ -68,7 +68,7 @@ function ProjectsFormPane() {
 
         <div className="mt-4 flex gap-4">
           <button type="submit" className="btn btn-neutral flex-1">
-            Save Project Entry
+            Save Project
           </button>
           <button type="button" className="btn btn-outline">
             Cancel
