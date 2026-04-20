@@ -1,4 +1,25 @@
-function ProfileGithubSection() {
+type GithubValues = {
+  githubLabel: string
+  githubUsername: string
+}
+
+type ProfileGithubSectionProps = {
+  values: GithubValues
+  disabled?: boolean
+  isSaving?: boolean
+  onChange: (field: keyof GithubValues, value: string) => void
+  onClear: () => void
+  onSave: () => void
+}
+
+function ProfileGithubSection({
+  values,
+  disabled = false,
+  isSaving = false,
+  onChange,
+  onClear,
+  onSave,
+}: ProfileGithubSectionProps) {
   return (
     <fieldset className="fieldset bg-base-200 border border-base-300 rounded-box p-4">
       <legend className="fieldset-legend">
@@ -12,32 +33,36 @@ function ProfileGithubSection() {
             id="github-label"
             type="text"
             className="input w-full"
-            defaultValue="GitHub"
+            value={values.githubLabel}
+            onChange={(event) => onChange('githubLabel', event.target.value)}
             placeholder="e.g. Primary Repo"
+            disabled={disabled}
           />
         </div>
 
         <div className="w-full">
           <label className="label" htmlFor="github-profile">GitHub Profile Link</label>
           <label className="input w-full" htmlFor="github-profile">
-            <span className="text-base-content/60">github.com/</span>
+            <span className="label">github.com/</span>
             <input
               id="github-profile"
               type="text"
               className="grow"
-              defaultValue="arivera-dev"
+              value={values.githubUsername}
+              onChange={(event) => onChange('githubUsername', event.target.value)}
               placeholder="username"
+              disabled={disabled}
             />
           </label>
         </div>
       </div>
 
       <div className="mt-4 flex justify-end gap-4">
-        <button className="btn btn-outline">
+        <button type="button" className="btn btn-outline" onClick={onClear} disabled={disabled}>
           Clear
         </button>
-        <button className="btn btn-neutral">
-          Save
+        <button type="button" className="btn btn-neutral" onClick={onSave} disabled={disabled || isSaving}>
+          {isSaving ? 'Saving...' : 'Save'}
         </button>
       </div>
     </fieldset>

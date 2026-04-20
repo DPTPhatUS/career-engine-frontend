@@ -5,7 +5,12 @@ import {
   UserRound,
 } from 'lucide-react'
 
-function HomeStatsGrid() {
+type HomeStatsGridProps = {
+  educationCount: number
+  projectCount: number
+}
+
+function HomeStatsGrid({ educationCount, projectCount }: HomeStatsGridProps) {
   return (
     <div className="stats border border-base-300 w-full mb-6">
       <div className="stat border-r">
@@ -21,18 +26,18 @@ function HomeStatsGrid() {
         <div className="stat-figure text-primary">
           <GraduationCap className="h-8 w-8" />
         </div>
-        <div className="stat-title">Education Credits</div>
-        <div className="stat-value">124</div>
-        <div className="stat-desc">+4 since last month</div>
+        <div className="stat-title">Education Entries</div>
+        <div className="stat-value">{educationCount}</div>
+        <div className="stat-desc">From your saved academic history</div>
       </div>
 
       <div className="stat border-r">
         <div className="stat-figure text-primary">
           <FolderKanban className="h-8 w-8" />
         </div>
-        <div className="stat-title">Active Projects</div>
-        <div className="stat-value">06</div>
-        <div className="stat-desc">2 nearing completion</div>
+        <div className="stat-title">Projects</div>
+        <div className="stat-value">{projectCount.toString().padStart(2, '0')}</div>
+        <div className="stat-desc">Tracked in your portfolio list</div>
       </div>
 
       <div className="stat">

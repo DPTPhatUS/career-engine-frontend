@@ -1,46 +1,36 @@
-import ProjectCard from './ProjectCard'
+import ProjectCard, { type ProjectItem } from './ProjectCard'
 
-const portfolioEntries = [
-  {
-    title: 'Quantum Logic Engine',
-    period: 'Jan 2024 - Apr 2024',
-    tags: ['Rust', 'WebAssembly', 'PostgreSQL'],
-    bullets: [
-      'Architected a high-performance computation engine reducing latency by 45% using Rust/WASM hooks.',
-      'Implemented a custom DSL for logical branching that supports over 10k concurrent evaluations.',
-    ],
-    repositoryLabel: 'View Repository',
-    contributorCount: 4,
-  },
-  {
-    title: 'DataSphere CRM',
-    period: 'Aug 2022 - Dec 2023',
-    tags: ['React', 'Node.js', 'PostgreSQL'],
-    bullets: [
-      'Built a multi-tenant CRM platform for freelance collectives with role-based access controls.',
-      'Improved lead conversion visibility through custom reporting dashboards and event tracking.',
-    ],
-    repositoryLabel: 'View Repository',
-    contributorCount: 3,
-  },
-  {
-    title: 'Long Project Name That Might Overflow in the UI and Needs to Be Tested for Responsiveness',
-    period: 'Jul 2023 - Dec 2023',
-    tags: ['TypeScript', 'Design System', 'Open Source'],
-    bullets: [
-      'Designed a terminal-inspired UI theme package adopted by community contributors.',
-      'Shipped reusable components with accessibility-first tokens and keyboard interaction support.',
-    ],
-    repositoryLabel: 'View Repository',
-    contributorCount: 2,
-  },
-]
+type ProjectsListPaneProps = {
+  projects: ProjectItem[]
+  deletingId: string | null
+  onEdit: (item: ProjectItem) => void
+  onDelete: (item: ProjectItem) => void
+}
 
-function ProjectsListPane() {
+function ProjectsListPane({ projects, deletingId, onEdit, onDelete }: ProjectsListPaneProps) {
+  if (projects.length === 0) {
+    return (
+      <section className="lg:col-span-7">
+        <div className="card border border-dashed border-base-300 bg-base-100">
+          <div className="card-body">
+            <h3 className="text-lg font-semibold">No projects yet</h3>
+            <p className="text-sm opacity-70">Save your first project from the editor pane.</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="space-y-8 lg:col-span-7">
-      {portfolioEntries.map((entry) => (
-        <ProjectCard key={entry.title} {...entry} />
+      {projects.map((project) => (
+        <ProjectCard
+          key={project.id}
+          item={project}
+          isDeleting={deletingId === project.id}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
       ))}
     </section>
   )

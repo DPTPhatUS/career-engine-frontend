@@ -1,4 +1,27 @@
-function ProfileGeneralInfoSection() {
+type GeneralInfoValues = {
+  fullName: string
+  email: string
+  phone: string
+  address: string
+}
+
+type ProfileGeneralInfoSectionProps = {
+  values: GeneralInfoValues
+  disabled?: boolean
+  isSaving?: boolean
+  onChange: (field: keyof GeneralInfoValues, value: string) => void
+  onClear: () => void
+  onSave: () => void
+}
+
+function ProfileGeneralInfoSection({
+  values,
+  disabled = false,
+  isSaving = false,
+  onChange,
+  onClear,
+  onSave,
+}: ProfileGeneralInfoSectionProps) {
   return (
     <fieldset className="fieldset bg-base-200 border border-base-300 rounded-box p-4">
       <legend className="fieldset-legend">
@@ -12,8 +35,10 @@ function ProfileGeneralInfoSection() {
             id="profile-full-name"
             type="text"
             className="input w-full"
-            defaultValue="Alex Rivera"
+            value={values.fullName}
+            onChange={(event) => onChange('fullName', event.target.value)}
             placeholder="e.g. John Doe"
+            disabled={disabled}
           />
         </div>
 
@@ -23,8 +48,10 @@ function ProfileGeneralInfoSection() {
             id="profile-email"
             type="email"
             className="input w-full"
-            defaultValue="alex.rivera@careerengine.io"
+            value={values.email}
+            onChange={(event) => onChange('email', event.target.value)}
             placeholder="name@company.com"
+            disabled={disabled}
           />
         </div>
       </div>
@@ -36,8 +63,10 @@ function ProfileGeneralInfoSection() {
             id="profile-phone"
             type="tel"
             className="input w-full"
-            defaultValue="+1 (555) 012-3456"
+            value={values.phone}
+            onChange={(event) => onChange('phone', event.target.value)}
             placeholder="+1 (234) 567-890"
+            disabled={disabled}
           />
         </div>
 
@@ -47,18 +76,20 @@ function ProfileGeneralInfoSection() {
             id="profile-location"
             type="text"
             className="input w-full"
-            defaultValue="San Francisco, CA"
+            value={values.address}
+            onChange={(event) => onChange('address', event.target.value)}
             placeholder="City, State, Country"
+            disabled={disabled}
           />
         </div>
       </div>
-      
+
       <div className="mt-4 flex justify-end gap-4">
-        <button className="btn btn-outline">
+        <button type="button" className="btn btn-outline" onClick={onClear} disabled={disabled}>
           Clear
         </button>
-        <button className="btn btn-neutral">
-          Save
+        <button type="button" className="btn btn-neutral" onClick={onSave} disabled={disabled || isSaving}>
+          {isSaving ? 'Saving...' : 'Save'}
         </button>
       </div>
     </fieldset>

@@ -5,15 +5,44 @@ import LoginScreen from './screens/LoginScreen.tsx'
 import ProfileScreen from './screens/ProfileScreen.tsx'
 import ProjectsScreen from './screens/ProjectsScreen.tsx'
 import ResumeScreen from './screens/ResumeScreen.tsx'
+import RequireAuth from './components/shared/navigation/RequireAuth.tsx'
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginScreen />} />
-      <Route path="/home" element={<HomeScreen />} />
-      <Route path="/profile" element={<ProfileScreen />} />
-      <Route path="/education" element={<EducationScreen />} />
-      <Route path="/projects" element={<ProjectsScreen />} />
+      <Route
+        path="/home"
+        element={(
+          <RequireAuth>
+            <HomeScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/profile"
+        element={(
+          <RequireAuth>
+            <ProfileScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/education"
+        element={(
+          <RequireAuth>
+            <EducationScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/projects"
+        element={(
+          <RequireAuth>
+            <ProjectsScreen />
+          </RequireAuth>
+        )}
+      />
       <Route path="/resume" element={<ResumeScreen />} />
 
       <Route path="/" element={<Navigate to="/home" replace />} />

@@ -17,7 +17,13 @@ const googleIconPaths = [
   },
 ]
 
-function LoginAuthCard() {
+type LoginAuthCardProps = {
+  onGoogleLogin: () => void
+  isLoading?: boolean
+  errorMessage?: string | null
+}
+
+function LoginAuthCard({ onGoogleLogin, isLoading = false, errorMessage = null }: LoginAuthCardProps) {
   return (
     <article className="rounded-xl bg-base-100 p-8 text-center shadow-(--ambient-shadow) md:p-12">
       <div className="mb-10 inline-flex h-16 w-16 items-center justify-center rounded-full bg-base-200 text-primary">
@@ -34,15 +40,23 @@ function LoginAuthCard() {
         <button
           type="button"
           className="btn mx-auto inline-flex h-14 min-h-14 w-65 max-w-full items-center justify-center gap-2 rounded-xl border-0 bg-base-200 px-6 text-base font-semibold normal-case text-(--on-surface) hover:bg-base-300"
+          onClick={onGoogleLogin}
+          disabled={isLoading}
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
             {googleIconPaths.map((path) => (
               <path key={path.fill} d={path.d} fill={path.fill} />
             ))}
           </svg>
-          Sign in with Google
+          {isLoading ? 'Redirecting...' : 'Sign in with Google'}
         </button>
       </div>
+
+      {errorMessage ? (
+        <p role="alert" className="mt-4 text-sm text-error">
+          {errorMessage}
+        </p>
+      ) : null}
 
       <div className="mt-12 flex flex-col items-center gap-6">
         <div className="h-1 w-12 rounded-full bg-base-300" />
