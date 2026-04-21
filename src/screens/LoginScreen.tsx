@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import LoginAuthCard from '../components/login/LoginAuthCard'
-import LoginBackground from '../components/login/LoginBackground'
-import LoginLegalLinks from '../components/login/LoginLegalLinks'
 import LoginTopNav from '../components/login/LoginTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
 import { useAuth } from '../contexts/AuthContext'
@@ -29,19 +27,15 @@ function LoginScreen() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-clip bg-(--surface) text-(--on-surface)">
-      <LoginBackground />
+    <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <LoginTopNav />
 
-      <main className="relative z-10 mx-auto flex w-full max-w-md flex-1 items-center px-6 py-28 md:px-8 md:py-32">
-        <section className="w-full">
-          <LoginAuthCard
-            onGoogleLogin={() => void handleGoogleLogin()}
-            isLoading={isStartingLogin}
-            errorMessage={errorMessage}
-          />
-          <LoginLegalLinks />
-        </section>
+      <main className="mx-auto flex w-full flex-1 items-center justify-center">
+        <LoginAuthCard
+          onGoogleLogin={() => void handleGoogleLogin()}
+          isLoading={isStartingLogin}
+          errorMessage={errorMessage}
+        />
       </main>
 
       <AppFooter />

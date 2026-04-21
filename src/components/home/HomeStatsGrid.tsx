@@ -28,7 +28,7 @@ function HomeStatsGrid({ educationCount, projectCount }: HomeStatsGridProps) {
         </div>
         <div className="stat-title">Education Entries</div>
         <div className="stat-value">{educationCount}</div>
-        <div className="stat-desc">From your saved academic history</div>
+        <div className="stat-desc">From your academic history</div>
       </div>
 
       <div className="stat border-r">
@@ -36,8 +36,8 @@ function HomeStatsGrid({ educationCount, projectCount }: HomeStatsGridProps) {
           <FolderKanban className="h-8 w-8" />
         </div>
         <div className="stat-title">Projects</div>
-        <div className="stat-value">{projectCount.toString().padStart(2, '0')}</div>
-        <div className="stat-desc">Tracked in your portfolio list</div>
+        <div className="stat-value">{projectCount}</div>
+        <div className="stat-desc">Tracked in your portfolio</div>
       </div>
 
       <div className="stat">

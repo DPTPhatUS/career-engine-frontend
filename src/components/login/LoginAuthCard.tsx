@@ -25,46 +25,32 @@ type LoginAuthCardProps = {
 
 function LoginAuthCard({ onGoogleLogin, isLoading = false, errorMessage = null }: LoginAuthCardProps) {
   return (
-    <article className="rounded-xl bg-base-100 p-8 text-center shadow-(--ambient-shadow) md:p-12">
-      <div className="mb-10 inline-flex h-16 w-16 items-center justify-center rounded-full bg-base-200 text-primary">
-        <span className="text-2xl font-black tracking-tight">CE</span>
+    <div className="card bg-base-100 shadow-xl w-full max-w-xs">
+      <div className="card-body">
+        <h1 className="card-title">Career Engine</h1>
+        <p>Curate your professional legacy</p>
+        <div className="card-actions justify-center mt-4">
+          <button
+            className="btn btn-outline w-full"
+            onClick={onGoogleLogin}
+            disabled={isLoading}
+          >
+            <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
+              {googleIconPaths.map((path) => (
+                <path key={path.fill} d={path.d} fill={path.fill} />
+              ))}
+            </svg>
+            {isLoading ? 'Redirecting...' : 'Sign in with Google'}
+          </button>
+        </div>
+
+        {errorMessage ? (
+          <div role="alert" className="alert alert-error alert-soft mt-4">
+            <span>{errorMessage}</span>
+          </div>
+        ) : null}
       </div>
-
-      <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-(--on-surface)">Career Engine</h1>
-
-      <p className="mb-10 text-base font-medium text-(--on-surface-variant)">
-        Curate your professional legacy
-      </p>
-
-      <div className="flex w-full justify-center">
-        <button
-          type="button"
-          className="btn mx-auto inline-flex h-14 min-h-14 w-65 max-w-full items-center justify-center gap-2 rounded-xl border-0 bg-base-200 px-6 text-base font-semibold normal-case text-(--on-surface) hover:bg-base-300"
-          onClick={onGoogleLogin}
-          disabled={isLoading}
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-            {googleIconPaths.map((path) => (
-              <path key={path.fill} d={path.d} fill={path.fill} />
-            ))}
-          </svg>
-          {isLoading ? 'Redirecting...' : 'Sign in with Google'}
-        </button>
-      </div>
-
-      {errorMessage ? (
-        <p role="alert" className="mt-4 text-sm text-error">
-          {errorMessage}
-        </p>
-      ) : null}
-
-      <div className="mt-12 flex flex-col items-center gap-6">
-        <div className="h-1 w-12 rounded-full bg-base-300" />
-        <p className="text-xs font-medium uppercase tracking-[0.25em] text-(--on-surface-variant)">
-          Precision in Recruitment
-        </p>
-      </div>
-    </article>
+    </div>
   )
 }
 

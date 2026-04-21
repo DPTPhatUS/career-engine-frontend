@@ -78,14 +78,14 @@ function ProjectsFormPane({
         </div>
 
         <div>
-          <label className="label">Completion Status</label>
+          <label className="label">Status</label>
           <select
             className="select w-full"
             value={values.completionStatus}
             onChange={(event) => onChange('completionStatus', event.target.value)}
           >
-            <option value="completed">Completed</option>
-            <option value="present">Present</option>
+            <option value="completed">Complete</option>
+            <option value="present">Ongoing</option>
           </select>
         </div>
 
@@ -115,7 +115,7 @@ function ProjectsFormPane({
 
         <div>
           <label className="label">Tech Stack</label>
-          <div className="mb-1 flex flex-wrap gap-1">
+          <div className={`${values.techStack.length > 0 ? 'mb-1' : ''} flex flex-wrap gap-1`}>
             {values.techStack.map((tech) => (
               <button
                 key={tech}
@@ -159,7 +159,7 @@ function ProjectsFormPane({
             {isSubmitting ? 'Saving...' : isEditing ? 'Update Project' : 'Save Project'}
           </button>
           <button type="button" className="btn btn-outline" onClick={onCancel} disabled={isSubmitting}>
-            Cancel
+            Clear
           </button>
         </div>
       </fieldset>

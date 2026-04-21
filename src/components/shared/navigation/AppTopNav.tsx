@@ -17,7 +17,6 @@ type AppTopNavProps = {
   actionLabel?: string
   actionTo?: string
   actionType?: 'link' | 'button'
-  fixed?: boolean
   marketingLinks?: string[]
   onActionClick?: () => void
 }
