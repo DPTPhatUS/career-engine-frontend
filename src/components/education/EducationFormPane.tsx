@@ -1,4 +1,4 @@
-type CompletionStatus = 'completed' | 'present' | 'expected'
+type CompletionStatus = 'graduated' | 'ongoing'
 
 type EducationFormValues = {
   university: string
@@ -29,8 +29,6 @@ function EducationFormPane({
   onSubmit,
   onCancel,
 }: EducationFormPaneProps) {
-  const needsEndDate = values.completionStatus === 'completed'
-
   return (
     <div className="lg:sticky lg:top-24 lg:col-span-5">
       <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
@@ -89,7 +87,6 @@ function EducationFormPane({
               className="input w-full"
               value={values.endMonth}
               onChange={(event) => onChange('endMonth', event.target.value)}
-              disabled={!needsEndDate}
             />
           </div>
         </div>
@@ -101,9 +98,8 @@ function EducationFormPane({
             value={values.completionStatus}
             onChange={(event) => onChange('completionStatus', event.target.value)}
           >
-            <option value="completed">Completed</option>
-            <option value="present">Present</option>
-            <option value="expected">Expected</option>
+            <option value="graduated">Graduated</option>
+            <option value="ongoing">Ongoing</option>
           </select>
         </div>
 
@@ -146,7 +142,7 @@ function EducationFormPane({
             {isSubmitting ? 'Saving...' : isEditing ? 'Update Education' : 'Save Education'}
           </button>
           <button type="button" className="btn btn-outline" onClick={onCancel} disabled={isSubmitting}>
-            Cancel
+            Clear
           </button>
         </div>
       </fieldset>

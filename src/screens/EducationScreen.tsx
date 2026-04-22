@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   createEducation,
   deleteEducation,
-  listEducations,
   updateEducation,
   type EducationPayload,
   type EducationRecord,
@@ -14,6 +13,8 @@ import EducationListPane from '../components/education/EducationListPane'
 import EducationTopNav from '../components/education/EducationTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
+import { useAppData } from '../contexts/AppDataContext'
+import { useNotification } from '../contexts/NotificationContext'
 
 function formatMonthYear(value: string) {
   const [year, month] = value.split('-')
@@ -84,7 +85,7 @@ function parseTimePeriod(timePeriod: string): {
     return {
       startMonth: parseMonthInput(timePeriod),
       endMonth: '',
-      completionStatus: 'completed',
+      completionStatus: 'graduated',
     }
   }
 
@@ -92,11 +93,20 @@ function parseTimePeriod(timePeriod: string): {
   const endPart = parts.slice(1).join(' - ')
   const normalizedEnd = endPart.trim().toLowerCase()
 
+  const expectedMatch = endPart.match(/^(.*?)(?:\s*)\((?:expected)\)\s*$/i)
+  if (expectedMatch) {
+    return {
+      startMonth: parseMonthInput(startPart),
+      endMonth: parseMonthInput(expectedMatch[1] ?? ''),
+      completionStatus: 'ongoing',
+    }
+  }
+
   if (normalizedEnd.includes('present')) {
     return {
       startMonth: parseMonthInput(startPart),
       endMonth: '',
-      completionStatus: 'present',
+      completionStatus: 'ongoing',
     }
   }
 
@@ -104,14 +114,14 @@ function parseTimePeriod(timePeriod: string): {
     return {
       startMonth: parseMonthInput(startPart),
       endMonth: '',
-      completionStatus: 'expected',
+      completionStatus: 'ongoing',
     }
   }
 
   return {
     startMonth: parseMonthInput(startPart),
     endMonth: parseMonthInput(endPart),
-    completionStatus: 'completed',
+    completionStatus: 'graduated',
   }
 }
 
@@ -162,7 +172,7 @@ function createInitialFormValues(): EducationFormValues {
     field: '',
     startMonth: '',
     endMonth: '',
-    completionStatus: 'completed',
+    completionStatus: 'graduated',
     gpa: '',
     location: '',
     coursework: '',
@@ -171,16 +181,13 @@ function createInitialFormValues(): EducationFormValues {
 
 function buildTimePeriod(values: EducationFormValues) {
   const start = formatMonthYear(values.startMonth)
+  const end = formatMonthYear(values.endMonth)
 
-  if (values.completionStatus === 'present') {
-    return `${start} - Present`
+  if (values.completionStatus === 'ongoing') {
+    return `${start} - ${end} (Expected)`
   }
 
-  if (values.completionStatus === 'expected') {
-    return `${start} - Expected`
-  }
-
-  return `${start} - ${formatMonthYear(values.endMonth)}`
+  return `${start} - ${end}`
 }
 
 function buildEducationPayload(values: EducationFormValues): EducationPayload {
@@ -196,39 +203,34 @@ function buildEducationPayload(values: EducationFormValues): EducationPayload {
 }
 
 function EducationScreen() {
-  const [educations, setEducations] = useState<EducationRecord[]>([])
+  const {
+    clearEducationsError,
+    educations,
+    educationsError,
+    refreshEducations,
+    setEducations,
+  } = useAppData()
+  const { notifyError, notifySuccess } = useNotification()
   const [formValues, setFormValues] = useState<EducationFormValues>(createInitialFormValues)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const educationItems = useMemo(() => educations.map(mapEducationToCardItem), [educations])
 
-  const loadEducations = useCallback(async () => {
-    setIsLoading(true)
-
-    try {
-      const response = await listEducations()
-      setEducations(response)
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to load education history')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    void loadEducations()
-  }, [loadEducations])
+    if (!educationsError) {
+      return
+    }
+
+    notifyError(educationsError)
+    clearEducationsError()
+  }, [clearEducationsError, educationsError, notifyError])
 
   function updateFormValue(field: keyof EducationFormValues, value: string) {
     setFormValues((previous) => ({
       ...previous,
       [field]: value,
-      ...(field === 'completionStatus' && value !== 'completed' ? { endMonth: '' } : {}),
     }))
   }
 
@@ -243,36 +245,34 @@ function EducationScreen() {
     const field = formValues.field.trim()
 
     if (!university || !degree || !field || !formValues.startMonth) {
-      setErrorMessage('University, degree, field of study, and start date are required.')
-      setSuccessMessage(null)
+      notifyError('University, degree, field of study, and start date are required.')
       return
     }
 
-    if (formValues.completionStatus === 'completed' && !formValues.endMonth) {
-      setErrorMessage('End date is required when completion status is Completed.')
-      setSuccessMessage(null)
+    if (!formValues.endMonth) {
+      notifyError('End date is required.')
       return
     }
 
     setIsSubmitting(true)
-    setErrorMessage(null)
-    setSuccessMessage(null)
 
     try {
       const payload = buildEducationPayload(formValues)
 
       if (editingId) {
-        await updateEducation(editingId, payload)
-        setSuccessMessage('Education entry updated.')
+        const updated = await updateEducation(editingId, payload)
+        setEducations((previous) => previous.map((education) => (education.id === updated.id ? updated : education)))
+        notifySuccess('Education entry updated.')
       } else {
-        await createEducation(payload)
-        setSuccessMessage('Education entry created.')
+        const created = await createEducation(payload)
+        setEducations((previous) => [...previous, created].sort((left, right) => left.sort_order - right.sort_order))
+        notifySuccess('Education entry created.')
       }
 
-      await loadEducations()
+      void refreshEducations()
       resetForm()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to save education entry')
+      notifyError(error instanceof Error ? error.message : 'Unable to save education entry')
     } finally {
       setIsSubmitting(false)
     }
@@ -286,8 +286,6 @@ function EducationScreen() {
 
     setEditingId(target.id)
     setFormValues(mapEducationToForm(target))
-    setErrorMessage(null)
-    setSuccessMessage(null)
   }
 
   async function handleDelete(item: EducationItem) {
@@ -297,20 +295,19 @@ function EducationScreen() {
     }
 
     setDeletingId(item.id)
-    setErrorMessage(null)
-    setSuccessMessage(null)
 
     try {
       await deleteEducation(item.id)
-      await loadEducations()
+      setEducations((previous) => previous.filter((education) => education.id !== item.id))
 
       if (editingId === item.id) {
         resetForm()
       }
 
-      setSuccessMessage('Education entry deleted.')
+      notifySuccess('Education entry deleted.')
+      void refreshEducations()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to delete education entry')
+      notifyError(error instanceof Error ? error.message : 'Unable to delete education entry')
     } finally {
       setDeletingId(null)
     }
@@ -325,24 +322,6 @@ function EducationScreen() {
           title="Academic History"
           description="Manage your academic achievements and credentials to optimize your career trajectory."
         />
-
-        {isLoading ? (
-          <div role="status" className="alert alert-info">
-            <span>Loading education history...</span>
-          </div>
-        ) : null}
-
-        {errorMessage ? (
-          <div role="alert" className="alert alert-error">
-            <span>{errorMessage}</span>
-          </div>
-        ) : null}
-
-        {successMessage ? (
-          <div role="status" className="alert alert-success">
-            <span>{successMessage}</span>
-          </div>
-        ) : null}
 
         <div className="grid grid-cols-12 items-start gap-8">
           <EducationListPane

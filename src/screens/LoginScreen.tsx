@@ -4,20 +4,20 @@ import LoginAuthCard from '../components/login/LoginAuthCard'
 import LoginTopNav from '../components/login/LoginTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotification } from '../contexts/NotificationContext'
 
 function LoginScreen() {
   const { beginGoogleLogin, status } = useAuth()
+  const { notifyError } = useNotification()
   const [isStartingLogin, setIsStartingLogin] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   async function handleGoogleLogin() {
     setIsStartingLogin(true)
-    setErrorMessage(null)
 
     try {
       await beginGoogleLogin('/home')
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to start Google sign in')
+      notifyError(error instanceof Error ? error.message : 'Unable to start Google sign in')
       setIsStartingLogin(false)
     }
   }
@@ -34,7 +34,6 @@ function LoginScreen() {
         <LoginAuthCard
           onGoogleLogin={() => void handleGoogleLogin()}
           isLoading={isStartingLogin}
-          errorMessage={errorMessage}
         />
       </main>
 

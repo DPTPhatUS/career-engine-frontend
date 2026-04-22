@@ -1,10 +1,7 @@
-type ProjectCompletionStatus = 'completed' | 'present'
-
 type ProjectsFormValues = {
   title: string
   startMonth: string
   endMonth: string
-  completionStatus: ProjectCompletionStatus
   githubRepo: string
   techInput: string
   techStack: string[]
@@ -36,8 +33,6 @@ function ProjectsFormPane({
   onCancel,
   onAutofill,
 }: ProjectsFormPaneProps) {
-  const needsEndDate = values.completionStatus === 'completed'
-
   return (
     <div className="lg:sticky lg:top-24 lg:col-span-5">
       <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
@@ -72,21 +67,8 @@ function ProjectsFormPane({
               className="input w-full"
               value={values.endMonth}
               onChange={(event) => onChange('endMonth', event.target.value)}
-              disabled={!needsEndDate}
             />
           </div>
-        </div>
-
-        <div>
-          <label className="label">Status</label>
-          <select
-            className="select w-full"
-            value={values.completionStatus}
-            onChange={(event) => onChange('completionStatus', event.target.value)}
-          >
-            <option value="completed">Complete</option>
-            <option value="present">Ongoing</option>
-          </select>
         </div>
 
         <div className="flex gap-4">
@@ -167,5 +149,5 @@ function ProjectsFormPane({
   )
 }
 
-export type { ProjectCompletionStatus, ProjectsFormValues }
+export type { ProjectsFormValues }
 export default ProjectsFormPane

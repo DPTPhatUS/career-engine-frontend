@@ -62,7 +62,7 @@ function ProfileGithubSection({
           Clear
         </button>
         <button type="button" className="btn btn-neutral" onClick={onSave} disabled={disabled || isSaving}>
-          {isSaving ? 'Saving...' : 'Save'}
+          Save
         </button>
       </div>
     </fieldset>

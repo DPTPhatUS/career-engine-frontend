@@ -20,7 +20,7 @@ type EducationCardProps = {
 
 function EducationCard({ item, isDeleting = false, onEdit, onDelete }: EducationCardProps) {
   const hasCoursework = Boolean(item.coursework && item.coursework.length > 0)
-  const isOngoing = /present|expected/i.test(item.timePeriod)
+  const isOngoing = /\(expected\)|present|expected/i.test(item.timePeriod)
 
   return (
     <div className="card bg-base-100 border border-base-300">
@@ -66,7 +66,7 @@ function EducationCard({ item, isDeleting = false, onEdit, onDelete }: Education
         <div className="card-actions justify-between mt-4">
           <div className="badge badge-success">
             <span className="inline-block size-2 rounded-full bg-success-content" aria-hidden="true" />
-            {isOngoing ? 'On going' : 'Graduated'}
+            {isOngoing ? 'Ongoing' : 'Graduated'}
           </div>
 
           <div>

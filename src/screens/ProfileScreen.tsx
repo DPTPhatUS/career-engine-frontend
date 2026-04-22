@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { ApiError } from '../api/client'
-import { getProfile, upsertProfile } from '../api/profile'
+import { upsertProfile } from '../api/profile'
 import ProfileAlert from '../components/profile/ProfileAlert'
 import ProfileGeneralInfoSection from '../components/profile/ProfileGeneralInfoSection'
 import ProfileGithubSection from '../components/profile/ProfileGithubSection'
 import ProfileTopNav from '../components/profile/ProfileTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
+import { useAppData } from '../contexts/AppDataContext'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotification } from '../contexts/NotificationContext'
 
 type ProfileFormState = {
   fullName: string
@@ -79,53 +80,34 @@ function createInitialFormState(email = ''): ProfileFormState {
 
 function ProfileScreen() {
   const { user } = useAuth()
-  const [formState, setFormState] = useState<ProfileFormState>(() => createInitialFormState(user?.email))
-  const [isLoading, setIsLoading] = useState(true)
+  const { notifyError, notifySuccess } = useNotification()
+  const { clearProfileError, profile, profileError, setProfile } = useAppData()
+
+  const [formState, setFormState] = useState<ProfileFormState>(() =>
+    profile ? mapProfileToFormState(profile) : createInitialFormState(user?.email),
+  )
   const [isSaving, setIsSaving] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    let isActive = true
-
-    async function loadProfile() {
-      setIsLoading(true)
-      setErrorMessage(null)
-
-      try {
-        const profile = await getProfile()
-
-        if (!isActive) {
-          return
-        }
-
-        setFormState(mapProfileToFormState(profile))
-      } catch (error) {
-        if (!isActive) {
-          return
-        }
-
-        if (error instanceof ApiError && error.status === 404) {
-          setFormState((previous) => ({
-            ...previous,
-            email: previous.email || user?.email || '',
-          }))
-        } else {
-          setErrorMessage(error instanceof Error ? error.message : 'Unable to load profile')
-        }
-      } finally {
-        if (isActive) {
-          setIsLoading(false)
-        }
-      }
+    if (profile) {
+      setFormState(mapProfileToFormState(profile))
+      return
     }
 
-    void loadProfile()
+    setFormState((previous) => ({
+      ...previous,
+      email: previous.email || user?.email || '',
+    }))
+  }, [profile, user?.email])
 
-    return () => {
-      isActive = false
+  useEffect(() => {
+    if (!profileError) {
+      return
     }
-  }, [user?.email])
+
+    notifyError(profileError)
+    clearProfileError()
+  }, [clearProfileError, notifyError, profileError])
 
   function updateField(field: keyof ProfileFormState, value: string) {
     setFormState((previous) => ({
@@ -142,8 +124,6 @@ function ProfileScreen() {
       phone: '',
       address: '',
     }))
-    setSuccessMessage(null)
-    setErrorMessage(null)
   }
 
   function clearGithubInfo() {
@@ -152,8 +132,6 @@ function ProfileScreen() {
       githubLabel: 'GitHub',
       githubUsername: '',
     }))
-    setSuccessMessage(null)
-    setErrorMessage(null)
   }
 
   async function saveProfile() {
@@ -161,14 +139,11 @@ function ProfileScreen() {
     const email = formState.email.trim()
 
     if (!fullName || !email) {
-      setErrorMessage('Full name and email are required before saving profile changes.')
-      setSuccessMessage(null)
+      notifyError('Full name and email are required before saving profile changes.')
       return
     }
 
     setIsSaving(true)
-    setErrorMessage(null)
-    setSuccessMessage(null)
 
     try {
       const saved = await upsertProfile({
@@ -180,10 +155,11 @@ function ProfileScreen() {
         github_url: toGithubUrl(formState.githubUsername),
       })
 
+      setProfile(saved)
       setFormState(mapProfileToFormState(saved))
-      setSuccessMessage('Profile saved successfully.')
+      notifySuccess('Profile saved successfully. It may take a few moments for changes to reflect across the platform.')
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to save profile changes')
+      notifyError(error instanceof Error ? error.message : 'Unable to save profile changes')
     } finally {
       setIsSaving(false)
     }
@@ -199,24 +175,6 @@ function ProfileScreen() {
           description="Manage your public information and developer presence across the Career Engine platform."
         />
 
-        {isLoading ? (
-          <div role="status" className="alert alert-info">
-            <span>Loading profile...</span>
-          </div>
-        ) : null}
-
-        {errorMessage ? (
-          <div role="alert" className="alert alert-error">
-            <span>{errorMessage}</span>
-          </div>
-        ) : null}
-
-        {successMessage ? (
-          <div role="status" className="alert alert-success">
-            <span>{successMessage}</span>
-          </div>
-        ) : null}
-
         <div className='space-y-8'>
           <ProfileGeneralInfoSection
             values={{
@@ -225,7 +183,7 @@ function ProfileScreen() {
               phone: formState.phone,
               address: formState.address,
             }}
-            disabled={isLoading}
+            // disabled={isSaving}
             isSaving={isSaving}
             onChange={updateField}
             onClear={clearGeneralInfo}
@@ -236,7 +194,7 @@ function ProfileScreen() {
               githubLabel: formState.githubLabel,
               githubUsername: formState.githubUsername,
             }}
-            disabled={isLoading}
+            // disabled={isSaving}
             isSaving={isSaving}
             onChange={updateField}
             onClear={clearGithubInfo}

@@ -1,23 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   autofillProject,
   createProject,
   deleteProject,
-  listProjects,
   updateProject,
   type ProjectPayload,
   type ProjectRecord,
 } from '../api/projects'
 import ProjectsFormPane from '../components/projects/ProjectsFormPane'
-import type {
-  ProjectCompletionStatus,
-  ProjectsFormValues,
-} from '../components/projects/ProjectsFormPane'
+import type { ProjectsFormValues } from '../components/projects/ProjectsFormPane'
 import type { ProjectItem } from '../components/projects/ProjectCard'
 import ProjectsListPane from '../components/projects/ProjectsListPane'
 import ProjectsTopNav from '../components/projects/ProjectsTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
+import { useAppData } from '../contexts/AppDataContext'
+import { useNotification } from '../contexts/NotificationContext'
 
 function formatMonthYear(value: string) {
   const [year, month] = value.split('-')
@@ -81,7 +79,6 @@ function parseMonthInput(value: string) {
 function parseDateRange(dateRange: string): {
   startMonth: string
   endMonth: string
-  completionStatus: ProjectCompletionStatus
 } {
   const parts = dateRange.split(/\s*-\s*/)
 
@@ -89,7 +86,6 @@ function parseDateRange(dateRange: string): {
     return {
       startMonth: parseMonthInput(dateRange),
       endMonth: '',
-      completionStatus: 'completed',
     }
   }
 
@@ -101,14 +97,12 @@ function parseDateRange(dateRange: string): {
     return {
       startMonth: parseMonthInput(startPart),
       endMonth: '',
-      completionStatus: 'present',
     }
   }
 
   return {
     startMonth: parseMonthInput(startPart),
     endMonth: parseMonthInput(endPart),
-    completionStatus: 'completed',
   }
 }
 
@@ -155,7 +149,6 @@ function createInitialFormValues(): ProjectsFormValues {
     title: '',
     startMonth: '',
     endMonth: '',
-    completionStatus: 'completed',
     githubRepo: '',
     techInput: '',
     techStack: [],
@@ -181,7 +174,6 @@ function mapProjectToForm(project: ProjectRecord): ProjectsFormValues {
     title: project.title,
     startMonth: parsedRange.startMonth,
     endMonth: parsedRange.endMonth,
-    completionStatus: parsedRange.completionStatus,
     githubRepo: parseGithubRepo(project.github_url),
     techInput: '',
     techStack: parseTechStack(project.tech_stack),
@@ -191,10 +183,6 @@ function mapProjectToForm(project: ProjectRecord): ProjectsFormValues {
 
 function buildDateRange(values: ProjectsFormValues) {
   const start = formatMonthYear(values.startMonth)
-  if (values.completionStatus === 'present') {
-    return `${start} - Present`
-  }
-
   return `${start} - ${formatMonthYear(values.endMonth)}`
 }
 
@@ -212,40 +200,35 @@ function buildProjectPayload(values: ProjectsFormValues): ProjectPayload {
 }
 
 function ProjectsScreen() {
-  const [projects, setProjects] = useState<ProjectRecord[]>([])
+  const {
+    clearProjectsError,
+    projects,
+    projectsError,
+    refreshProjects,
+    setProjects,
+  } = useAppData()
+  const { notifyError, notifySuccess } = useNotification()
   const [formValues, setFormValues] = useState<ProjectsFormValues>(createInitialFormValues)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAutofilling, setIsAutofilling] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const projectItems = useMemo(() => projects.map(mapProjectToItem), [projects])
 
-  const loadProjects = useCallback(async () => {
-    setIsLoading(true)
-
-    try {
-      const response = await listProjects()
-      setProjects(response)
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to load projects')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    void loadProjects()
-  }, [loadProjects])
+    if (!projectsError) {
+      return
+    }
+
+    notifyError(projectsError)
+    clearProjectsError()
+  }, [clearProjectsError, notifyError, projectsError])
 
   function updateFormValue(field: keyof ProjectsFormValues, value: string) {
     setFormValues((previous) => ({
       ...previous,
       [field]: value,
-      ...(field === 'completionStatus' && value !== 'completed' ? { endMonth: '' } : {}),
     }))
   }
 
@@ -280,14 +263,11 @@ function ProjectsScreen() {
   async function handleAutofill() {
     const githubUrl = toGithubUrl(formValues.githubRepo)
     if (!githubUrl) {
-      setErrorMessage('A GitHub repository is required for autofill.')
-      setSuccessMessage(null)
+      notifyError('A GitHub repository is required for autofill.')
       return
     }
 
     setIsAutofilling(true)
-    setErrorMessage(null)
-    setSuccessMessage(null)
 
     try {
       const result = await autofillProject({ github_url: githubUrl })
@@ -297,15 +277,14 @@ function ProjectsScreen() {
         title: result.title,
         startMonth: parsedRange.startMonth,
         endMonth: parsedRange.endMonth,
-        completionStatus: parsedRange.completionStatus,
         githubRepo: parseGithubRepo(result.github_url),
         techInput: '',
         techStack: parseTechStack(result.tech_stack),
         accomplishments: result.bullets.join('\n'),
       }))
-      setSuccessMessage('Project details were autofilled. Review before saving.')
+      notifySuccess('Project details were autofilled. Review before saving.')
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to autofill project details')
+      notifyError(error instanceof Error ? error.message : 'Unable to autofill project details')
     } finally {
       setIsAutofilling(false)
     }
@@ -314,36 +293,34 @@ function ProjectsScreen() {
   async function handleSubmit() {
     const title = formValues.title.trim()
     if (!title || !formValues.startMonth) {
-      setErrorMessage('Project title and start date are required.')
-      setSuccessMessage(null)
+      notifyError('Project title and start date are required.')
       return
     }
 
-    if (formValues.completionStatus === 'completed' && !formValues.endMonth) {
-      setErrorMessage('End date is required when completion status is Completed.')
-      setSuccessMessage(null)
+    if (!formValues.endMonth) {
+      notifyError('End date is required.')
       return
     }
 
     setIsSubmitting(true)
-    setErrorMessage(null)
-    setSuccessMessage(null)
 
     try {
       const payload = buildProjectPayload(formValues)
 
       if (editingId) {
-        await updateProject(editingId, payload)
-        setSuccessMessage('Project updated successfully.')
+        const updated = await updateProject(editingId, payload)
+        setProjects((previous) => previous.map((project) => (project.id === updated.id ? updated : project)))
+        notifySuccess('Project updated successfully.')
       } else {
-        await createProject(payload)
-        setSuccessMessage('Project created successfully.')
+        const created = await createProject(payload)
+        setProjects((previous) => [...previous, created].sort((left, right) => left.sort_order - right.sort_order))
+        notifySuccess('Project created successfully.')
       }
 
-      await loadProjects()
+      void refreshProjects()
       resetForm()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to save project')
+      notifyError(error instanceof Error ? error.message : 'Unable to save project')
     } finally {
       setIsSubmitting(false)
     }
@@ -357,8 +334,6 @@ function ProjectsScreen() {
 
     setEditingId(target.id)
     setFormValues(mapProjectToForm(target))
-    setErrorMessage(null)
-    setSuccessMessage(null)
   }
 
   async function handleDelete(item: ProjectItem) {
@@ -368,20 +343,19 @@ function ProjectsScreen() {
     }
 
     setDeletingId(item.id)
-    setErrorMessage(null)
-    setSuccessMessage(null)
 
     try {
       await deleteProject(item.id)
-      await loadProjects()
+      setProjects((previous) => previous.filter((project) => project.id !== item.id))
 
       if (editingId === item.id) {
         resetForm()
       }
 
-      setSuccessMessage('Project deleted successfully.')
+      notifySuccess('Project deleted successfully.')
+      void refreshProjects()
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unable to delete project')
+      notifyError(error instanceof Error ? error.message : 'Unable to delete project')
     } finally {
       setDeletingId(null)
     }
@@ -396,24 +370,6 @@ function ProjectsScreen() {
           title="Your Projects"
           description="Manage your projects, track progress, and collaborate with your team all in one place."
         />
-
-        {isLoading ? (
-          <div role="status" className="alert alert-info">
-            <span>Loading projects...</span>
-          </div>
-        ) : null}
-
-        {errorMessage ? (
-          <div role="alert" className="alert alert-error">
-            <span>{errorMessage}</span>
-          </div>
-        ) : null}
-
-        {successMessage ? (
-          <div role="status" className="alert alert-success">
-            <span>{successMessage}</span>
-          </div>
-        ) : null}
 
         <div className="grid grid-cols-12 items-start gap-8">
           <ProjectsFormPane

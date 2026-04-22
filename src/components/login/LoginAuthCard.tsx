@@ -20,10 +20,9 @@ const googleIconPaths = [
 type LoginAuthCardProps = {
   onGoogleLogin: () => void
   isLoading?: boolean
-  errorMessage?: string | null
 }
 
-function LoginAuthCard({ onGoogleLogin, isLoading = false, errorMessage = null }: LoginAuthCardProps) {
+function LoginAuthCard({ onGoogleLogin, isLoading = false }: LoginAuthCardProps) {
   return (
     <div className="card bg-base-100 shadow-xl w-full max-w-xs">
       <div className="card-body">
@@ -43,12 +42,6 @@ function LoginAuthCard({ onGoogleLogin, isLoading = false, errorMessage = null }
             {isLoading ? 'Redirecting...' : 'Sign in with Google'}
           </button>
         </div>
-
-        {errorMessage ? (
-          <div role="alert" className="alert alert-error alert-soft mt-4">
-            <span>{errorMessage}</span>
-          </div>
-        ) : null}
       </div>
     </div>
   )
