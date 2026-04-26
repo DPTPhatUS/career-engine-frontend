@@ -6,9 +6,9 @@ import ProfileGithubSection from '../components/profile/ProfileGithubSection'
 import ProfileTopNav from '../components/profile/ProfileTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
-import { useAppData } from '../contexts/AppDataContext'
-import { useAuth } from '../contexts/AuthContext'
-import { useNotification } from '../contexts/NotificationContext'
+import { useAppData } from '../contexts/useAppData'
+import { useAuth } from '../contexts/useAuth'
+import { useNotification } from '../contexts/useNotification'
 
 type ProfileFormState = {
   fullName: string
@@ -157,7 +157,7 @@ function ProfileScreen() {
 
       setProfile(saved)
       setFormState(mapProfileToFormState(saved))
-      notifySuccess('Profile saved successfully. It may take a few moments for changes to reflect across the platform.')
+      notifySuccess('Profile saved successfully.')
     } catch (error) {
       notifyError(error instanceof Error ? error.message : 'Unable to save profile changes')
     } finally {

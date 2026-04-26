@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { useNotification } from '../../../contexts/NotificationContext'
+import { useNotification } from '../../../contexts/useNotification'
 
 function FloatingNotifications() {
   const { notifications, dismissNotification } = useNotification()
@@ -9,7 +9,7 @@ function FloatingNotifications() {
   }
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3 sm:bottom-6 sm:right-6">
+    <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-full max-w-xs flex-col gap-3">
       {notifications.map((notification) => (
         <div
           key={notification.id}

@@ -1,39 +1,23 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from 'react'
-
-type NotificationType = 'success' | 'error'
-
-type NotificationRecord = {
-  id: string
-  message: string
-  type: NotificationType
-}
-
-type NotificationOptions = {
-  duration?: number
-}
-
-type NotificationContextValue = {
-  notifications: NotificationRecord[]
-  notifySuccess: (message: string, options?: NotificationOptions) => void
-  notifyError: (message: string, options?: NotificationOptions) => void
-  dismissNotification: (id: string) => void
-}
+import { NotificationContext } from './NotificationContextShared'
+import type {
+  NotificationContextValue,
+  NotificationOptions,
+  NotificationRecord,
+  NotificationType,
+} from './NotificationContextShared'
 
 const DEFAULT_NOTIFICATION_DURATION_MS: Record<NotificationType, number> = {
   success: 5000,
   error: 7000,
 }
-
-const NotificationContext = createContext<NotificationContextValue | null>(null)
 
 type NotificationProviderProps = {
   children: ReactNode
@@ -123,15 +107,4 @@ function NotificationProvider({ children }: NotificationProviderProps) {
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>
 }
 
-function useNotification() {
-  const context = useContext(NotificationContext)
-
-  if (!context) {
-    throw new Error('useNotification must be used within NotificationProvider')
-  }
-
-  return context
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { NotificationProvider, useNotification }
+export { NotificationProvider }

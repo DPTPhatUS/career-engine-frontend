@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { useAppData } from '../../../contexts/AppDataContext'
-import { useAuth } from '../../../contexts/AuthContext'
+import { useAppData } from '../../../contexts/useAppData'
+import { useAuth } from '../../../contexts/useAuth'
 
 type RequireAuthProps = {
   children: ReactNode

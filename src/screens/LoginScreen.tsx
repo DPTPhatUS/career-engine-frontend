@@ -3,8 +3,8 @@ import { Navigate } from 'react-router-dom'
 import LoginAuthCard from '../components/login/LoginAuthCard'
 import LoginTopNav from '../components/login/LoginTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
-import { useAuth } from '../contexts/AuthContext'
-import { useNotification } from '../contexts/NotificationContext'
+import { useAuth } from '../contexts/useAuth'
+import { useNotification } from '../contexts/useNotification'
 
 function LoginScreen() {
   const { beginGoogleLogin, status } = useAuth()

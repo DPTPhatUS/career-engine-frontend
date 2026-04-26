@@ -8,14 +8,14 @@ import {
   type ProjectRecord,
 } from '../api/projects'
 import ProjectsFormPane from '../components/projects/ProjectsFormPane'
-import type { ProjectsFormValues } from '../components/projects/ProjectsFormPane'
-import type { ProjectItem } from '../components/projects/ProjectCard'
+import type { ProjectsFormValues } from '../components/projects/ProjectsFormPane.types'
+import type { ProjectItem } from '../components/projects/ProjectCard.types'
 import ProjectsListPane from '../components/projects/ProjectsListPane'
 import ProjectsTopNav from '../components/projects/ProjectsTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
-import { useAppData } from '../contexts/AppDataContext'
-import { useNotification } from '../contexts/NotificationContext'
+import { useAppData } from '../contexts/useAppData'
+import { useNotification } from '../contexts/useNotification'
 
 function formatMonthYear(value: string) {
   const [year, month] = value.split('-')

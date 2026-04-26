@@ -1,13 +1,5 @@
 import { FolderGit2, Pencil, Trash2 } from 'lucide-react'
-
-type ProjectItem = {
-  id: string
-  title: string
-  dateRange: string
-  tags: string[]
-  bullets: string[]
-  githubUrl?: string
-}
+import type { ProjectItem } from './ProjectCard.types'
 
 function ProjectCard({
   item,
@@ -89,5 +81,4 @@ function ProjectCard({
   )
 }
 
-export type { ProjectItem }
 export default ProjectCard

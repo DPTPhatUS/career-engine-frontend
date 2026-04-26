@@ -3,7 +3,7 @@ import HomeStatsGrid from '../components/home/HomeStatsGrid'
 import HomeTopNav from '../components/home/HomeTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
-import { useAppData } from '../contexts/AppDataContext'
+import { useAppData } from '../contexts/useAppData'
 
 function HomeScreen() {
   const { educations, profile, projects } = useAppData()

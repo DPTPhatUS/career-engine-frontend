@@ -1,4 +1,5 @@
-import EducationCard, { type EducationItem } from './EducationCard'
+import EducationCard from './EducationCard'
+import type { EducationItem } from './EducationCard.types'
 
 type EducationListPaneProps = {
   educations: EducationItem[]

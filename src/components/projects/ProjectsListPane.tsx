@@ -1,4 +1,5 @@
-import ProjectCard, { type ProjectItem } from './ProjectCard'
+import ProjectCard from './ProjectCard'
+import type { ProjectItem } from './ProjectCard.types'
 
 type ProjectsListPaneProps = {
   projects: ProjectItem[]

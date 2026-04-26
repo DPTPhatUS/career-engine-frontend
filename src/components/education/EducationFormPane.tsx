@@ -1,16 +1,4 @@
-type CompletionStatus = 'graduated' | 'ongoing'
-
-type EducationFormValues = {
-  university: string
-  degree: string
-  field: string
-  startMonth: string
-  endMonth: string
-  completionStatus: CompletionStatus
-  gpa: string
-  location: string
-  coursework: string
-}
+import type { EducationFormValues } from './EducationFormPane.types'
 
 type EducationFormPaneProps = {
   values: EducationFormValues
@@ -150,5 +138,4 @@ function EducationFormPane({
   )
 }
 
-export type { CompletionStatus, EducationFormValues }
 export default EducationFormPane

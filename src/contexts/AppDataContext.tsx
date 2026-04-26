@@ -1,43 +1,18 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type Dispatch,
   type ReactNode,
-  type SetStateAction,
 } from 'react'
 import { ApiError } from '../api/client'
 import { listEducations, type EducationRecord } from '../api/educations'
 import { getProfile, type ProfileRecord } from '../api/profile'
 import { listProjects, type ProjectRecord } from '../api/projects'
-import { useAuth } from './AuthContext'
-
-type AppDataContextValue = {
-  isReady: boolean
-  isBootstrapping: boolean
-  profile: ProfileRecord | null
-  educations: EducationRecord[]
-  projects: ProjectRecord[]
-  profileError: string | null
-  educationsError: string | null
-  projectsError: string | null
-  clearProfileError: () => void
-  clearEducationsError: () => void
-  clearProjectsError: () => void
-  refreshProfile: () => Promise<ProfileRecord | null>
-  refreshEducations: () => Promise<EducationRecord[]>
-  refreshProjects: () => Promise<ProjectRecord[]>
-  refreshAll: () => Promise<void>
-  setProfile: Dispatch<SetStateAction<ProfileRecord | null>>
-  setEducations: Dispatch<SetStateAction<EducationRecord[]>>
-  setProjects: Dispatch<SetStateAction<ProjectRecord[]>>
-}
-
-const AppDataContext = createContext<AppDataContextValue | null>(null)
+import { AppDataContext } from './AppDataContextShared'
+import type { AppDataContextValue } from './AppDataContextShared'
+import { useAuth } from './useAuth'
 
 type AppDataProviderProps = {
   children: ReactNode
@@ -248,15 +223,4 @@ function AppDataProvider({ children }: AppDataProviderProps) {
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>
 }
 
-function useAppData() {
-  const context = useContext(AppDataContext)
-
-  if (!context) {
-    throw new Error('useAppData must be used within AppDataProvider')
-  }
-
-  return context
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { AppDataProvider, useAppData }
+export { AppDataProvider }

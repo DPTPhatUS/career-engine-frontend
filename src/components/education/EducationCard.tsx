@@ -1,15 +1,5 @@
 import { GraduationCap, MapPin, Pencil, Trash2 } from 'lucide-react'
-
-type EducationItem = {
-  id: string
-  university: string
-  degree: string
-  timePeriod: string
-  location?: string
-  gpa?: string
-  field: string
-  coursework: string[]
-}
+import type { EducationItem } from './EducationCard.types'
 
 type EducationCardProps = {
   item: EducationItem
@@ -95,5 +85,4 @@ function EducationCard({ item, isDeleting = false, onEdit, onDelete }: Education
   )
 }
 
-export type { EducationItem }
 export default EducationCard

@@ -7,14 +7,14 @@ import {
   type EducationRecord,
 } from '../api/educations'
 import EducationFormPane from '../components/education/EducationFormPane'
-import type { CompletionStatus, EducationFormValues } from '../components/education/EducationFormPane'
-import type { EducationItem } from '../components/education/EducationCard'
+import type { CompletionStatus, EducationFormValues } from '../components/education/EducationFormPane.types'
+import type { EducationItem } from '../components/education/EducationCard.types'
 import EducationListPane from '../components/education/EducationListPane'
 import EducationTopNav from '../components/education/EducationTopNav'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
 import AppFooter from '../components/shared/navigation/AppFooter'
-import { useAppData } from '../contexts/AppDataContext'
-import { useNotification } from '../contexts/NotificationContext'
+import { useAppData } from '../contexts/useAppData'
+import { useNotification } from '../contexts/useNotification'
 
 function formatMonthYear(value: string) {
   const [year, month] = value.split('-')

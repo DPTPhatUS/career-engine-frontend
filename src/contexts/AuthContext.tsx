@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -9,19 +7,8 @@ import {
 } from 'react'
 import { getAuthSession, logoutSession, startGoogleLogin, type AuthSession } from '../api/auth'
 import { ApiError } from '../api/client'
-
-type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
-
-type AuthContextValue = {
-  status: AuthStatus
-  user: AuthSession | null
-  errorMessage: string | null
-  refreshSession: () => Promise<void>
-  beginGoogleLogin: (nextPath?: string) => Promise<void>
-  logout: () => Promise<void>
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null)
+import { AuthContext } from './AuthContextShared'
+import type { AuthContextValue, AuthStatus } from './AuthContextShared'
 
 type AuthProviderProps = {
   children: ReactNode
@@ -89,16 +76,4 @@ function AuthProvider({ children }: AuthProviderProps) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-function useAuth() {
-  const context = useContext(AuthContext)
-
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider')
-  }
-
-  return context
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { AuthProvider, useAuth }
-export type { AuthStatus }
+export { AuthProvider }

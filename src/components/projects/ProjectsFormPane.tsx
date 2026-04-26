@@ -1,12 +1,4 @@
-type ProjectsFormValues = {
-  title: string
-  startMonth: string
-  endMonth: string
-  githubRepo: string
-  techInput: string
-  techStack: string[]
-  accomplishments: string
-}
+import type { ProjectsFormValues } from './ProjectsFormPane.types'
 
 type ProjectsFormPaneProps = {
   values: ProjectsFormValues
@@ -149,5 +141,4 @@ function ProjectsFormPane({
   )
 }
 
-export type { ProjectsFormValues }
 export default ProjectsFormPane
