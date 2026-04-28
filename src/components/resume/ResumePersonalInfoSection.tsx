@@ -1,40 +1,110 @@
-import { CircleAlert } from 'lucide-react'
-import ResumeTextField from './ResumeTextField'
+export type ResumePersonalInfoValues = {
+  fullName: string
+  email: string
+  phone: string
+  address: string
+  githubLabel: string
+  githubUrl: string
+}
 
-function ResumePersonalInfoSection() {
+type ResumePersonalInfoSectionProps = {
+  values: ResumePersonalInfoValues
+  onChange: (field: keyof ResumePersonalInfoValues, value: string) => void
+}
+
+function ResumePersonalInfoSection({ values, onChange }: ResumePersonalInfoSectionProps) {
   return (
-    <section className="space-y-6">
+    <fieldset className="fieldset">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <ResumeTextField label="First Name" defaultValue="Alexander" />
-        <ResumeTextField label="Last Name" defaultValue="Sterling" />
-      </div>
+        <div>
+          <label className="label" htmlFor="resume-personal-full-name">
+            Full Name
+          </label>
+          <input
+            id="resume-personal-full-name"
+            type="text"
+            className="input w-full"
+            placeholder="e.g. Ada Lovelace"
+            value={values.fullName}
+            onChange={(event) => onChange('fullName', event.target.value)}
+          />
+        </div>
 
-      <ResumeTextField
-        label="Professional Headline"
-        defaultValue="Senior Full-Stack Engineer and Product Strategist"
-      />
+        <div>
+          <label className="label" htmlFor="resume-personal-email">
+            Email Address
+          </label>
+          <input
+            id="resume-personal-email"
+            type="email"
+            className="input w-full"
+            placeholder="name@company.com"
+            value={values.email}
+            onChange={(event) => onChange('email', event.target.value)}
+          />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <ResumeTextField label="Email Address" type="email" defaultValue="alex.sterling@dev.io" />
-        <ResumeTextField label="Phone Number" type="tel" defaultValue="+1 (555) 234-8901" />
+        <div>
+          <label className="label" htmlFor="resume-personal-phone">
+            Phone Number
+          </label>
+          <input
+            id="resume-personal-phone"
+            type="tel"
+            className="input w-full"
+            placeholder="+1 (234) 567-8901"
+            value={values.phone}
+            onChange={(event) => onChange('phone', event.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="label" htmlFor="resume-personal-address">
+            Address
+          </label>
+          <input
+            id="resume-personal-address"
+            type="text"
+            className="input w-full"
+            placeholder="City, State, Country"
+            value={values.address}
+            onChange={(event) => onChange('address', event.target.value)}
+          />
+        </div>
       </div>
 
-      <ResumeTextField
-        label="Professional Summary"
-        textarea
-        rows={5}
-        defaultValue="Results-driven Software Engineer with over 8 years of experience building scalable web applications. Expert in React, Node.js, and Cloud Infrastructure. Passionate about precision functionalism in UI/UX."
-      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="label" htmlFor="resume-personal-github-label">
+            GitHub Label
+          </label>
+          <input
+            id="resume-personal-github-label"
+            type="text"
+            className="input w-full"
+            placeholder="GitHub"
+            value={values.githubLabel}
+            onChange={(event) => onChange('githubLabel', event.target.value)}
+          />
+        </div>
 
-      <div className="flex items-start gap-3 rounded-xl bg-primary/10 px-4 py-4">
-        <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-          <CircleAlert className="h-3.5 w-3.5" aria-hidden="true" />
-        </span>
-        <p className="text-sm font-medium text-primary">
-          Use active verbs like \"Architected\" or \"Spearheaded\" to highlight leadership.
-        </p>
+        <div>
+          <label className="label" htmlFor="resume-personal-github-url">
+            GitHub URL
+          </label>
+          <input
+            id="resume-personal-github-url"
+            type="url"
+            className="input w-full"
+            placeholder="https://github.com/username"
+            value={values.githubUrl}
+            onChange={(event) => onChange('githubUrl', event.target.value)}
+          />
+        </div>
       </div>
-    </section>
+    </fieldset>
   )
 }
 

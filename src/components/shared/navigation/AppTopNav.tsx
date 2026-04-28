@@ -7,7 +7,7 @@ const appLinks = [
   { path: '/profile', label: 'Profile' },
   { path: '/education', label: 'Education' },
   { path: '/projects', label: 'Projects' },
-  { path: '/resume', label: 'Resume Builder' },
+  { path: '/resumes', label: 'Resumes' },
 ]
 
 const defaultMarketingLinks = ['Features', 'Pricing', 'About']

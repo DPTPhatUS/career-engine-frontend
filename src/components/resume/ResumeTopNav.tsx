@@ -1,7 +1,7 @@
 import AppTopNav from '../shared/navigation/AppTopNav'
 
 function ResumeTopNav() {
-  return <AppTopNav actionLabel="Export PDF" actionType="button" />
+  return <AppTopNav />
 }
 
 export default ResumeTopNav

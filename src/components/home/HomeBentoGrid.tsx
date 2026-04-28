@@ -36,11 +36,11 @@ function HomeBentoGrid() {
     <section className="grid grid-cols-1 gap-6 md:grid-cols-12">
       <div className="card card-xl bg-neutral text-neutral-content md:col-span-8 md:row-span-2">
         <div className="card-body">
-          <h2 className="card-title">Resume Builder</h2>
-          <p>Our AI-powered builder helps you craft a high-conversion resume tailored for tech giants. New templates just added.</p>
+          <h2 className="card-title">Resumes</h2>
+          <p>Create targeted resumes fast with tailored project highlights and clean formatting.</p>
           <div className="card-actions justify-start">
-            <NavLink to="/resume" className="btn btn-primary">
-              Open Builder
+            <NavLink to="/resumes" className="btn btn-primary">
+              Open Resumes
             </NavLink>
             <button className="btn btn-outline">
               View Templates

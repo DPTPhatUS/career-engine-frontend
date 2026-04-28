@@ -4,7 +4,8 @@ import HomeScreen from './screens/HomeScreen.tsx'
 import LoginScreen from './screens/LoginScreen.tsx'
 import ProfileScreen from './screens/ProfileScreen.tsx'
 import ProjectsScreen from './screens/ProjectsScreen.tsx'
-import ResumeScreen from './screens/ResumeScreen.tsx'
+import ResumeBuilderScreen from './screens/ResumeBuilderScreen.tsx'
+import ResumesScreen from './screens/ResumesScreen.tsx'
 import RequireAuth from './components/shared/navigation/RequireAuth.tsx'
 
 function App() {
@@ -43,7 +44,31 @@ function App() {
           </RequireAuth>
         )}
       />
-      <Route path="/resume" element={<ResumeScreen />} />
+      <Route
+        path="/resumes"
+        element={(
+          <RequireAuth>
+            <ResumesScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/resumes/new"
+        element={(
+          <RequireAuth>
+            <ResumeBuilderScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/resumes/:resumeId"
+        element={(
+          <RequireAuth>
+            <ResumeBuilderScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route path="/resume" element={<Navigate to="/resumes" replace />} />
 
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="*" element={<Navigate to="/home" replace />} />

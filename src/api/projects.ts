@@ -36,6 +36,33 @@ type AutofillProjectResponse = {
   bullets: string[]
 }
 
+type TailorProjectsPayload = {
+  job_title: string
+  job_description: string
+  job_requirements: string
+  project_ids: string[]
+}
+
+type TailoredProject = {
+  project_id: string
+  title: string
+  date_range: string
+  github_url: string
+  tech_stack: string
+  bullets: string[]
+}
+
+type SkippedProject = {
+  project_id: string
+  reason_code: string
+  detail: string
+}
+
+type TailorProjectsResponse = {
+  tailored_projects: TailoredProject[]
+  skipped_projects: SkippedProject[]
+}
+
 async function listProjects() {
   return api<ProjectRecord[]>('/api/v1/projects')
 }
@@ -67,10 +94,21 @@ async function autofillProject(payload: AutofillProjectPayload) {
   })
 }
 
-export { autofillProject, createProject, deleteProject, listProjects, updateProject }
+async function tailorProjects(payload: TailorProjectsPayload) {
+  return api<TailorProjectsResponse>('/api/v1/projects/tailor', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export { autofillProject, createProject, deleteProject, listProjects, tailorProjects, updateProject }
 export type {
   AutofillProjectPayload,
   AutofillProjectResponse,
+  SkippedProject,
+  TailorProjectsPayload,
+  TailorProjectsResponse,
+  TailoredProject,
   ProjectPatchPayload,
   ProjectPayload,
   ProjectRecord,
