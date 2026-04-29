@@ -53,36 +53,6 @@ function buildDateRange(values: ProjectDateFields) {
   return `${start} - ${end}`
 }
 
-function parseGithubRepo(value: string) {
-  if (!value) {
-    return ''
-  }
-
-  const trimmed = value.trim()
-  if (!trimmed) {
-    return ''
-  }
-
-  try {
-    const parsed = new URL(trimmed)
-    if (parsed.hostname.toLowerCase().includes('github.com')) {
-      return parsed.pathname.replace(/^\/+/, '').replace(/\/+$/, '')
-    }
-  } catch {
-    // Keep fallback for already-normalized slug values.
-  }
-
-  return trimmed.replace(/^https?:\/\/github\.com\//i, '').replace(/^github\.com\//i, '').replace(/\/+$/, '')
-}
-
-function toGithubUrl(repo: string) {
-  const cleaned = repo
-    .trim()
-    .replace(/^https?:\/\/github\.com\//i, '')
-    .replace(/^github\.com\//i, '')
-    .replace(/\/+$/, '')
-  return cleaned ? `https://github.com/${cleaned}` : ''
-}
 
 function parseTechStack(value: string) {
   return value
@@ -120,7 +90,6 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
   const dateFields = selectedProject
     ? parseDateRange(selectedProject.dateRange)
     : { startMonth: '', endMonth: '' }
-  const githubRepo = selectedProject ? parseGithubRepo(selectedProject.githubUrl) : ''
   const techStack = selectedProject ? parseTechStack(selectedProject.techStack) : []
 
   function handleAdd() {
@@ -247,18 +216,16 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
 
             <div>
               <label className="label" htmlFor={`resume-project-github-url-${safeIndex}`}>
-                Project Link
+                Project URL
               </label>
-              <label className="input w-full" htmlFor={`resume-project-github-url-${safeIndex}`}>
-                <span className="label">github.com/</span>
-                <input
-                  id={`resume-project-github-url-${safeIndex}`}
-                  type="text"
-                  placeholder="username/repo"
-                  value={githubRepo}
-                  onChange={(event) => onChange(safeIndex, 'githubUrl', toGithubUrl(event.target.value))}
-                />
-              </label>
+              <input
+                id={`resume-project-github-url-${safeIndex}`}
+                type="text"
+                className="input w-full"
+                placeholder="github.com/username/repo"
+                value={selectedProject.githubUrl}
+                onChange={(event) => onChange(safeIndex, 'githubUrl', event.target.value)}
+              />
             </div>
 
             <div>

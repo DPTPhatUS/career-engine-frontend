@@ -67,16 +67,14 @@ function ProjectsFormPane({
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="label">Project Link</label>
-            <label className="input w-full">
-              <span className="label">github.com/</span>
-              <input
-                type="text"
-                placeholder="username/repo"
-                value={values.githubRepo}
-                onChange={(event) => onChange('githubRepo', event.target.value)}
-              />
-            </label>
+            <label className="label">Project URL</label>
+            <input
+              type="text"
+              className="input w-full"
+              placeholder="github.com/username/repo"
+              value={values.githubRepo}
+              onChange={(event) => onChange('githubRepo', event.target.value)}
+            />
           </div>
 
           <button

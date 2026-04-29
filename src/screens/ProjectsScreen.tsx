@@ -64,21 +64,34 @@ function parseGithubRepo(value: string | null) {
     return ''
   }
 
-  try {
-    const parsed = new URL(trimmed)
-    if (parsed.hostname.toLowerCase().includes('github.com')) {
-      return parsed.pathname.replace(/^\/+/, '').replace(/\/+$/, '')
-    }
-  } catch {
-    // Keep fallback for already-normalized slug values.
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
   }
 
-  return trimmed.replace(/^https?:\/\/github\.com\//i, '').replace(/^github\.com\//i, '').replace(/\/+$/, '')
+  const withoutWww = trimmed.replace(/^www\./i, '')
+  if (/^github\.com\//i.test(withoutWww)) {
+    return `https://${withoutWww}`
+  }
+
+  return `https://github.com/${withoutWww.replace(/^\/+/, '')}`
 }
 
 function toGithubUrl(repo: string) {
-  const cleaned = repo.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/^github\.com\//i, '').replace(/\/+$/, '')
-  return cleaned ? `https://github.com/${cleaned}` : undefined
+  const trimmed = repo.trim()
+  if (!trimmed) {
+    return undefined
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+
+  const withoutWww = trimmed.replace(/^www\./i, '')
+  if (/^github\.com\//i.test(withoutWww)) {
+    return `https://${withoutWww}`
+  }
+
+  return `https://github.com/${withoutWww.replace(/^\/+/, '')}`
 }
 
 function createInitialFormValues(): ProjectsFormValues {
