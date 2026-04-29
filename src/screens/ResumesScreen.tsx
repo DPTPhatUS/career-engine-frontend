@@ -5,6 +5,8 @@ import { deleteResume, listResumes, type ResumeRecord } from '../api/resumes'
 import ResumeTopNav from '../components/resume/ResumeTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
 import { useNotification } from '../contexts/useNotification'
+import ScreenHeader from '../components/shared/layout/ScreenHeader'
+import { Pencil, Trash2 } from 'lucide-react'
 
 function formatDate(value: string) {
   const parsed = new Date(value)
@@ -83,72 +85,81 @@ function ResumesScreen() {
 
   function renderListContent() {
     if (isLoading) {
-      return (
-        <div className="grid gap-6 lg:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={`resume-skeleton-${index}`} className="card border border-base-200 bg-base-100">
-              <div className="card-body gap-4">
-                <div className="skeleton h-6 w-2/3" />
-                <div className="skeleton h-4 w-1/2" />
-                <div className="skeleton h-4 w-full" />
-                <div className="skeleton h-9 w-28" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )
+      // return (
+      //   <div className="grid gap-6 lg:grid-cols-2">
+      //     {Array.from({ length: 4 }).map((_, index) => (
+      //       <div key={`resume-skeleton-${index}`} className="card border border-base-200 bg-base-100">
+      //         <div className="card-body gap-4">
+      //           <div className="skeleton h-6 w-2/3" />
+      //           <div className="skeleton h-4 w-1/2" />
+      //           <div className="skeleton h-4 w-full" />
+      //           <div className="skeleton h-9 w-28" />
+      //         </div>
+      //       </div>
+      //     ))}
+      //   </div>
+      // )
     }
 
-    if (resumes.length === 0) {
-      return (
+    return (
+      <div className="grid gap-6 lg:grid-cols-2">
         <div className="card border border-dashed border-base-300 bg-base-100">
           <div className="card-body">
-            <h3 className="text-lg font-semibold">No resumes yet</h3>
-            <p className="text-sm opacity-70">Start your first targeted resume from your project library.</p>
-            <div className="card-actions">
+            <h3 className="card-title">New Resume</h3>
+            <p className="opacity-70">Start building your next targeted resume. Tailored by AI to match your goals and preferences.</p>
+            <div className="card-actions justify-end">
               <Link to="/resumes/new" className="btn btn-primary">
                 Create Resume
               </Link>
             </div>
           </div>
         </div>
-      )
-    }
 
-    return (
-      <div className="grid gap-6 lg:grid-cols-2">
         {resumes.map((resume) => (
-          <div key={resume.id} className="card border border-base-200 bg-base-100">
-            <div className="card-body gap-4">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-semibold">{resume.title}</h3>
-                  <p className="text-sm text-(--on-surface-variant)">
-                    Updated {formatDate(resume.updated_at)}
-                  </p>
-                </div>
+          <div key={resume.id} className="card border border-base-300 bg-base-100">
+            <div className="card-body">
+              <div className="flex items-start justify-between">
+                <h3 className="text-xl font-semibold">{resume.title}</h3>
                 <span className="badge badge-outline">
                   {resume.payload.projects.length} projects
                 </span>
               </div>
+              <p className="text-sm">
+                Updated {formatDate(resume.updated_at)}
+              </p>
 
-              <div className="flex flex-wrap gap-3 text-sm text-(--on-surface-variant)">
+              {/* <div className="flex flex-wrap gap-3 text-sm">
                 <span>{resume.payload.education.length} education</span>
                 <span>{resume.payload.skills.length} skill groups</span>
-              </div>
+              </div> */}
 
-              <div className="card-actions items-center justify-between">
-                <Link to={`/resumes/${resume.id}`} className="btn btn-outline">
-                  Edit Resume
-                </Link>
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={() => void handleDelete(resume)}
-                  disabled={deletingId === resume.id}
+              <div className="card-actions justify-between mt-2">
+                <a
+                  href={/* placeholder for now */ '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-outline"
                 >
-                  {deletingId === resume.id ? 'Deleting...' : 'Delete'}
-                </button>
+                  Preview
+                </a>
+                <div>
+                  <Link
+                    to={`/resumes/${resume.id}`}
+                    aria-label="Edit resume"
+                    className="btn btn-ghost"
+                  >
+                    <Pencil className="size-4" aria-hidden="true" />
+                  </Link>
+                  <button
+                    type="button"
+                    aria-label="Delete resume"
+                    className="btn btn-ghost"
+                    onClick={() => void handleDelete(resume)}
+                    disabled={deletingId === resume.id}
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -161,31 +172,13 @@ function ResumesScreen() {
     <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <ResumeTopNav />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
-        <section className="relative overflow-hidden rounded-3xl border border-base-200 bg-base-100 p-8">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-70"
-            style={{
-              background: 'linear-gradient(135deg, #fffbeb 0%, #ffffff 55%, #f0fdfa 100%)',
-            }}
-          />
-          <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-(--on-surface-variant)">
-                Resume Library
-              </p>
-              <h1 className="text-4xl font-semibold">Resumes</h1>
-              <p className="mt-2 text-sm text-(--on-surface-variant)">
-                Keep a curated set of targeted resumes ready for every role.
-              </p>
-            </div>
-            <Link to="/resumes/new" className="btn btn-primary">
-              New Resume
-            </Link>
-          </div>
-        </section>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+        <ScreenHeader
+          title="Your Resumes"
+          description="Manage your resumes and keep them up to date for every opportunity."
+        />
 
-        <section className="mt-8">{renderListContent()}</section>
+        {renderListContent()}
       </main>
 
       <AppFooter />

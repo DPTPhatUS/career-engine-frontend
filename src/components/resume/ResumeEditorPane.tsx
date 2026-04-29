@@ -213,24 +213,24 @@ function ResumeEditorPane({ resumeId: resumeIdProp, initialValues, onSaveSuccess
     setActiveTab((previous) => Math.min(previous + 1, resumeTabs.length - 1))
   }
 
-  function handleClearActiveTab() {
-    if (activeTab === 0) {
-      setPersonalInfoValues(createInitialPersonalInfoValues())
-      return
-    }
+  // function handleClearActiveTab() {
+  //   if (activeTab === 0) {
+  //     setPersonalInfoValues(createInitialPersonalInfoValues())
+  //     return
+  //   }
 
-    if (activeTab === 1) {
-      setEducationValues([createInitialEducationValues()])
-      return
-    }
+  //   if (activeTab === 1) {
+  //     setEducationValues([createInitialEducationValues()])
+  //     return
+  //   }
 
-    if (activeTab === 2) {
-      setProjectsValues([createInitialProjectsValues()])
-      return
-    }
+  //   if (activeTab === 2) {
+  //     setProjectsValues([createInitialProjectsValues()])
+  //     return
+  //   }
 
-    setSkillsValues(createInitialSkillsValues())
-  }
+  //   setSkillsValues(createInitialSkillsValues())
+  // }
 
   function buildEducationPayload(values: ResumeEducationValues[]): ResumePayload['education'] {
     return values.flatMap((item, index) => {
@@ -564,7 +564,7 @@ function ResumeEditorPane({ resumeId: resumeIdProp, initialValues, onSaveSuccess
                     activeTab={activeTab}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
-                    onClearTab={handleClearActiveTab}
+                    // onClearTab={handleClearActiveTab}
                     onSave={() => void handleSaveResume()}
                     isSaving={isSaving}
                     isBusy={isHydrating}

@@ -3,17 +3,18 @@ import type { EducationItem } from './EducationCard.types'
 
 type EducationCardProps = {
   item: EducationItem
+  isSelected?: boolean
   isDeleting?: boolean
   onEdit: (item: EducationItem) => void
   onDelete: (item: EducationItem) => void
 }
 
-function EducationCard({ item, isDeleting = false, onEdit, onDelete }: EducationCardProps) {
+function EducationCard({ item, isSelected = false, isDeleting = false, onEdit, onDelete }: EducationCardProps) {
   const hasCoursework = Boolean(item.coursework && item.coursework.length > 0)
   const isOngoing = /\(expected\)|present|expected/i.test(item.timePeriod)
 
   return (
-    <div className="card bg-base-100 border border-base-300">
+    <div className={`card bg-base-100 border ${isSelected ? 'border-primary' : 'border-base-300'}`}>
       <div className="card-body">
         <div className="flex justify-between items-start">
           <GraduationCap className="text-primary" aria-hidden="true" />

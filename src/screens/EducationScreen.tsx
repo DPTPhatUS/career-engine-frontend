@@ -16,112 +16,37 @@ import AppFooter from '../components/shared/navigation/AppFooter'
 import { useAppData } from '../contexts/useAppData'
 import { useNotification } from '../contexts/useNotification'
 
-function formatMonthYear(value: string) {
-  const [year, month] = value.split('-')
-  const parsedYear = Number(year)
-  const parsedMonth = Number(month)
-
-  if (!parsedYear || !parsedMonth) {
-    return value
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    year: 'numeric',
-  }).format(new Date(parsedYear, parsedMonth - 1, 1))
-}
-
-function parseMonthInput(value: string) {
-  const trimmed = value.trim()
-
-  if (!trimmed) {
-    return ''
-  }
-
-  if (/^\d{4}-\d{2}$/.test(trimmed)) {
-    return trimmed
-  }
-
-  if (/^\d{4}$/.test(trimmed)) {
-    return `${trimmed}-01`
-  }
-
-  const match = trimmed.match(/^([A-Za-z]{3,9})\s+(\d{4})$/)
-  if (!match) {
-    return ''
-  }
-
-  const monthMap: Record<string, string> = {
-    jan: '01',
-    feb: '02',
-    mar: '03',
-    apr: '04',
-    may: '05',
-    jun: '06',
-    jul: '07',
-    aug: '08',
-    sep: '09',
-    oct: '10',
-    nov: '11',
-    dec: '12',
-  }
-
-  const month = monthMap[match[1].slice(0, 3).toLowerCase()]
-  if (!month) {
-    return ''
-  }
-
-  return `${match[2]}-${month}`
-}
 
 function parseTimePeriod(timePeriod: string): {
   startMonth: string
   endMonth: string
   completionStatus: CompletionStatus
 } {
-  const parts = timePeriod.split(/\s*-\s*/)
-
-  if (parts.length < 2) {
+  const trimmed = timePeriod.trim()
+  if (!trimmed) {
     return {
-      startMonth: parseMonthInput(timePeriod),
+      startMonth: '',
       endMonth: '',
       completionStatus: 'graduated',
     }
   }
 
-  const startPart = parts[0] ?? ''
-  const endPart = parts.slice(1).join(' - ')
-  const normalizedEnd = endPart.trim().toLowerCase()
-
-  const expectedMatch = endPart.match(/^(.*?)(?:\s*)\((?:expected)\)\s*$/i)
-  if (expectedMatch) {
+  const expectedSuffix = /\(expected\)\s*$/i
+  const completionStatus: CompletionStatus = expectedSuffix.test(trimmed) ? 'ongoing' : 'graduated'
+  const cleaned = trimmed.replace(expectedSuffix, '').trim()
+  const parts = cleaned.split(/\s+-\s+/)
+  if (parts.length < 2) {
     return {
-      startMonth: parseMonthInput(startPart),
-      endMonth: parseMonthInput(expectedMatch[1] ?? ''),
-      completionStatus: 'ongoing',
-    }
-  }
-
-  if (normalizedEnd.includes('present')) {
-    return {
-      startMonth: parseMonthInput(startPart),
+      startMonth: cleaned,
       endMonth: '',
-      completionStatus: 'ongoing',
-    }
-  }
-
-  if (normalizedEnd.includes('expected')) {
-    return {
-      startMonth: parseMonthInput(startPart),
-      endMonth: '',
-      completionStatus: 'ongoing',
+      completionStatus,
     }
   }
 
   return {
-    startMonth: parseMonthInput(startPart),
-    endMonth: parseMonthInput(endPart),
-    completionStatus: 'graduated',
+    startMonth: (parts[0] ?? '').trim(),
+    endMonth: parts.slice(1).join(' - ').trim(),
+    completionStatus,
   }
 }
 
@@ -180,14 +105,16 @@ function createInitialFormValues(): EducationFormValues {
 }
 
 function buildTimePeriod(values: EducationFormValues) {
-  const start = formatMonthYear(values.startMonth)
-  const end = formatMonthYear(values.endMonth)
+  const start = values.startMonth.trim()
+  const end = values.endMonth.trim()
 
-  if (values.completionStatus === 'ongoing') {
-    return `${start} - ${end} (Expected)`
+  if (!start || !end) {
+    return ''
   }
 
-  return `${start} - ${end}`
+  return values.completionStatus === 'ongoing'
+    ? `${start} - ${end} (Expected)`
+    : `${start} - ${end}`
 }
 
 function buildEducationPayload(values: EducationFormValues): EducationPayload {

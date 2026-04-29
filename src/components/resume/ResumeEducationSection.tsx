@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import EducationCard from '../education/EducationCard'
+import type { EducationItem } from '../education/EducationCard.types'
+
 export type ResumeEducationValues = {
   university: string
   degree: string
@@ -15,149 +19,316 @@ type ResumeEducationSectionProps = {
   onRemove: (index: number) => void
 }
 
+type CompletionStatus = 'graduated' | 'ongoing'
+
+type EducationTimeFields = {
+  startMonth: string
+  endMonth: string
+  completionStatus: CompletionStatus
+}
+
+const defaultTimeFields: EducationTimeFields = {
+  startMonth: '',
+  endMonth: '',
+  completionStatus: 'graduated',
+}
+
+function parseTimePeriod(timePeriod: string): EducationTimeFields {
+  const trimmed = timePeriod.trim()
+  if (!trimmed) {
+    return defaultTimeFields
+  }
+
+  const expectedSuffix = /\(expected\)\s*$/i
+  const completionStatus: CompletionStatus = expectedSuffix.test(trimmed) ? 'ongoing' : 'graduated'
+  const cleaned = trimmed.replace(expectedSuffix, '').trim()
+  const parts = cleaned.split(/\s+-\s+/)
+  if (parts.length < 2) {
+    return {
+      startMonth: cleaned,
+      endMonth: '',
+      completionStatus,
+    }
+  }
+
+  return {
+    startMonth: (parts[0] ?? '').trim(),
+    endMonth: parts.slice(1).join(' - ').trim(),
+    completionStatus,
+  }
+}
+
+function buildTimePeriod(values: EducationTimeFields) {
+  const start = values.startMonth.trim()
+  const end = values.endMonth.trim()
+
+  if (!start || !end) {
+    return ''
+  }
+
+  return values.completionStatus === 'ongoing'
+    ? `${start} - ${end} (Expected)`
+    : `${start} - ${end}`
+}
+
+function parseCoursework(value: string) {
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+function mapEducationToCardItem(education: ResumeEducationValues, index: number): EducationItem {
+  const location = education.location.trim()
+  const gpa = education.gpa.trim()
+
+  return {
+    id: `resume-education-${index}`,
+    university: education.university.trim(),
+    degree: education.degree.trim(),
+    timePeriod: education.timePeriod.trim(),
+    location: location.length > 0 ? location : undefined,
+    gpa: gpa.length > 0 ? gpa : undefined,
+    field: education.field.trim(),
+    coursework: parseCoursework(education.relevantCoursework),
+  }
+}
+
 function ResumeEducationSection({ values, onAdd, onChange, onRemove }: ResumeEducationSectionProps) {
-  if (values.length === 0) {
-    return (
-      <div className="card border border-dashed border-base-300 bg-base-100">
-        <div className="card-body">
-          <h3 className="text-lg font-semibold">No education entries yet</h3>
-          <p className="text-sm opacity-70">Add your first education entry to the resume.</p>
-          <div className="card-actions">
-            <button type="button" className="btn btn-outline" onClick={onAdd}>
-              Add Education
-            </button>
-          </div>
-        </div>
-      </div>
-    )
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const hasEntries = values.length > 0
+  const safeIndex = hasEntries ? Math.min(selectedIndex, values.length - 1) : -1
+  const selectedEducation = hasEntries ? values[safeIndex] : null
+  const timeFields = selectedEducation
+    ? parseTimePeriod(selectedEducation.timePeriod)
+    : defaultTimeFields
+
+  function handleAdd() {
+    onAdd()
+    setSelectedIndex(values.length)
+  }
+
+  function handleSelect(index: number) {
+    setSelectedIndex(index)
+  }
+
+  function handleRemove(index: number) {
+    onRemove(index)
+    setSelectedIndex((previous) => {
+      if (values.length <= 1) {
+        return 0
+      }
+
+      if (index < previous) {
+        return previous - 1
+      }
+
+      if (index === previous) {
+        return Math.min(previous, values.length - 2)
+      }
+
+      return previous
+    })
+  }
+
+  function updateTimePeriod(fields: Partial<EducationTimeFields>) {
+    if (!selectedEducation) {
+      return
+    }
+
+    const next = {
+      ...timeFields,
+      ...fields,
+    }
+
+    onChange(safeIndex, 'timePeriod', buildTimePeriod(next))
   }
 
   return (
-    <div className="space-y-4">
-      {values.map((education, index) => (
-        <fieldset
-          key={`education-${index}`}
-          className="fieldset rounded-box border border-base-300 bg-base-200 p-4 md:p-6"
-        >
-          <legend className="fieldset-legend">Education {index + 1}</legend>
-          <div className="flex items-start justify-between gap-4">
-            <p className="label">Match the backend education schema for your resume payload.</p>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              onClick={() => onRemove(index)}
-            >
-              Remove
-            </button>
-          </div>
-
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <div className="space-y-4 lg:col-span-7">
+        <div className="flex items-center justify-between gap-4">
           <div>
-            <label className="label" htmlFor={`resume-education-university-${index}`}>
-              School / University
-            </label>
-            <input
-              id={`resume-education-university-${index}`}
-              type="text"
-              className="input w-full"
-              placeholder="e.g. Stanford University"
-              value={education.university}
-              onChange={(event) => onChange(index, 'university', event.target.value)}
-            />
+            <h3 className="text-sm font-semibold">Education entries</h3>
+            <p className="text-xs opacity-70">Select a card to edit.</p>
           </div>
+          <button type="button" className="btn btn-outline btn-sm" onClick={handleAdd}>
+            Add Education
+          </button>
+        </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {hasEntries ? (
+          <div className="space-y-4">
+            {values.map((education, index) => {
+              const item = mapEducationToCardItem(education, index)
+              const isSelected = index === safeIndex
+
+              return (
+                <EducationCard
+                  item={item}
+                  isSelected={isSelected}
+                  onEdit={() => handleSelect(index)}
+                  onDelete={() => handleRemove(index)}
+                />
+              )
+            })}
+          </div>
+        ) : (
+          <div className="card border border-dashed border-base-300 bg-base-100">
+            <div className="card-body">
+              <h3 className="text-lg font-semibold">No education entries yet</h3>
+              <p className="text-sm opacity-70">Add your first education entry to start editing.</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="lg:col-span-5 lg:sticky lg:top-20">
+        {selectedEducation ? (
+          <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
+            <legend className="fieldset-legend">Education Editor</legend>
+
             <div>
-              <label className="label" htmlFor={`resume-education-degree-${index}`}>
-                Degree
+              <label className="label" htmlFor={`resume-education-university-${safeIndex}`}>
+                University Name
               </label>
               <input
-                id={`resume-education-degree-${index}`}
+                id={`resume-education-university-${safeIndex}`}
                 type="text"
                 className="input w-full"
-                placeholder="e.g. B.S."
-                value={education.degree}
-                onChange={(event) => onChange(index, 'degree', event.target.value)}
+                placeholder="e.g. Massachusetts Institute of Technology"
+                value={selectedEducation.university}
+                onChange={(event) => onChange(safeIndex, 'university', event.target.value)}
               />
             </div>
 
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="label" htmlFor={`resume-education-degree-${safeIndex}`}>
+                  Degree
+                </label>
+                <input
+                  id={`resume-education-degree-${safeIndex}`}
+                  type="text"
+                  className="input w-full"
+                  placeholder="e.g. Bachelor of Arts"
+                  value={selectedEducation.degree}
+                  onChange={(event) => onChange(safeIndex, 'degree', event.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="label" htmlFor={`resume-education-field-${safeIndex}`}>
+                  Field of Study
+                </label>
+                <input
+                  id={`resume-education-field-${safeIndex}`}
+                  type="text"
+                  className="input w-full"
+                  placeholder="e.g. Economics"
+                  value={selectedEducation.field}
+                  onChange={(event) => onChange(safeIndex, 'field', event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor={`resume-education-start-${safeIndex}`}>
+                  Start Date
+                </label>
+                <input
+                  id={`resume-education-start-${safeIndex}`}
+                  type="text"
+                  className="input w-full"
+                  placeholder="e.g. Sep 2020"
+                  value={timeFields.startMonth}
+                  onChange={(event) => updateTimePeriod({ startMonth: event.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="label" htmlFor={`resume-education-end-${safeIndex}`}>
+                  End Date
+                </label>
+                <input
+                  id={`resume-education-end-${safeIndex}`}
+                  type="text"
+                  className="input w-full"
+                  placeholder="e.g. May 2024"
+                  value={timeFields.endMonth}
+                  onChange={(event) => updateTimePeriod({ endMonth: event.target.value })}
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="label" htmlFor={`resume-education-field-${index}`}>
-                Field of Study
+              <label className="label" htmlFor={`resume-education-completion-${safeIndex}`}>
+                Completion Status
               </label>
-              <input
-                id={`resume-education-field-${index}`}
-                type="text"
-                className="input w-full"
-                placeholder="e.g. Computer Science"
-                value={education.field}
-                onChange={(event) => onChange(index, 'field', event.target.value)}
-              />
+              <select
+                id={`resume-education-completion-${safeIndex}`}
+                className="select w-full"
+                value={timeFields.completionStatus}
+                onChange={(event) => updateTimePeriod({ completionStatus: event.target.value as CompletionStatus })}
+              >
+                <option value="graduated">Graduated</option>
+                <option value="ongoing">Ongoing</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-1">
+                <label className="label" htmlFor={`resume-education-gpa-${safeIndex}`}>
+                  GPA
+                </label>
+                <input
+                  id={`resume-education-gpa-${safeIndex}`}
+                  type="text"
+                  className="input w-full"
+                  placeholder="e.g. 3.8 / 4.0"
+                  value={selectedEducation.gpa}
+                  onChange={(event) => onChange(safeIndex, 'gpa', event.target.value)}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="label" htmlFor={`resume-education-location-${safeIndex}`}>
+                  Location
+                </label>
+                <input
+                  id={`resume-education-location-${safeIndex}`}
+                  type="text"
+                  className="input w-full"
+                  placeholder="e.g. Cambridge, MA"
+                  value={selectedEducation.location}
+                  onChange={(event) => onChange(safeIndex, 'location', event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="label" htmlFor={`resume-education-coursework-${safeIndex}`}>
+                Coursework
+              </label>
+              <textarea
+                id={`resume-education-coursework-${safeIndex}`}
+                className="textarea w-full"
+                placeholder="e.g. Data Structures, Algorithms, Computer Networks"
+                value={selectedEducation.relevantCoursework}
+                onChange={(event) => onChange(safeIndex, 'relevantCoursework', event.target.value)}
+              ></textarea>
+            </div>
+          </fieldset>
+        ) : (
+          <div className="card border border-dashed border-base-300 bg-base-100">
+            <div className="card-body">
+              <h3 className="text-lg font-semibold">Start with a new education entry</h3>
+              <p className="text-sm opacity-70">Add an entry to edit its details here.</p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="label" htmlFor={`resume-education-time-period-${index}`}>
-                Time Period
-              </label>
-              <input
-                id={`resume-education-time-period-${index}`}
-                type="text"
-                className="input w-full"
-                placeholder="e.g. 2020-2024"
-                value={education.timePeriod}
-                onChange={(event) => onChange(index, 'timePeriod', event.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="label" htmlFor={`resume-education-gpa-${index}`}>
-                GPA (optional)
-              </label>
-              <input
-                id={`resume-education-gpa-${index}`}
-                type="text"
-                className="input w-full"
-                placeholder="e.g. 3.8 / 4.0"
-                value={education.gpa}
-                onChange={(event) => onChange(index, 'gpa', event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="label" htmlFor={`resume-education-location-${index}`}>
-              Location
-            </label>
-            <input
-              id={`resume-education-location-${index}`}
-              type="text"
-              className="input w-full"
-              placeholder="City, ST"
-              value={education.location}
-              onChange={(event) => onChange(index, 'location', event.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="label" htmlFor={`resume-education-coursework-${index}`}>
-              Relevant Coursework
-            </label>
-            <input
-              id={`resume-education-coursework-${index}`}
-              type="text"
-              className="input w-full"
-              placeholder="Algorithms, Systems"
-              value={education.relevantCoursework}
-              onChange={(event) => onChange(index, 'relevantCoursework', event.target.value)}
-            />
-          </div>
-        </fieldset>
-      ))}
-
-      <button type="button" className="btn btn-outline" onClick={onAdd}>
-        Add Another Education
-      </button>
+        )}
+      </div>
     </div>
   )
 }

@@ -17,6 +17,7 @@ import ResumeTopNav from '../components/resume/ResumeTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
 import { useAppData } from '../contexts/useAppData'
 import { useNotification } from '../contexts/useNotification'
+import ScreenHeader from '../components/shared/layout/ScreenHeader'
 
 const wizardSteps = ['Target Role', 'Choose Projects', 'Edit Resume'] as const
 
@@ -268,39 +269,15 @@ function ResumeBuilderScreen() {
   ), [step])
 
   const headerContent = isEditing ? (
-    <section className="flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-(--on-surface-variant)">Resume Editor</p>
-        <h1 className="text-4xl font-semibold">Edit Resume</h1>
-        <p className="mt-2 text-sm text-(--on-surface-variant)">
-          Update the sections and save when you are ready.
-        </p>
-      </div>
-      <Link to="/resumes" className="btn btn-outline">
-        Back to Resumes
-      </Link>
-    </section>
+    <ScreenHeader
+      title="Edit Resume"
+      description="Update your resume to match your latest projects, education, and profile information."
+    />
   ) : (
-    <section className="relative overflow-hidden rounded-3xl border border-base-200 bg-base-100 p-8">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background: 'linear-gradient(135deg, #ecfdf5 0%, #ffffff 55%, #fffbeb 100%)',
-        }}
-      />
-      <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-(--on-surface-variant)">New Resume</p>
-          <h1 className="text-4xl font-semibold">Tailored Resume Builder</h1>
-          <p className="mt-2 text-sm text-(--on-surface-variant)">
-            Start with a target role and let the system tailor your project bullets.
-          </p>
-        </div>
-        <Link to="/resumes" className="btn btn-outline">
-          Back to Resumes
-        </Link>
-      </div>
-    </section>
+    <ScreenHeader
+      title="Resume Builder"
+      description="Create a tailored resume by matching your projects to a target role."
+    />
   )
 
   if (isBootstrapping || !isReady) {
@@ -326,175 +303,173 @@ function ResumeBuilderScreen() {
     <div className="flex min-h-screen flex-col bg-(--surface) text-(--on-surface)">
       <ResumeTopNav />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-10 md:px-8 md:py-12 lg:py-14">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         {headerContent}
 
-        <section className="mt-8">
-          {isEditing ? (
-            <ResumeEditorPane resumeId={resumeId} />
-          ) : (
-            <div className="space-y-6">
-              <div className="card border border-base-200 bg-base-100">
-                <div className="card-body gap-6">
-                  {stepsContent}
+        {isEditing ? (
+          <ResumeEditorPane resumeId={resumeId} />
+        ) : (
+          <div className="space-y-6">
+            <div className="card border border-base-200 bg-base-100">
+              <div className="card-body gap-6">
+                {stepsContent}
 
-                  {step === 0 ? (
-                    <div className="grid gap-4">
+                {step === 0 ? (
+                  <div className="grid gap-4">
+                    <div>
+                      <label className="label" htmlFor="resume-job-title">Job Title</label>
+                      <input
+                        id="resume-job-title"
+                        type="text"
+                        className="input w-full"
+                        placeholder="e.g. Backend Engineer"
+                        value={jobTarget.jobTitle}
+                        onChange={(event) => updateJobTarget('jobTitle', event.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="label" htmlFor="resume-job-description">Job Description</label>
+                      <textarea
+                        id="resume-job-description"
+                        rows={4}
+                        className="textarea w-full"
+                        placeholder="Paste the role summary here..."
+                        value={jobTarget.jobDescription}
+                        onChange={(event) => updateJobTarget('jobDescription', event.target.value)}
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <label className="label" htmlFor="resume-job-requirements">Job Requirements</label>
+                      <textarea
+                        id="resume-job-requirements"
+                        rows={4}
+                        className="textarea w-full"
+                        placeholder="List the must-have skills and tools..."
+                        value={jobTarget.jobRequirements}
+                        onChange={(event) => updateJobTarget('jobRequirements', event.target.value)}
+                      ></textarea>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <p className="text-sm text-(--on-surface-variant)">
+                        We will tailor project bullets based on this target.
+                      </p>
+                      <button type="button" className="btn btn-primary" onClick={handleContinueToProjects}>
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {step === 1 ? (
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
                       <div>
-                        <label className="label" htmlFor="resume-job-title">Job Title</label>
-                        <input
-                          id="resume-job-title"
-                          type="text"
-                          className="input w-full"
-                          placeholder="e.g. Backend Engineer"
-                          value={jobTarget.jobTitle}
-                          onChange={(event) => updateJobTarget('jobTitle', event.target.value)}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="label" htmlFor="resume-job-description">Job Description</label>
-                        <textarea
-                          id="resume-job-description"
-                          rows={4}
-                          className="textarea w-full"
-                          placeholder="Paste the role summary here..."
-                          value={jobTarget.jobDescription}
-                          onChange={(event) => updateJobTarget('jobDescription', event.target.value)}
-                        ></textarea>
-                      </div>
-
-                      <div>
-                        <label className="label" htmlFor="resume-job-requirements">Job Requirements</label>
-                        <textarea
-                          id="resume-job-requirements"
-                          rows={4}
-                          className="textarea w-full"
-                          placeholder="List the must-have skills and tools..."
-                          value={jobTarget.jobRequirements}
-                          onChange={(event) => updateJobTarget('jobRequirements', event.target.value)}
-                        ></textarea>
-                      </div>
-
-                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <h2 className="text-lg font-semibold">Select projects to tailor</h2>
                         <p className="text-sm text-(--on-surface-variant)">
-                          We will tailor project bullets based on this target.
+                          Choose up to 5 projects to match this role.
                         </p>
-                        <button type="button" className="btn btn-primary" onClick={handleContinueToProjects}>
-                          Continue
-                        </button>
+                      </div>
+                      <div className="text-sm text-(--on-surface-variant)">
+                        Selected {selectionCount}/5
                       </div>
                     </div>
-                  ) : null}
 
-                  {step === 1 ? (
-                    <div className="space-y-4">
-                      <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                          <h2 className="text-lg font-semibold">Select projects to tailor</h2>
-                          <p className="text-sm text-(--on-surface-variant)">
-                            Choose up to 5 projects to match this role.
-                          </p>
-                        </div>
-                        <div className="text-sm text-(--on-surface-variant)">
-                          Selected {selectionCount}/5
-                        </div>
-                      </div>
-
-                      {projects.length === 0 ? (
-                        <div className="card border border-dashed border-base-300 bg-base-100">
-                          <div className="card-body">
-                            <h3 className="text-lg font-semibold">No projects found</h3>
-                            <p className="text-sm opacity-70">Add projects first to tailor a resume.</p>
-                            <div className="card-actions">
-                              <Link to="/projects" className="btn btn-outline">Go to Projects</Link>
-                            </div>
+                    {projects.length === 0 ? (
+                      <div className="card border border-dashed border-base-300 bg-base-100">
+                        <div className="card-body">
+                          <h3 className="text-lg font-semibold">No projects found</h3>
+                          <p className="text-sm opacity-70">Add projects first to tailor a resume.</p>
+                          <div className="card-actions">
+                            <Link to="/projects" className="btn btn-outline">Go to Projects</Link>
                           </div>
                         </div>
-                      ) : (
-                        <div className="grid gap-4 lg:grid-cols-2">
-                          {projects.map((project) => {
-                            const selected = selectedProjectIds.includes(project.id)
-                            const techStack = splitTechStack(project.tech_stack)
-                            const isDisabled = !selected && selectionCount >= 5
-
-                            return (
-                              <label
-                                key={project.id}
-                                className={`card cursor-pointer border ${selected
-                                  ? 'border-primary bg-primary/5'
-                                  : 'border-base-200 bg-base-100'
-                                } ${isDisabled ? 'opacity-60' : ''}`}
-                              >
-                                <div className="card-body gap-3">
-                                  <div className="flex items-start justify-between gap-3">
-                                    <div>
-                                      <h3 className="text-lg font-semibold">{project.title}</h3>
-                                      <p className="text-sm text-(--on-surface-variant)">
-                                        {project.date_range}
-                                      </p>
-                                    </div>
-                                    <input
-                                      type="checkbox"
-                                      className="checkbox checkbox-primary"
-                                      checked={selected}
-                                      disabled={isDisabled}
-                                      onChange={() => toggleProject(project.id)}
-                                    />
-                                  </div>
-
-                                  {techStack.length > 0 ? (
-                                    <div className="flex flex-wrap gap-2">
-                                      {techStack.map((tech) => (
-                                        <span key={`${project.id}-${tech}`} className="badge badge-outline">
-                                          {tech}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  ) : null}
-
-                                  {!project.github_url ? (
-                                    <p className="text-xs text-warning">
-                                      No GitHub link. Tailoring will keep original details.
-                                    </p>
-                                  ) : null}
-                                </div>
-                              </label>
-                            )
-                          })}
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap items-center justify-between gap-4">
-                        <button type="button" className="btn btn-outline" onClick={() => setStep(0)}>
-                          Back
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => void handleGenerateResume()}
-                          disabled={isTailoring || projects.length === 0}
-                        >
-                          {isTailoring ? 'Tailoring...' : 'Generate Tailored Projects'}
-                        </button>
                       </div>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
+                    ) : (
+                      <div className="grid gap-4 lg:grid-cols-2">
+                        {projects.map((project) => {
+                          const selected = selectedProjectIds.includes(project.id)
+                          const techStack = splitTechStack(project.tech_stack)
+                          const isDisabled = !selected && selectionCount >= 5
 
-              {step === 2 && editorSeed ? (
-                <div className="space-y-4">
-                  {warningsContent}
-                  <ResumeEditorPane key={`resume-editor-${editorSeedId}`} initialValues={editorSeed} />
-                  <button type="button" className="btn btn-outline" onClick={() => setStep(1)}>
-                    Back to Project Selection
-                  </button>
-                </div>
-              ) : null}
+                          return (
+                            <label
+                              key={project.id}
+                              className={`card cursor-pointer border ${selected
+                                ? 'border-primary bg-primary/5'
+                                : 'border-base-200 bg-base-100'
+                                } ${isDisabled ? 'opacity-60' : ''}`}
+                            >
+                              <div className="card-body gap-3">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <h3 className="text-lg font-semibold">{project.title}</h3>
+                                    <p className="text-sm text-(--on-surface-variant)">
+                                      {project.date_range}
+                                    </p>
+                                  </div>
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox checkbox-primary"
+                                    checked={selected}
+                                    disabled={isDisabled}
+                                    onChange={() => toggleProject(project.id)}
+                                  />
+                                </div>
+
+                                {techStack.length > 0 ? (
+                                  <div className="flex flex-wrap gap-2">
+                                    {techStack.map((tech) => (
+                                      <span key={`${project.id}-${tech}`} className="badge badge-outline">
+                                        {tech}
+                                      </span>
+                                    ))}
+                                  </div>
+                                ) : null}
+
+                                {!project.github_url ? (
+                                  <p className="text-xs text-warning">
+                                    No GitHub link. Tailoring will keep original details.
+                                  </p>
+                                ) : null}
+                              </div>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <button type="button" className="btn btn-outline" onClick={() => setStep(0)}>
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => void handleGenerateResume()}
+                        disabled={isTailoring || projects.length === 0}
+                      >
+                        {isTailoring ? 'Tailoring...' : 'Generate Tailored Projects'}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
             </div>
-          )}
-        </section>
+
+            {step === 2 && editorSeed ? (
+              <div className="space-y-4">
+                {warningsContent}
+                <ResumeEditorPane key={`resume-editor-${editorSeedId}`} initialValues={editorSeed} />
+                <button type="button" className="btn btn-outline" onClick={() => setStep(1)}>
+                  Back to Project Selection
+                </button>
+              </div>
+            ) : null}
+          </div>
+        )}
       </main>
 
       <AppFooter />

@@ -3,7 +3,7 @@ type ResumeEditorActionsProps = {
   activeTab: number
   onPrevious: () => void
   onNext: () => void
-  onClearTab: () => void
+  // onClearTab: () => void
   onSave: () => void
   isSaving: boolean
   isBusy?: boolean
@@ -14,7 +14,7 @@ function ResumeEditorActions({
   activeTab,
   onPrevious,
   onNext,
-  onClearTab,
+  // onClearTab,
   onSave,
   isSaving,
   isBusy = false,
@@ -25,8 +25,8 @@ function ResumeEditorActions({
   const isDisabled = isSaving || isBusy
 
   return (
-    <div className="mt-6 space-y-4">
-      <div className="divider my-0" />
+    <div className="mt-4 space-y-4">
+      {/* <div className="divider my-0" />
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-(--on-surface-variant)">
@@ -41,7 +41,7 @@ function ResumeEditorActions({
         >
           Clear This Tab
         </button>
-      </div>
+      </div> */}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <button type="button" className="btn btn-primary" onClick={onSave} disabled={isDisabled}>

@@ -3,17 +3,19 @@ import type { ProjectItem } from './ProjectCard.types'
 
 function ProjectCard({
   item,
+  isSelected = false,
   isDeleting = false,
   onEdit,
   onDelete,
 }: {
   item: ProjectItem
+  isSelected?: boolean
   isDeleting?: boolean
   onEdit: (item: ProjectItem) => void
   onDelete: (item: ProjectItem) => void
 }) {
   return (
-    <div className="card border border-base-300 bg-base-100">
+    <div className={`card border ${isSelected ? 'border-primary' : 'border-base-300'} bg-base-100`}>
       <div className="card-body">
         <div className="flex items-start justify-between">
           <FolderGit2 className="text-primary" aria-hidden="true" />
