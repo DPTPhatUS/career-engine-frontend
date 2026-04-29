@@ -3,12 +3,13 @@ import type { EducationItem } from './EducationCard.types'
 
 type EducationListPaneProps = {
   educations: EducationItem[]
+  selectedId?: string | null
   deletingId: string | null
   onEdit: (item: EducationItem) => void
   onDelete: (item: EducationItem) => void
 }
 
-function EducationListPane({ educations, deletingId, onEdit, onDelete }: EducationListPaneProps) {
+function EducationListPane({ educations, selectedId, deletingId, onEdit, onDelete }: EducationListPaneProps) {
   if (educations.length === 0) {
     return (
       <div className="lg:col-span-7">
@@ -30,6 +31,7 @@ function EducationListPane({ educations, deletingId, onEdit, onDelete }: Educati
         <EducationCard
           key={item.id}
           item={item}
+          isSelected={selectedId === item.id}
           isDeleting={deletingId === item.id}
           onEdit={onEdit}
           onDelete={onDelete}

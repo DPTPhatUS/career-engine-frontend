@@ -145,7 +145,7 @@ function ResumeEducationSection({ values, onAdd, onChange, onRemove }: ResumeEdu
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
       <div className="space-y-4 lg:col-span-7">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -183,7 +183,7 @@ function ResumeEducationSection({ values, onAdd, onChange, onRemove }: ResumeEdu
         )}
       </div>
 
-      <div className="lg:col-span-5 lg:sticky lg:top-20">
+      <div className="self-start lg:col-span-5 lg:sticky lg:top-20">
         {selectedEducation ? (
           <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
             <legend className="fieldset-legend">Education Editor</legend>

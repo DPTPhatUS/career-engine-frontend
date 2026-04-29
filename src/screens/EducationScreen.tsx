@@ -253,6 +253,7 @@ function EducationScreen() {
         <div className="grid grid-cols-12 items-start gap-8">
           <EducationListPane
             educations={educationItems}
+            selectedId={editingId}
             deletingId={deletingId}
             onEdit={handleEdit}
             onDelete={(item) => void handleDelete(item)}

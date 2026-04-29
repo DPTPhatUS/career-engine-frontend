@@ -18,9 +18,9 @@ function EducationFormPane({
   onCancel,
 }: EducationFormPaneProps) {
   return (
-    <div className="lg:sticky lg:top-24 lg:col-span-5">
+    <div className="self-start lg:sticky lg:top-24 lg:col-span-5">
       <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
-        <legend className="fieldset-legend">Editor</legend>
+        <legend className="fieldset-legend">Education Editor</legend>
 
         <div>
           <label className="label">University Name</label>

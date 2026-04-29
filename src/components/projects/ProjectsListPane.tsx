@@ -3,12 +3,13 @@ import type { ProjectItem } from './ProjectCard.types'
 
 type ProjectsListPaneProps = {
   projects: ProjectItem[]
+  selectedId?: string | null
   deletingId: string | null
   onEdit: (item: ProjectItem) => void
   onDelete: (item: ProjectItem) => void
 }
 
-function ProjectsListPane({ projects, deletingId, onEdit, onDelete }: ProjectsListPaneProps) {
+function ProjectsListPane({ projects, selectedId, deletingId, onEdit, onDelete }: ProjectsListPaneProps) {
   if (projects.length === 0) {
     return (
       <section className="lg:col-span-7">
@@ -28,6 +29,7 @@ function ProjectsListPane({ projects, deletingId, onEdit, onDelete }: ProjectsLi
         <ProjectCard
           key={project.id}
           item={project}
+          isSelected={selectedId === project.id}
           isDeleting={deletingId === project.id}
           onEdit={onEdit}
           onDelete={onDelete}

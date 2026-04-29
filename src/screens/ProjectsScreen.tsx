@@ -17,92 +17,29 @@ import AppFooter from '../components/shared/navigation/AppFooter'
 import { useAppData } from '../contexts/useAppData'
 import { useNotification } from '../contexts/useNotification'
 
-function formatMonthYear(value: string) {
-  const [year, month] = value.split('-')
-  const parsedYear = Number(year)
-  const parsedMonth = Number(month)
-
-  if (!parsedYear || !parsedMonth) {
-    return value
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    year: 'numeric',
-  }).format(new Date(parsedYear, parsedMonth - 1, 1))
-}
-
-function parseMonthInput(value: string) {
-  const trimmed = value.trim()
-
-  if (!trimmed) {
-    return ''
-  }
-
-  if (/^\d{4}-\d{2}$/.test(trimmed)) {
-    return trimmed
-  }
-
-  const yearOnly = trimmed.match(/^(\d{4})$/)
-  if (yearOnly) {
-    return `${yearOnly[1]}-01`
-  }
-
-  const namedMonth = trimmed.match(/^([A-Za-z]{3,9})\s+(\d{4})$/)
-  if (!namedMonth) {
-    return ''
-  }
-
-  const monthMap: Record<string, string> = {
-    jan: '01',
-    feb: '02',
-    mar: '03',
-    apr: '04',
-    may: '05',
-    jun: '06',
-    jul: '07',
-    aug: '08',
-    sep: '09',
-    oct: '10',
-    nov: '11',
-    dec: '12',
-  }
-
-  const month = monthMap[namedMonth[1].slice(0, 3).toLowerCase()]
-  if (!month) {
-    return ''
-  }
-
-  return `${namedMonth[2]}-${month}`
-}
-
 function parseDateRange(dateRange: string): {
   startMonth: string
   endMonth: string
 } {
-  const parts = dateRange.split(/\s*-\s*/)
-
-  if (parts.length < 2) {
+  const trimmed = dateRange.trim()
+  if (!trimmed) {
     return {
-      startMonth: parseMonthInput(dateRange),
+      startMonth: '',
       endMonth: '',
     }
   }
 
-  const startPart = parts[0] ?? ''
-  const endPart = parts.slice(1).join(' - ')
-  const normalizedEnd = endPart.trim().toLowerCase()
-
-  if (normalizedEnd.includes('present')) {
+  const parts = trimmed.split(/\s+-\s+/)
+  if (parts.length < 2) {
     return {
-      startMonth: parseMonthInput(startPart),
+      startMonth: trimmed,
       endMonth: '',
     }
   }
 
   return {
-    startMonth: parseMonthInput(startPart),
-    endMonth: parseMonthInput(endPart),
+    startMonth: (parts[0] ?? '').trim(),
+    endMonth: parts.slice(1).join(' - ').trim(),
   }
 }
 
@@ -182,8 +119,14 @@ function mapProjectToForm(project: ProjectRecord): ProjectsFormValues {
 }
 
 function buildDateRange(values: ProjectsFormValues) {
-  const start = formatMonthYear(values.startMonth)
-  return `${start} - ${formatMonthYear(values.endMonth)}`
+  const start = values.startMonth.trim()
+  const end = values.endMonth.trim()
+
+  if (!start || !end) {
+    return ''
+  }
+
+  return `${start} - ${end}`
 }
 
 function buildProjectPayload(values: ProjectsFormValues): ProjectPayload {
@@ -386,6 +329,7 @@ function ProjectsScreen() {
           />
           <ProjectsListPane
             projects={projectItems}
+            selectedId={editingId}
             deletingId={deletingId}
             onEdit={handleEdit}
             onDelete={(item) => void handleDelete(item)}

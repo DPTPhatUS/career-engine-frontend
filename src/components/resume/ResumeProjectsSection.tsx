@@ -22,98 +22,35 @@ type ProjectDateFields = {
   endMonth: string
 }
 
-function formatMonthYear(value: string) {
-  const [year, month] = value.split('-')
-  const parsedYear = Number(year)
-  const parsedMonth = Number(month)
-
-  if (!parsedYear || !parsedMonth) {
-    return value
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    year: 'numeric',
-  }).format(new Date(parsedYear, parsedMonth - 1, 1))
-}
-
-function parseMonthInput(value: string) {
-  const trimmed = value.trim()
-
-  if (!trimmed) {
-    return ''
-  }
-
-  if (/^\d{4}-\d{2}$/.test(trimmed)) {
-    return trimmed
-  }
-
-  const yearOnly = trimmed.match(/^(\d{4})$/)
-  if (yearOnly) {
-    return `${yearOnly[1]}-01`
-  }
-
-  const namedMonth = trimmed.match(/^([A-Za-z]{3,9})\s+(\d{4})$/)
-  if (!namedMonth) {
-    return ''
-  }
-
-  const monthMap: Record<string, string> = {
-    jan: '01',
-    feb: '02',
-    mar: '03',
-    apr: '04',
-    may: '05',
-    jun: '06',
-    jul: '07',
-    aug: '08',
-    sep: '09',
-    oct: '10',
-    nov: '11',
-    dec: '12',
-  }
-
-  const month = monthMap[namedMonth[1].slice(0, 3).toLowerCase()]
-  if (!month) {
-    return ''
-  }
-
-  return `${namedMonth[2]}-${month}`
-}
-
 function parseDateRange(dateRange: string): ProjectDateFields {
-  const parts = dateRange.split(/\s*-\s*/)
+  const trimmed = dateRange.trim()
+  if (!trimmed) {
+    return { startMonth: '', endMonth: '' }
+  }
 
+  const parts = trimmed.split(/\s+-\s+/)
   if (parts.length < 2) {
     return {
-      startMonth: parseMonthInput(dateRange),
-      endMonth: '',
-    }
-  }
-
-  const startPart = parts[0] ?? ''
-  const endPart = parts.slice(1).join(' - ')
-  const normalizedEnd = endPart.trim().toLowerCase()
-
-  if (normalizedEnd.includes('present')) {
-    return {
-      startMonth: parseMonthInput(startPart),
+      startMonth: trimmed,
       endMonth: '',
     }
   }
 
   return {
-    startMonth: parseMonthInput(startPart),
-    endMonth: parseMonthInput(endPart),
+    startMonth: (parts[0] ?? '').trim(),
+    endMonth: parts.slice(1).join(' - ').trim(),
   }
 }
 
 function buildDateRange(values: ProjectDateFields) {
-  if (!values.startMonth || !values.endMonth) {
+  const start = values.startMonth.trim()
+  const end = values.endMonth.trim()
+
+  if (!start || !end) {
     return ''
   }
 
-  return `${formatMonthYear(values.startMonth)} - ${formatMonthYear(values.endMonth)}`
+  return `${start} - ${end}`
 }
 
 function parseGithubRepo(value: string) {
@@ -258,26 +195,24 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-      <section className="lg:col-span-5 lg:sticky lg:top-20">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+      <section className="self-start lg:col-span-5 lg:sticky lg:top-20">
         {selectedProject ? (
           <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
             <legend className="fieldset-legend">Project Editor</legend>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="label" htmlFor={`resume-project-title-${safeIndex}`}>
-                  Project Title
-                </label>
-                <input
-                  id={`resume-project-title-${safeIndex}`}
-                  type="text"
-                  className="input w-full"
-                  placeholder="e.g. Neural Link Dashboard"
-                  value={selectedProject.title}
-                  onChange={(event) => onChange(safeIndex, 'title', event.target.value)}
-                />
-              </div>
+            <div>
+              <label className="label" htmlFor={`resume-project-title-${safeIndex}`}>
+                Project Title
+              </label>
+              <input
+                id={`resume-project-title-${safeIndex}`}
+                type="text"
+                className="input w-full"
+                placeholder="e.g. Neural Link Dashboard"
+                value={selectedProject.title}
+                onChange={(event) => onChange(safeIndex, 'title', event.target.value)}
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -287,8 +222,9 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
                 </label>
                 <input
                   id={`resume-project-start-${safeIndex}`}
-                  type="month"
+                  type="text"
                   className="input w-full"
+                  placeholder="e.g. Sep 2020"
                   value={dateFields.startMonth}
                   onChange={(event) => updateDateRange({ startMonth: event.target.value })}
                 />
@@ -300,8 +236,9 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
                 </label>
                 <input
                   id={`resume-project-end-${safeIndex}`}
-                  type="month"
+                  type="text"
                   className="input w-full"
+                  placeholder="e.g. May 2024"
                   value={dateFields.endMonth}
                   onChange={(event) => updateDateRange({ endMonth: event.target.value })}
                 />

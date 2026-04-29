@@ -45,7 +45,8 @@ function ProjectsFormPane({
           <div>
             <label className="label">Start Date</label>
             <input
-              type="month"
+              type="text"
+              placeholder="e.g. Sep 2020"
               className="input w-full"
               value={values.startMonth}
               onChange={(event) => onChange('startMonth', event.target.value)}
@@ -55,7 +56,8 @@ function ProjectsFormPane({
           <div>
             <label className="label">End Date</label>
             <input
-              type="month"
+              type="text"
+              placeholder="e.g. May 2024"
               className="input w-full"
               value={values.endMonth}
               onChange={(event) => onChange('endMonth', event.target.value)}
