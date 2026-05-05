@@ -209,8 +209,6 @@ function ResumeBuilderScreen() {
       })
 
       const resumeTitle = jobTarget.jobTitle.trim()
-        ? `${jobTarget.jobTitle.trim()} Resume`
-        : ''
 
       setEditorSeed({
         title: resumeTitle,
