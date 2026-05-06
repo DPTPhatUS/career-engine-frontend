@@ -1,8 +1,11 @@
 import {
+  BriefcaseBusiness,
   // Braces,
   // Database,
   // FileCode2,
+  Building2,
   GraduationCap,
+  FolderGit2,
   UserRound,
   type LucideIcon,
 } from 'lucide-react'
@@ -28,6 +31,24 @@ const shortcuts: Shortcut[] = [
     description: 'Manage your degrees and certifications.',
     icon: GraduationCap,
     to: '/education',
+  },
+  {
+    title: 'Companies',
+    description: 'Save target companies and their hiring context.',
+    icon: Building2,
+    to: '/companies',
+  },
+  {
+    title: 'Jobs',
+    description: 'Track saved roles and requirements by company.',
+    icon: BriefcaseBusiness,
+    to: '/jobs',
+  },
+  {
+    title: 'Projects',
+    description: 'Maintain portfolio projects and impact bullets.',
+    icon: FolderGit2,
+    to: '/projects',
   },
 ]
 

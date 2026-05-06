@@ -7,7 +7,9 @@ import {
   type ReactNode,
 } from 'react'
 import { ApiError } from '../api/client'
+import { listCompanies, type CompanyRecord } from '../api/companies'
 import { listEducations, type EducationRecord } from '../api/educations'
+import { listJobs, type JobRecord } from '../api/jobs'
 import { getProfile, type ProfileRecord } from '../api/profile'
 import { listProjects, type ProjectRecord } from '../api/projects'
 import { AppDataContext } from './AppDataContextShared'
@@ -25,10 +27,14 @@ function AppDataProvider({ children }: AppDataProviderProps) {
   const [isBootstrapping, setIsBootstrapping] = useState(false)
 
   const [profile, setProfile] = useState<ProfileRecord | null>(null)
+  const [companies, setCompanies] = useState<CompanyRecord[]>([])
+  const [jobs, setJobs] = useState<JobRecord[]>([])
   const [educations, setEducations] = useState<EducationRecord[]>([])
   const [projects, setProjects] = useState<ProjectRecord[]>([])
 
   const [profileError, setProfileError] = useState<string | null>(null)
+  const [companiesError, setCompaniesError] = useState<string | null>(null)
+  const [jobsError, setJobsError] = useState<string | null>(null)
   const [educationsError, setEducationsError] = useState<string | null>(null)
   const [projectsError, setProjectsError] = useState<string | null>(null)
 
@@ -40,15 +46,27 @@ function AppDataProvider({ children }: AppDataProviderProps) {
     setIsReady(false)
     setIsBootstrapping(false)
     setProfile(null)
+    setCompanies([])
+    setJobs([])
     setEducations([])
     setProjects([])
     setProfileError(null)
+    setCompaniesError(null)
+    setJobsError(null)
     setEducationsError(null)
     setProjectsError(null)
   }, [])
 
   const clearProfileError = useCallback(() => {
     setProfileError(null)
+  }, [])
+
+  const clearCompaniesError = useCallback(() => {
+    setCompaniesError(null)
+  }, [])
+
+  const clearJobsError = useCallback(() => {
+    setJobsError(null)
   }, [])
 
   const clearEducationsError = useCallback(() => {
@@ -74,6 +92,32 @@ function AppDataProvider({ children }: AppDataProviderProps) {
 
       const message = error instanceof Error ? error.message : 'Unable to load profile'
       setProfileError(message)
+      throw error
+    }
+  }, [])
+
+  const refreshCompanies = useCallback(async () => {
+    try {
+      const nextCompanies = await listCompanies()
+      setCompanies(nextCompanies)
+      setCompaniesError(null)
+      return nextCompanies
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to load companies'
+      setCompaniesError(message)
+      throw error
+    }
+  }, [])
+
+  const refreshJobs = useCallback(async () => {
+    try {
+      const nextJobs = await listJobs()
+      setJobs(nextJobs)
+      setJobsError(null)
+      return nextJobs
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to load jobs'
+      setJobsError(message)
       throw error
     }
   }, [])
@@ -105,8 +149,14 @@ function AppDataProvider({ children }: AppDataProviderProps) {
   }, [])
 
   const refreshAll = useCallback(async () => {
-    await Promise.allSettled([refreshProfile(), refreshEducations(), refreshProjects()])
-  }, [refreshEducations, refreshProfile, refreshProjects])
+    await Promise.allSettled([
+      refreshProfile(),
+      refreshCompanies(),
+      refreshJobs(),
+      refreshEducations(),
+      refreshProjects(),
+    ])
+  }, [refreshCompanies, refreshEducations, refreshJobs, refreshProfile, refreshProjects])
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -144,9 +194,13 @@ function AppDataProvider({ children }: AppDataProviderProps) {
 
       if (!isSameUser) {
         setProfile(null)
+        setCompanies([])
+        setJobs([])
         setEducations([])
         setProjects([])
         setProfileError(null)
+        setCompaniesError(null)
+        setJobsError(null)
         setEducationsError(null)
         setProjectsError(null)
       }
@@ -154,7 +208,13 @@ function AppDataProvider({ children }: AppDataProviderProps) {
       setIsReady(false)
       setIsBootstrapping(true)
 
-      await Promise.allSettled([refreshProfile(), refreshEducations(), refreshProjects()])
+      await Promise.allSettled([
+        refreshProfile(),
+        refreshCompanies(),
+        refreshJobs(),
+        refreshEducations(),
+        refreshProjects(),
+      ])
 
       if (!isActive || bootstrapRequestRef.current !== requestId) {
         return
@@ -174,6 +234,8 @@ function AppDataProvider({ children }: AppDataProviderProps) {
     clearAllData,
     isReady,
     refreshEducations,
+    refreshCompanies,
+    refreshJobs,
     refreshProfile,
     refreshProjects,
     status,
@@ -185,28 +247,44 @@ function AppDataProvider({ children }: AppDataProviderProps) {
       isReady,
       isBootstrapping,
       profile,
+      companies,
+      jobs,
       educations,
       projects,
       profileError,
+      companiesError,
+      jobsError,
       educationsError,
       projectsError,
       clearProfileError,
+      clearCompaniesError,
+      clearJobsError,
       clearEducationsError,
       clearProjectsError,
       refreshProfile,
+      refreshCompanies,
+      refreshJobs,
       refreshEducations,
       refreshProjects,
       refreshAll,
       setProfile,
+      setCompanies,
+      setJobs,
       setEducations,
       setProjects,
     }),
     [
+      clearCompaniesError,
       clearEducationsError,
+      clearJobsError,
       clearProfileError,
       clearProjectsError,
+      companies,
+      companiesError,
       educations,
       educationsError,
+      jobs,
+      jobsError,
       isBootstrapping,
       isReady,
       profile,
@@ -214,7 +292,9 @@ function AppDataProvider({ children }: AppDataProviderProps) {
       projects,
       projectsError,
       refreshAll,
+      refreshCompanies,
       refreshEducations,
+      refreshJobs,
       refreshProfile,
       refreshProjects,
     ],

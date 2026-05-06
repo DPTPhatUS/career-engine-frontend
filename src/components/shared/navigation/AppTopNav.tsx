@@ -6,6 +6,8 @@ const appLinks = [
   { path: '/home', label: 'Home' },
   { path: '/profile', label: 'Profile' },
   { path: '/education', label: 'Education' },
+  { path: '/companies', label: 'Companies' },
+  { path: '/jobs', label: 'Jobs' },
   { path: '/projects', label: 'Projects' },
   { path: '/resumes', label: 'Resumes' },
 ]

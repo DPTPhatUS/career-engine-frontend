@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import CompaniesScreen from './screens/CompaniesScreen.tsx'
 import EducationScreen from './screens/EducationScreen.tsx'
 import HomeScreen from './screens/HomeScreen.tsx'
+import JobsScreen from './screens/JobsScreen.tsx'
 import LoginScreen from './screens/LoginScreen.tsx'
 import ProfileScreen from './screens/ProfileScreen.tsx'
 import ProjectsScreen from './screens/ProjectsScreen.tsx'
@@ -33,6 +35,22 @@ function App() {
         element={(
           <RequireAuth>
             <EducationScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/companies"
+        element={(
+          <RequireAuth>
+            <CompaniesScreen />
+          </RequireAuth>
+        )}
+      />
+      <Route
+        path="/jobs"
+        element={(
+          <RequireAuth>
+            <JobsScreen />
           </RequireAuth>
         )}
       />
