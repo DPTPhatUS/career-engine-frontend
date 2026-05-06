@@ -328,6 +328,13 @@ function ProjectsScreen() {
         />
 
         <div className="grid grid-cols-12 items-start gap-8">
+          <ProjectsListPane
+            projects={projectItems}
+            selectedId={editingId}
+            deletingId={deletingId}
+            onEdit={handleEdit}
+            onDelete={(item) => void handleDelete(item)}
+          />
           <ProjectsFormPane
             values={formValues}
             isEditing={Boolean(editingId)}
@@ -339,13 +346,6 @@ function ProjectsScreen() {
             onSubmit={() => void handleSubmit()}
             onCancel={resetForm}
             onAutofill={() => void handleAutofill()}
-          />
-          <ProjectsListPane
-            projects={projectItems}
-            selectedId={editingId}
-            deletingId={deletingId}
-            onEdit={handleEdit}
-            onDelete={(item) => void handleDelete(item)}
           />
         </div>
       </main>

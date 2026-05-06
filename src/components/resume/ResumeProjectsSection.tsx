@@ -165,6 +165,43 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+      <section className="space-y-4 lg:col-span-7">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-semibold">Project entries</h3>
+            <p className="text-xs opacity-70">Select a card to edit.</p>
+          </div>
+          <button type="button" className="btn btn-outline btn-sm" onClick={handleAdd}>
+            Add Project
+          </button>
+        </div>
+
+        {hasEntries ? (
+          <div className="space-y-4">
+            {values.map((project, index) => {
+              const item = mapProjectToCardItem(project, index)
+              const isSelected = index === safeIndex
+
+              return (
+                <ProjectCard
+                  item={item}
+                  isSelected={isSelected}
+                  onEdit={() => handleSelect(index)}
+                  onDelete={() => handleRemove(index)}
+                />
+              )
+            })}
+          </div>
+        ) : (
+          <div className="card border border-dashed border-base-300 bg-base-100">
+            <div className="card-body">
+              <h3 className="text-lg font-semibold">No projects yet</h3>
+              <p className="text-sm opacity-70">Add a project you want highlighted in this resume.</p>
+            </div>
+          </div>
+        )}
+      </section>
+
       <section className="self-start lg:col-span-5 lg:sticky lg:top-20">
         {selectedProject ? (
           <fieldset className="fieldset rounded-box border border-base-300 bg-base-200 p-4">
@@ -280,43 +317,6 @@ function ResumeProjectsSection({ values, onAdd, onChange, onRemove }: ResumeProj
             <div className="card-body">
               <h3 className="text-lg font-semibold">Start with a new project</h3>
               <p className="text-sm opacity-70">Add a project to edit its details here.</p>
-            </div>
-          </div>
-        )}
-      </section>
-
-      <section className="space-y-4 lg:col-span-7">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h3 className="text-sm font-semibold">Project entries</h3>
-            <p className="text-xs opacity-70">Select a card to edit.</p>
-          </div>
-          <button type="button" className="btn btn-outline btn-sm" onClick={handleAdd}>
-            Add Project
-          </button>
-        </div>
-
-        {hasEntries ? (
-          <div className="space-y-4">
-            {values.map((project, index) => {
-              const item = mapProjectToCardItem(project, index)
-              const isSelected = index === safeIndex
-
-              return (
-                <ProjectCard
-                  item={item}
-                  isSelected={isSelected}
-                  onEdit={() => handleSelect(index)}
-                  onDelete={() => handleRemove(index)}
-                />
-              )
-            })}
-          </div>
-        ) : (
-          <div className="card border border-dashed border-base-300 bg-base-100">
-            <div className="card-body">
-              <h3 className="text-lg font-semibold">No projects yet</h3>
-              <p className="text-sm opacity-70">Add a project you want highlighted in this resume.</p>
             </div>
           </div>
         )}
