@@ -459,15 +459,15 @@ Errors:
 - `503` when selected LLM provider key is missing.
 - `502` for upstream GitHub/LLM failures.
 
-### Tailor selected projects for a target job
+### Tailor selected projects for a job
 
 #### `POST /api/v1/projects/tailor`
 
-Use this endpoint on the resume setup screen when a user provides a target job and selects projects from their saved list.
+Use this endpoint on the resume setup screen when a user provides a job and selects projects from their saved list.
 
 The backend scans each selected project's GitHub repository, then generates job-aligned project bullets and tech stack suggestions.
 
-Request:
+Request (ad-hoc job fields):
 
 ```json
 {
@@ -478,11 +478,20 @@ Request:
 }
 ```
 
+Request (saved job):
+
+```json
+{
+  "job_id": "job-1",
+  "project_ids": ["project-1", "project-2"]
+}
+```
+
 Validation rules:
 
 - `project_ids` must contain between 1 and 5 items.
 - `project_ids` must not contain duplicates.
-- Job text fields must be non-empty.
+- Provide either `job_id` or all job text fields.
 
 Response `200`:
 
@@ -515,6 +524,7 @@ Response `200`:
 Notes:
 
 - This endpoint is preview-only and does not update project records.
+- When `job_id` is provided, the backend uses the saved job plus company overview for tailoring.
 - This endpoint does not create a resume record.
 - Frontend should use `tailored_projects` to prefill the next resume-building screen, then call existing resume create/update endpoints.
 - Partial success is supported: one or more projects can be skipped while others are successfully tailored.
@@ -531,6 +541,134 @@ Errors:
 - `503` for missing LLM provider configuration/dependencies.
 - `502` for non-recoverable upstream failures.
 
+## Companies
+
+Company endpoints manage a saved list of companies that jobs must reference.
+
+All company endpoints require an authenticated session cookie.
+
+### Company item shape
+
+```json
+{
+  "name": "Acme Corp",
+  "company_url": "https://acme.example",
+  "overview": "Builds developer tooling."
+}
+```
+
+Optional fields: `company_url`, `overview`.
+
+### List companies
+
+#### `GET /api/v1/companies`
+
+Response `200`: array of `CompanyResponse` objects.
+
+Items are sorted by `sort_order` ascending, then `created_at` ascending.
+
+### Create company
+
+#### `POST /api/v1/companies`
+
+Request:
+
+```json
+{
+  "name": "Acme Corp",
+  "company_url": "https://acme.example",
+  "overview": "Builds developer tooling.",
+  "sort_order": 0
+}
+```
+
+- `sort_order` is optional. If omitted, backend appends to the end of the user list.
+
+Response `201`: one `CompanyResponse` object.
+
+### Update company
+
+#### `PATCH /api/v1/companies/{company_id}`
+
+Request supports partial updates, including `sort_order`.
+
+Response `200`: updated `CompanyResponse` object.
+
+Errors:
+
+- `404 { "detail": "Company not found" }` if missing or not owned by current user.
+
+### Delete company
+
+#### `DELETE /api/v1/companies/{company_id}`
+
+Response `204 No Content`.
+
+## Jobs
+
+Job endpoints manage saved roles linked to a saved company.
+
+All job endpoints require an authenticated session cookie.
+
+### Job item shape
+
+```json
+{
+  "company_id": "<company_id>",
+  "title": "Backend Engineer",
+  "job_description": "Build and maintain backend APIs...",
+  "job_requirements": "FastAPI, PostgreSQL, testing, CI/CD"
+}
+```
+
+### List jobs
+
+#### `GET /api/v1/jobs`
+
+Response `200`: array of `JobResponse` objects.
+
+Items are sorted by `sort_order` ascending, then `created_at` ascending.
+
+### Create job
+
+#### `POST /api/v1/jobs`
+
+Request:
+
+```json
+{
+  "company_id": "<company_id>",
+  "title": "Backend Engineer",
+  "job_description": "Build and maintain backend APIs...",
+  "job_requirements": "FastAPI, PostgreSQL, testing, CI/CD",
+  "sort_order": 0
+}
+```
+
+- `company_id` must reference a saved company owned by the current user.
+- `sort_order` is optional. If omitted, backend appends to the end of the user list.
+
+Response `201`: one `JobResponse` object.
+
+### Update job
+
+#### `PATCH /api/v1/jobs/{job_id}`
+
+Request supports partial updates, including `sort_order` and `company_id`.
+
+Response `200`: updated `JobResponse` object.
+
+Errors:
+
+- `404 { "detail": "Job not found" }` if missing or not owned by current user.
+- `404 { "detail": "Company not found" }` if `company_id` is provided and not owned by current user.
+
+### Delete job
+
+#### `DELETE /api/v1/jobs/{job_id}`
+
+Response `204 No Content`.
+
 ## Resume from Scratch
 
 The resume flow remains independent and unchanged: frontend still sends complete resume payloads directly when creating/updating resumes.
@@ -546,6 +684,7 @@ A resume has:
 - `title`: string
 - `payload`: object with:
   - `personal_info`
+  - `job_id` (optional)
   - `education[]`
   - `projects[]`
   - `skills[]`
@@ -644,6 +783,7 @@ Request:
       "github_label": "GitHub",
       "github_url": "https://github.com/ada"
     },
+    "job_id": "job-1",
     "education": [],
     "projects": [],
     "skills": []
