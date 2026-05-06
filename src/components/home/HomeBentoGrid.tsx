@@ -85,41 +85,6 @@ function HomeBentoGrid() {
           </div>
         </NavLink>
       ))}
-
-      {/* <article className="relative overflow-hidden rounded-xl bg-base-200 p-6 md:col-span-12 md:row-span-1">
-        <div className="relative z-10 flex h-full flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div className="flex items-center gap-6">
-            <div className="avatar-group -space-x-4 rtl:space-x-reverse">
-              <div className="avatar">
-                <div className="grid w-12 place-content-center rounded bg-primary text-white">
-                  <Braces className="h-5 w-5" aria-hidden="true" />
-                </div>
-              </div>
-              <div className="avatar">
-                <div className="grid w-12 place-content-center rounded bg-success text-white">
-                  <Database className="h-5 w-5" aria-hidden="true" />
-                </div>
-              </div>
-              <div className="avatar">
-                <div className="grid w-12 place-content-center rounded bg-warning text-white">
-                  <FileCode2 className="h-5 w-5" aria-hidden="true" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold text-(--on-surface)">Ongoing Projects</h3>
-              <p className="text-(--on-surface-variant)">
-                Continue your latest "Eco-Tracker Dashboard" development.
-              </p>
-            </div>
-          </div>
-
-          <NavLink to="/projects" className="btn border-0 bg-base-100 px-8 font-bold text-(--on-surface) hover:bg-base-300">
-            Manage All Projects
-          </NavLink>
-        </div>
-      </article> */}
     </section>
   )
 }
