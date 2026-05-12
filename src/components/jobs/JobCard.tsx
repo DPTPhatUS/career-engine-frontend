@@ -9,7 +9,30 @@ type JobCardProps = {
   onDelete: (item: JobItem) => void
 }
 
+const stageLabels: Record<JobItem['stage'], string> = {
+  saved: 'Saved',
+  applied: 'Applied',
+  interviewing: 'Interviewing',
+  offer: 'Offer',
+  rejected: 'Rejected',
+  expired: 'Expired',
+}
+
+function isOverdue(item: JobItem) {
+  if (!item.deadline) {
+    return false
+  }
+
+  if (item.stage === 'expired' || item.stage === 'offer' || item.stage === 'rejected') {
+    return false
+  }
+
+  return item.deadline < new Date().toISOString().slice(0, 10)
+}
+
 function JobCard({ item, isSelected = false, isDeleting = false, onEdit, onDelete }: JobCardProps) {
+  const overdue = isOverdue(item)
+
   return (
     <div className={`card border ${isSelected ? 'border-primary' : 'border-base-300'} bg-base-100`}>
       <div className="card-body">
@@ -34,12 +57,19 @@ function JobCard({ item, isSelected = false, isDeleting = false, onEdit, onDelet
             </div>
           </div>
 
-          <div className="badge badge-outline text-xs opacity-70">Approved job</div>
+          <div className="badge badge-outline text-xs opacity-70">{stageLabels[item.stage]}</div>
         </div>
 
         <div className="divider my-1" />
 
         <div className="space-y-4">
+          {item.deadline ? (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide opacity-60">Deadline</p>
+              <p className={`text-sm ${overdue ? 'font-semibold text-error' : 'opacity-80'}`}>{item.deadline}</p>
+            </div>
+          ) : null}
+
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide opacity-60">Description</p>
             <p className="whitespace-pre-line text-sm opacity-80">{item.jobDescription}</p>

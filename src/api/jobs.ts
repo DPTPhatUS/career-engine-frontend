@@ -1,5 +1,7 @@
 import { api } from './client'
 
+type JobStage = 'saved' | 'applied' | 'interviewing' | 'offer' | 'rejected' | 'expired'
+
 type JobRecord = {
   id: string
   user_id: string
@@ -8,6 +10,8 @@ type JobRecord = {
   title: string
   job_description: string
   job_requirements: string
+  stage: JobStage
+  deadline: string | null
   created_at: string
   updated_at: string
 }
@@ -17,6 +21,8 @@ type JobPayload = {
   title: string
   job_description: string
   job_requirements: string
+  stage?: JobStage
+  deadline?: string | null
   sort_order?: number
 }
 
@@ -47,4 +53,4 @@ async function deleteJob(jobId: string) {
 }
 
 export { createJob, deleteJob, listJobs, updateJob }
-export type { JobPatchPayload, JobPayload, JobRecord }
+export type { JobPatchPayload, JobPayload, JobRecord, JobStage }

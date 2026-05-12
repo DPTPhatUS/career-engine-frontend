@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createCompany, type CompanyPayload, type CompanyRecord } from '../api/companies'
-import { createJob, deleteJob, updateJob, type JobPayload, type JobRecord } from '../api/jobs'
+import {
+  createJob,
+  deleteJob,
+  updateJob,
+  type JobPayload,
+  type JobRecord,
+  type JobStage,
+} from '../api/jobs'
 import JobsFormPane from '../components/jobs/JobsFormPane'
 import type {
   CompanyOption,
@@ -31,6 +38,8 @@ function createInitialFormValues(): JobsFormValues {
     title: '',
     jobDescription: '',
     jobRequirements: '',
+    stage: 'saved',
+    deadline: '',
   }
 }
 
@@ -71,6 +80,8 @@ function mapJobToItem(job: JobRecord, companyById: Map<string, CompanyRecord>): 
     title: job.title,
     jobDescription: job.job_description,
     jobRequirements: job.job_requirements,
+    stage: job.stage,
+    deadline: job.deadline,
   }
 }
 
@@ -80,15 +91,22 @@ function mapJobToForm(job: JobRecord): JobsFormValues {
     title: job.title,
     jobDescription: job.job_description,
     jobRequirements: job.job_requirements,
+    stage: job.stage,
+    deadline: job.deadline ?? '',
   }
 }
 
 function buildJobPayload(values: JobsFormValues): JobPayload {
+  const stage: JobStage = values.stage
+  const deadline = values.deadline.trim()
+
   return {
     company_id: values.companyId.trim(),
     title: values.title.trim(),
     job_description: values.jobDescription.trim(),
     job_requirements: values.jobRequirements.trim(),
+    stage,
+    deadline: deadline || null,
   }
 }
 

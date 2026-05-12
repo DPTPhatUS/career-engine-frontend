@@ -27,12 +27,6 @@ const emptySkills: ResumeSkillsValues = {
   languages: '',
 }
 
-type JobTargetValues = {
-  jobTitle: string
-  jobDescription: string
-  jobRequirements: string
-}
-
 function createEmptyEducation(): ResumeEducationValues {
   return {
     university: '',
@@ -109,17 +103,22 @@ function splitTechStack(value: string | null) {
     .filter(Boolean)
 }
 
+function previewText(value: string, maxLength = 180) {
+  const normalized = value.replace(/\s+/g, ' ').trim()
+  if (normalized.length <= maxLength) {
+    return normalized
+  }
+
+  return `${normalized.slice(0, maxLength).trim()}...`
+}
+
 function ResumeBuilderScreen() {
   const { resumeId } = useParams()
   const { notifyError, notifySuccess } = useNotification()
-  const { isBootstrapping, isReady, profile, educations, projects } = useAppData()
+  const { isBootstrapping, isReady, profile, companies, jobs, educations, projects } = useAppData()
 
   const [step, setStep] = useState(0)
-  const [jobTarget, setJobTarget] = useState<JobTargetValues>({
-    jobTitle: '',
-    jobDescription: '',
-    jobRequirements: '',
-  })
+  const [selectedJobId, setSelectedJobId] = useState('')
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([])
   const [isTailoring, setIsTailoring] = useState(false)
   const [tailorWarnings, setTailorWarnings] = useState<SkippedProject[]>([])
@@ -127,6 +126,14 @@ function ResumeBuilderScreen() {
   const [editorSeedId, setEditorSeedId] = useState(0)
 
   const isEditing = Boolean(resumeId)
+
+  const companyMap = useMemo(() => {
+    return new Map(companies.map((company) => [company.id, company]))
+  }, [companies])
+
+  const selectedJob = useMemo(() => {
+    return jobs.find((job) => job.id === selectedJobId) ?? null
+  }, [jobs, selectedJobId])
 
   const projectMap = useMemo(() => {
     return new Map(projects.map((project) => [project.id, project]))
@@ -139,13 +146,6 @@ function ResumeBuilderScreen() {
 
     return educations.map(mapEducationRecordToValues)
   }, [educations])
-
-  function updateJobTarget(field: keyof JobTargetValues, value: string) {
-    setJobTarget((previous) => ({
-      ...previous,
-      [field]: value,
-    }))
-  }
 
   function toggleProject(projectId: string) {
     setSelectedProjectIds((previous) => {
@@ -163,12 +163,8 @@ function ResumeBuilderScreen() {
   }
 
   function handleContinueToProjects() {
-    const title = jobTarget.jobTitle.trim()
-    const description = jobTarget.jobDescription.trim()
-    const requirements = jobTarget.jobRequirements.trim()
-
-    if (!title || !description || !requirements) {
-      notifyError('Job title, description, and requirements are required.')
+    if (!selectedJob) {
+      notifyError('Select a saved job to continue.')
       return
     }
 
@@ -186,13 +182,19 @@ function ResumeBuilderScreen() {
       return
     }
 
+    if (!selectedJob) {
+      notifyError('Select a saved job to continue.')
+      setStep(0)
+      return
+    }
+
     setIsTailoring(true)
 
     try {
       const response = await tailorProjects({
-        job_title: jobTarget.jobTitle.trim(),
-        job_description: jobTarget.jobDescription.trim(),
-        job_requirements: jobTarget.jobRequirements.trim(),
+        job_title: selectedJob.title,
+        job_description: selectedJob.job_description,
+        job_requirements: selectedJob.job_requirements,
         project_ids: selectedProjectIds,
       })
 
@@ -208,7 +210,7 @@ function ResumeBuilderScreen() {
         return original ? mapProjectRecordToValues(original) : createEmptyProject()
       })
 
-      const resumeTitle = jobTarget.jobTitle.trim()
+      const resumeTitle = selectedJob.title
 
       setEditorSeed({
         title: resumeTitle,
@@ -314,45 +316,84 @@ function ResumeBuilderScreen() {
 
                 {step === 0 ? (
                   <div className="grid gap-4">
-                    <div>
-                      <label className="label" htmlFor="resume-job-title">Job Title</label>
-                      <input
-                        id="resume-job-title"
-                        type="text"
-                        className="input w-full"
-                        placeholder="e.g. Backend Engineer"
-                        value={jobTarget.jobTitle}
-                        onChange={(event) => updateJobTarget('jobTitle', event.target.value)}
-                      />
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <h2 className="text-lg font-semibold">Choose a saved job</h2>
+                        <p className="text-sm text-(--on-surface-variant)">
+                          We will tailor project bullets based on the selected job.
+                        </p>
+                      </div>
+                      <Link to="/jobs" className="btn btn-outline btn-sm">
+                        Manage Jobs
+                      </Link>
                     </div>
 
-                    <div>
-                      <label className="label" htmlFor="resume-job-description">Job Description</label>
-                      <textarea
-                        id="resume-job-description"
-                        rows={4}
-                        className="textarea w-full"
-                        placeholder="Paste the role summary here..."
-                        value={jobTarget.jobDescription}
-                        onChange={(event) => updateJobTarget('jobDescription', event.target.value)}
-                      ></textarea>
-                    </div>
+                    {jobs.length === 0 ? (
+                      <div className="card border border-dashed border-base-300 bg-base-100">
+                        <div className="card-body">
+                          <h3 className="text-lg font-semibold">No saved jobs found</h3>
+                          <p className="text-sm opacity-70">
+                            Add a target job before building a tailored resume.
+                          </p>
+                          <div className="card-actions">
+                            <Link to="/jobs" className="btn btn-outline">Go to Saved Jobs</Link>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid gap-4">
+                        {jobs.map((job) => {
+                          const selected = selectedJobId === job.id
+                          const company = companyMap.get(job.company_id)
+                          const companyName = company?.name ?? 'Unknown company'
 
-                    <div>
-                      <label className="label" htmlFor="resume-job-requirements">Job Requirements</label>
-                      <textarea
-                        id="resume-job-requirements"
-                        rows={4}
-                        className="textarea w-full"
-                        placeholder="List the must-have skills and tools..."
-                        value={jobTarget.jobRequirements}
-                        onChange={(event) => updateJobTarget('jobRequirements', event.target.value)}
-                      ></textarea>
-                    </div>
+                          return (
+                            <label
+                              key={job.id}
+                              className={`card cursor-pointer border ${selected
+                                ? 'border-primary bg-primary/5'
+                                : 'border-base-200 bg-base-100'
+                                }`}
+                            >
+                              <div className="card-body gap-3">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <h3 className="text-lg font-semibold">{job.title}</h3>
+                                    <p className="text-sm text-(--on-surface-variant)">{companyName}</p>
+                                  </div>
+                                  <input
+                                    type="radio"
+                                    name="resume-target-job"
+                                    className="radio radio-primary"
+                                    checked={selected}
+                                    onChange={() => setSelectedJobId(job.id)}
+                                  />
+                                </div>
+
+                                <div className="grid gap-3 md:grid-cols-2">
+                                  <div className="space-y-1">
+                                    <p className="text-xs font-semibold uppercase opacity-60">Description</p>
+                                    <p className="text-sm text-(--on-surface-variant)">
+                                      {previewText(job.job_description)}
+                                    </p>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <p className="text-xs font-semibold uppercase opacity-60">Requirements</p>
+                                    <p className="text-sm text-(--on-surface-variant)">
+                                      {previewText(job.job_requirements)}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <p className="text-sm text-(--on-surface-variant)">
-                        We will tailor project bullets based on this target.
+                        Select one saved job to continue.
                       </p>
                       <button type="button" className="btn btn-primary" onClick={handleContinueToProjects}>
                         Continue

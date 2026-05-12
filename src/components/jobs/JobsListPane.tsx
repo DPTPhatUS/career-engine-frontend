@@ -16,7 +16,7 @@ function JobsListPane({ jobs, selectedId, deletingId, onEdit, onDelete }: JobsLi
         <div className="card border border-dashed border-base-300 bg-base-100">
           <div className="card-body">
             <h3 className="text-lg font-semibold">No jobs yet</h3>
-            <p className="text-sm opacity-70">Add your first approved job in the editor pane.</p>
+            <p className="text-sm opacity-70">Add your first saved job in the editor pane.</p>
           </div>
         </div>
       </section>

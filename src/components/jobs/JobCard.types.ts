@@ -1,3 +1,5 @@
+import type { JobStage } from '../../api/jobs'
+
 type JobItem = {
   id: string
   companyId: string
@@ -6,6 +8,8 @@ type JobItem = {
   title: string
   jobDescription: string
   jobRequirements: string
+  stage: JobStage
+  deadline: string | null
 }
 
 export type { JobItem }

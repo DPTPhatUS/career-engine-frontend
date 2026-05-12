@@ -1,5 +1,14 @@
 import type { CompanyOption, InlineCompanyFormValues, JobsFormValues } from './JobsFormPane.types'
 
+const stageOptions: Array<{ value: JobsFormValues['stage']; label: string }> = [
+  { value: 'saved', label: 'Saved' },
+  { value: 'applied', label: 'Applied' },
+  { value: 'interviewing', label: 'Interviewing' },
+  { value: 'offer', label: 'Offer' },
+  { value: 'rejected', label: 'Rejected' },
+  { value: 'expired', label: 'Expired' },
+]
+
 type JobsFormPaneProps = {
   values: JobsFormValues
   inlineCompanyValues: InlineCompanyFormValues
@@ -180,6 +189,31 @@ function JobsFormPane({
             className="textarea w-full"
             value={values.jobRequirements}
             onChange={(event) => onChange('jobRequirements', event.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="label">Stage</label>
+          <select
+            className="select w-full"
+            value={values.stage}
+            onChange={(event) => onChange('stage', event.target.value)}
+          >
+            {stageOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="label">Deadline (optional)</label>
+          <input
+            type="date"
+            className="input w-full"
+            value={values.deadline}
+            onChange={(event) => onChange('deadline', event.target.value)}
           />
         </div>
 
