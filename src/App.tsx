@@ -6,6 +6,7 @@ import JobsScreen from './screens/JobsScreen.tsx'
 import LoginScreen from './screens/LoginScreen.tsx'
 import ProfileScreen from './screens/ProfileScreen.tsx'
 import ProjectsScreen from './screens/ProjectsScreen.tsx'
+import PublicPortfolioScreen from './screens/PublicPortfolioScreen.tsx'
 import ResumeBuilderScreen from './screens/ResumeBuilderScreen.tsx'
 import ResumesScreen from './screens/ResumesScreen.tsx'
 import RequireAuth from './components/shared/navigation/RequireAuth.tsx'
@@ -87,6 +88,7 @@ function App() {
         )}
       />
       <Route path="/resume" element={<Navigate to="/resumes" replace />} />
+      <Route path="/u/:slug" element={<PublicPortfolioScreen />} />
 
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="*" element={<Navigate to="/home" replace />} />

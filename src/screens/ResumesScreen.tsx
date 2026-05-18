@@ -2,11 +2,17 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError } from '../api/client'
 import { deleteResume, listResumes, type ResumeRecord } from '../api/resumes'
+import {
+  listPortfolioPublications,
+  updatePortfolioVisibility,
+  type PortfolioPublicationRecord,
+} from '../api/portfolioPublications'
+import PublishPortfolioDialog from '../components/portfolio/PublishPortfolioDialog'
 import ResumeTopNav from '../components/resume/ResumeTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
 import { useNotification } from '../contexts/useNotification'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
-import { Pencil, Trash2 } from 'lucide-react'
+import { ExternalLink, Eye, Pencil, Trash2 } from 'lucide-react'
 
 function formatDate(value: string) {
   const parsed = new Date(value)
@@ -24,8 +30,11 @@ function formatDate(value: string) {
 function ResumesScreen() {
   const { notifyError, notifySuccess } = useNotification()
   const [resumes, setResumes] = useState<ResumeRecord[]>([])
+  const [publications, setPublications] = useState<PortfolioPublicationRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [updatingVisibilityId, setUpdatingVisibilityId] = useState<string | null>(null)
+  const [dialogResume, setDialogResume] = useState<ResumeRecord | null>(null)
 
   useEffect(() => {
     let isActive = true
@@ -34,12 +43,16 @@ function ResumesScreen() {
       setIsLoading(true)
 
       try {
-        const list = await listResumes()
+        const [resumeList, publicationList] = await Promise.all([
+          listResumes(),
+          listPortfolioPublications(),
+        ])
         if (!isActive) {
           return
         }
 
-        setResumes(list)
+        setResumes(resumeList)
+        setPublications(publicationList)
       } catch (error) {
         if (!isActive) {
           return
@@ -59,6 +72,34 @@ function ResumesScreen() {
       isActive = false
     }
   }, [notifyError])
+
+  async function handleTogglePublication(publication: PortfolioPublicationRecord, isPublished: boolean) {
+    setUpdatingVisibilityId(publication.id)
+
+    try {
+      const updated = await updatePortfolioVisibility(publication.id, isPublished)
+      setPublications((previous) => previous.map((item) => (item.id === updated.id ? updated : item)))
+      notifySuccess(isPublished ? 'Portfolio published.' : 'Portfolio unpublished.')
+    } catch (error) {
+      notifyError(error instanceof Error ? error.message : 'Unable to update publication visibility.')
+    } finally {
+      setUpdatingVisibilityId(null)
+    }
+  }
+
+  function handlePublished(record: PortfolioPublicationRecord) {
+    setPublications((previous) => {
+      const existingIndex = previous.findIndex((item) => item.id === record.id)
+      if (existingIndex >= 0) {
+        return previous.map((item) => (item.id === record.id ? record : item))
+      }
+
+      return [...previous, record]
+    })
+
+    setDialogResume(null)
+    notifySuccess(record.is_published ? 'Portfolio published successfully.' : 'Publish settings saved.')
+  }
 
   async function handleDelete(resume: ResumeRecord) {
     if (!window.confirm(`Delete "${resume.title}"? This cannot be undone.`)) {
@@ -117,7 +158,7 @@ function ResumesScreen() {
 
         {resumes.map((resume) => (
           <div key={resume.id} className="card border border-base-300 bg-base-100">
-            <div className="card-body">
+            <div className="card-body gap-4">
               <div className="flex items-start justify-between">
                 <h3 className="text-xl font-semibold">{resume.title}</h3>
                 <span className="badge badge-outline">
@@ -133,16 +174,43 @@ function ResumesScreen() {
                 <span>{resume.payload.skills.length} skill groups</span>
               </div> */}
 
-              <div className="card-actions justify-between mt-2">
-                <a
-                  href={/* placeholder for now */ '#'}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-outline"
-                >
-                  Preview
-                </a>
-                <div>
+              <div className="card-actions mt-2 justify-between">
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const publication = publications.find((item) => item.source_resume_id === resume.id)
+
+                    if (!publication) {
+                      return (
+                        <button type="button" className="btn btn-outline" onClick={() => setDialogResume(resume)}>
+                          Publish
+                        </button>
+                      )
+                    }
+
+                    return (
+                      <>
+                        {publication.is_published ? (
+                          <a href={publication.public_url} target="_blank" rel="noreferrer" className="btn btn-outline">
+                            <Eye className="size-4" />
+                            View
+                          </a>
+                        ) : null}
+                        <button type="button" className="btn btn-outline" onClick={() => setDialogResume(resume)}>
+                          Edit Publish Settings
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn ${publication.is_published ? 'btn-warning' : 'btn-primary'}`}
+                          disabled={updatingVisibilityId === publication.id}
+                          onClick={() => void handleTogglePublication(publication, !publication.is_published)}
+                        >
+                          {publication.is_published ? 'Unpublish' : 'Publish'}
+                        </button>
+                      </>
+                    )
+                  })()}
+                </div>
+                <div className="flex items-center gap-1">
                   <Link
                     to={`/resumes/${resume.id}`}
                     aria-label="Edit resume"
@@ -161,6 +229,19 @@ function ResumesScreen() {
                   </button>
                 </div>
               </div>
+              {(() => {
+                const publication = publications.find((item) => item.source_resume_id === resume.id)
+                if (!publication) {
+                  return null
+                }
+
+                return (
+                  <a href={publication.public_url} target="_blank" rel="noreferrer" className="link link-primary inline-flex items-center gap-1 text-sm">
+                    {publication.public_url}
+                    <ExternalLink className="size-3.5" />
+                  </a>
+                )
+              })()}
             </div>
           </div>
         ))}
@@ -179,6 +260,13 @@ function ResumesScreen() {
         />
 
         {renderListContent()}
+        <PublishPortfolioDialog
+          open={dialogResume !== null}
+          resume={dialogResume}
+          publication={dialogResume ? publications.find((item) => item.source_resume_id === dialogResume.id) : null}
+          onClose={() => setDialogResume(null)}
+          onPublished={handlePublished}
+        />
       </main>
 
       <AppFooter />
