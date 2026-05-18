@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
+  rankProjects,
   tailorProjects,
   type ProjectRecord,
+  type RankedProject,
   type SkippedProject,
   type TailoredProject,
 } from '../api/projects'
@@ -120,10 +122,14 @@ function ResumeBuilderScreen() {
   const [step, setStep] = useState(0)
   const [selectedJobId, setSelectedJobId] = useState('')
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([])
+  const [projectRankings, setProjectRankings] = useState<RankedProject[]>([])
+  const [isRankingProjects, setIsRankingProjects] = useState(false)
+  const [hasProjectRankingError, setHasProjectRankingError] = useState(false)
   const [isTailoring, setIsTailoring] = useState(false)
   const [tailorWarnings, setTailorWarnings] = useState<SkippedProject[]>([])
   const [editorSeed, setEditorSeed] = useState<ResumeEditorInitialValues | null>(null)
   const [editorSeedId, setEditorSeedId] = useState(0)
+  const projectRankingRequestIdRef = useRef(0)
 
   const isEditing = Boolean(resumeId)
 
@@ -147,6 +153,59 @@ function ResumeBuilderScreen() {
     return educations.map(mapEducationRecordToValues)
   }, [educations])
 
+  const projectScoreMap = useMemo(() => {
+    const scoreMap = new Map<string, number>()
+
+    projectRankings.forEach((item) => {
+      scoreMap.set(item.project_id, Math.max(0, Math.min(100, Math.round(item.similarity_score))))
+    })
+
+    return scoreMap
+  }, [projectRankings])
+
+  const projectRawScoreMap = useMemo(() => {
+    const scoreMap = new Map<string, number>()
+    projectRankings.forEach((item) => {
+      scoreMap.set(item.project_id, item.similarity_score)
+    })
+    return scoreMap
+  }, [projectRankings])
+
+  const rankedProjects = useMemo(() => {
+    const originalOrderMap = new Map(projects.map((project, index) => [project.id, index]))
+
+    return [...projects].sort((left, right) => {
+      const leftScore = projectRawScoreMap.get(left.id)
+      const rightScore = projectRawScoreMap.get(right.id)
+
+      if (leftScore == null && rightScore == null) {
+        return (originalOrderMap.get(left.id) ?? 0) - (originalOrderMap.get(right.id) ?? 0)
+      }
+
+      if (leftScore == null) {
+        return 1
+      }
+
+      if (rightScore == null) {
+        return -1
+      }
+
+      if (leftScore !== rightScore) {
+        return rightScore - leftScore
+      }
+
+      return (originalOrderMap.get(left.id) ?? 0) - (originalOrderMap.get(right.id) ?? 0)
+    })
+  }, [projectRawScoreMap, projects])
+
+  function handleSelectJob(jobId: string) {
+    setSelectedJobId(jobId)
+    setProjectRankings([])
+    setHasProjectRankingError(false)
+    setIsRankingProjects(false)
+    projectRankingRequestIdRef.current += 1
+  }
+
   function toggleProject(projectId: string) {
     setSelectedProjectIds((previous) => {
       if (previous.includes(projectId)) {
@@ -162,13 +221,39 @@ function ResumeBuilderScreen() {
     })
   }
 
-  function handleContinueToProjects() {
+  async function handleContinueToProjects() {
     if (!selectedJob) {
       notifyError('Select a saved job to continue.')
       return
     }
 
     setStep(1)
+
+    setIsRankingProjects(true)
+    setHasProjectRankingError(false)
+    setProjectRankings([])
+    const requestId = projectRankingRequestIdRef.current + 1
+    projectRankingRequestIdRef.current = requestId
+
+    try {
+      const response = await rankProjects({ job_id: selectedJob.id })
+      if (projectRankingRequestIdRef.current !== requestId) {
+        return
+      }
+
+      setProjectRankings(response.ranked_projects)
+    } catch {
+      if (projectRankingRequestIdRef.current !== requestId) {
+        return
+      }
+
+      setHasProjectRankingError(true)
+      notifyError('Project ranking is unavailable. You can still select projects manually.')
+    } finally {
+      if (projectRankingRequestIdRef.current === requestId) {
+        setIsRankingProjects(false)
+      }
+    }
   }
 
   async function handleGenerateResume() {
@@ -366,7 +451,7 @@ function ResumeBuilderScreen() {
                                     name="resume-target-job"
                                     className="radio radio-primary"
                                     checked={selected}
-                                    onChange={() => setSelectedJobId(job.id)}
+                                    onChange={() => handleSelectJob(job.id)}
                                   />
                                 </div>
 
@@ -395,7 +480,11 @@ function ResumeBuilderScreen() {
                       <p className="text-sm text-(--on-surface-variant)">
                         Select one saved job to continue.
                       </p>
-                      <button type="button" className="btn btn-primary" onClick={handleContinueToProjects}>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => void handleContinueToProjects()}
+                      >
                         Continue
                       </button>
                     </div>
@@ -411,8 +500,12 @@ function ResumeBuilderScreen() {
                           Choose up to 5 projects to match this role.
                         </p>
                       </div>
-                      <div className="text-sm text-(--on-surface-variant)">
-                        Selected {selectionCount}/5
+                      <div className="text-right text-sm text-(--on-surface-variant)">
+                        <p>Selected {selectionCount}/5</p>
+                        {isRankingProjects ? <p className="text-xs">Ranking projects...</p> : null}
+                        {hasProjectRankingError ? (
+                          <p className="text-xs">Ranking unavailable. Manual selection is still available.</p>
+                        ) : null}
                       </div>
                     </div>
 
@@ -428,10 +521,11 @@ function ResumeBuilderScreen() {
                       </div>
                     ) : (
                       <div className="grid gap-4 lg:grid-cols-2">
-                        {projects.map((project) => {
+                        {rankedProjects.map((project) => {
                           const selected = selectedProjectIds.includes(project.id)
                           const techStack = splitTechStack(project.tech_stack)
                           const isDisabled = !selected && selectionCount >= 5
+                          const matchScore = projectScoreMap.get(project.id)
 
                           return (
                             <label
@@ -444,7 +538,16 @@ function ResumeBuilderScreen() {
                               <div className="card-body gap-3">
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
-                                    <h3 className="text-lg font-semibold">{project.title}</h3>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <h3 className="text-lg font-semibold">{project.title}</h3>
+                                      {matchScore != null ? (
+                                        <span
+                                          className={`badge badge-sm ${matchScore >= 75 ? 'badge-primary' : 'badge-outline'}`}
+                                        >
+                                          {matchScore}% match
+                                        </span>
+                                      ) : null}
+                                    </div>
                                     <p className="text-sm text-(--on-surface-variant)">
                                       {project.date_range}
                                     </p>

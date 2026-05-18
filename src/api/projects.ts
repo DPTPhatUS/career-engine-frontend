@@ -43,6 +43,19 @@ type TailorProjectsPayload = {
   project_ids: string[]
 }
 
+type RankProjectsPayload = {
+  job_id: string
+}
+
+type RankedProject = {
+  project_id: string
+  similarity_score: number
+}
+
+type RankProjectsResponse = {
+  ranked_projects: RankedProject[]
+}
+
 type TailoredProject = {
   project_id: string
   title: string
@@ -101,10 +114,20 @@ async function tailorProjects(payload: TailorProjectsPayload) {
   })
 }
 
-export { autofillProject, createProject, deleteProject, listProjects, tailorProjects, updateProject }
+async function rankProjects(payload: RankProjectsPayload) {
+  return api<RankProjectsResponse>('/api/v1/projects/rank', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export { autofillProject, createProject, deleteProject, listProjects, rankProjects, tailorProjects, updateProject }
 export type {
   AutofillProjectPayload,
   AutofillProjectResponse,
+  RankProjectsPayload,
+  RankedProject,
+  RankProjectsResponse,
   SkippedProject,
   TailorProjectsPayload,
   TailorProjectsResponse,
