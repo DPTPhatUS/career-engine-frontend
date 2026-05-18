@@ -1,5 +1,5 @@
 import { ExternalLink, Mail, MapPin, Phone } from 'lucide-react'
-import type { PublicPortfolioRecord } from '../../api/portfolioPublications'
+import type { PublicPortfolioRecord } from '../../api/portfolio'
 import EducationCard from '../education/EducationCard'
 import type { EducationItem } from '../education/EducationCard.types'
 import ProjectCard from '../projects/ProjectCard'

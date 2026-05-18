@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ApiError } from '../api/client'
-import { getPublicPortfolioBySlug, type PublicPortfolioRecord } from '../api/portfolioPublications'
+import { getPublicPortfolioBySlug, type PublicPortfolioRecord } from '../api/portfolio'
 import PublicPortfolioView from '../components/portfolio/PublicPortfolioView'
 
 function PublicPortfolioScreen() {

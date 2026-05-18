@@ -6,13 +6,13 @@ import {
   listPortfolioPublications,
   updatePortfolioVisibility,
   type PortfolioPublicationRecord,
-} from '../api/portfolioPublications'
+} from '../api/portfolio'
 import PublishPortfolioDialog from '../components/portfolio/PublishPortfolioDialog'
 import ResumeTopNav from '../components/resume/ResumeTopNav'
 import AppFooter from '../components/shared/navigation/AppFooter'
 import { useNotification } from '../contexts/useNotification'
 import ScreenHeader from '../components/shared/layout/ScreenHeader'
-import { ExternalLink, Eye, Pencil, Trash2 } from 'lucide-react'
+import { ExternalLink, Pencil, Settings, Trash2 } from 'lucide-react'
 
 function formatDate(value: string) {
   const parsed = new Date(value)
@@ -126,20 +126,7 @@ function ResumesScreen() {
 
   function renderListContent() {
     if (isLoading) {
-      // return (
-      //   <div className="grid gap-6 lg:grid-cols-2">
-      //     {Array.from({ length: 4 }).map((_, index) => (
-      //       <div key={`resume-skeleton-${index}`} className="card border border-base-200 bg-base-100">
-      //         <div className="card-body gap-4">
-      //           <div className="skeleton h-6 w-2/3" />
-      //           <div className="skeleton h-4 w-1/2" />
-      //           <div className="skeleton h-4 w-full" />
-      //           <div className="skeleton h-9 w-28" />
-      //         </div>
-      //       </div>
-      //     ))}
-      //   </div>
-      // )
+      return null
     }
 
     return (
@@ -169,47 +156,56 @@ function ResumesScreen() {
                 Updated {formatDate(resume.updated_at)}
               </p>
 
-              {/* <div className="flex flex-wrap gap-3 text-sm">
-                <span>{resume.payload.education.length} education</span>
-                <span>{resume.payload.skills.length} skill groups</span>
-              </div> */}
-
               <div className="card-actions mt-2 justify-between">
-                <div className="flex flex-wrap gap-2">
-                  {(() => {
-                    const publication = publications.find((item) => item.source_resume_id === resume.id)
+                {(() => {
+                  const publication = publications.find((item) => item.source_resume_id === resume.id)
 
-                    if (!publication) {
-                      return (
-                        <button type="button" className="btn btn-outline" onClick={() => setDialogResume(resume)}>
-                          Publish
-                        </button>
-                      )
-                    }
-
+                  if (!publication) {
                     return (
-                      <>
-                        {publication.is_published ? (
-                          <a href={publication.public_url} target="_blank" rel="noreferrer" className="btn btn-outline">
-                            <Eye className="size-4" />
-                            View
-                          </a>
-                        ) : null}
-                        <button type="button" className="btn btn-outline" onClick={() => setDialogResume(resume)}>
-                          Edit Publish Settings
-                        </button>
+                      <button type="button" className="btn btn-primary" onClick={() => setDialogResume(resume)}>
+                        Publish
+                      </button>
+                    )
+                  }
+
+                  return (
+                    <div>
+                      {publication.is_published ? (
+                        <div className="flex flex-wrap gap-1">
+                          <button
+                            type="button"
+                            className="btn btn-warning"
+                            disabled={updatingVisibilityId === publication.id}
+                            onClick={() => void handleTogglePublication(publication, !publication.is_published)}
+                          >
+                            Unpublish
+                          </button>
+                          <Link
+                            to={`/u/${publication.slug}`}
+                            aria-label="View published portfolio"
+                            className="btn btn-ghost"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink className="size-4" />
+                          </Link>
+                          <button type="button" className="btn btn-ghost" onClick={() => setDialogResume(resume)}>
+                            <Settings className="size-4" />
+                          </button>
+                        </div>
+                      ) : (
                         <button
                           type="button"
-                          className={`btn ${publication.is_published ? 'btn-warning' : 'btn-primary'}`}
+                          className="btn btn-primary"
                           disabled={updatingVisibilityId === publication.id}
                           onClick={() => void handleTogglePublication(publication, !publication.is_published)}
                         >
-                          {publication.is_published ? 'Unpublish' : 'Publish'}
+                          Publish
                         </button>
-                      </>
-                    )
-                  })()}
-                </div>
+                      )}
+                    </div>
+                  )
+                })()}
                 <div className="flex items-center gap-1">
                   <Link
                     to={`/resumes/${resume.id}`}
@@ -229,19 +225,6 @@ function ResumesScreen() {
                   </button>
                 </div>
               </div>
-              {(() => {
-                const publication = publications.find((item) => item.source_resume_id === resume.id)
-                if (!publication) {
-                  return null
-                }
-
-                return (
-                  <a href={publication.public_url} target="_blank" rel="noreferrer" className="link link-primary inline-flex items-center gap-1 text-sm">
-                    {publication.public_url}
-                    <ExternalLink className="size-3.5" />
-                  </a>
-                )
-              })()}
             </div>
           </div>
         ))}

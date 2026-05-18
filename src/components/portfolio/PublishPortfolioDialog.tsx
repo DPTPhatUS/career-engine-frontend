@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ResumeRecord } from '../../api/resumes'
 import {
   publishPortfolio,
   updatePortfolioPublication,
   type PortfolioPublicationRecord,
-} from '../../api/portfolioPublications'
+} from '../../api/portfolio'
 import { ExternalLink, X } from 'lucide-react'
 
 type PublishPortfolioDialogProps = {
@@ -55,41 +55,43 @@ function PublishPortfolioDialog({ open, resume, publication, onClose, onPublishe
   const [educationIndexes, setEducationIndexes] = useState<number[]>([])
   const [projectIndexes, setProjectIndexes] = useState<number[]>([])
   const [skillIndexes, setSkillIndexes] = useState<number[]>([])
-  const [includeEmail, setIncludeEmail] = useState(false)
-  const [includePhone, setIncludePhone] = useState(false)
-  const [includeAddress, setIncludeAddress] = useState(false)
+  const [includeEmail, setIncludeEmail] = useState(true)
+  const [includePhone, setIncludePhone] = useState(true)
+  const [includeAddress, setIncludeAddress] = useState(true)
   const [includeGithub, setIncludeGithub] = useState(true)
-  const [isPublished, setIsPublished] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [savedPublicUrl, setSavedPublicUrl] = useState<string | null>(null)
 
-  const educationItems = useMemo(() => resume?.payload.education ?? [], [resume])
-  const projectItems = useMemo(() => resume?.payload.projects ?? [], [resume])
-  const skillItems = useMemo(() => resume?.payload.skills ?? [], [resume])
+  const educationItems = resume?.payload.education ?? []
+  const projectItems = resume?.payload.projects ?? []
+  const skillItems = resume?.payload.skills ?? []
 
   useEffect(() => {
     if (!open || !resume) {
       return
     }
 
+    const resumeEducation = resume.payload.education
+    const resumeProjects = resume.payload.projects
+    const resumeSkills = resume.payload.skills
+
     setSlug(publication?.slug ?? slugify(resume.title))
     setTitle(publication?.title ?? resume.title)
-    setEducationIndexes(findSelectedIndexes(educationItems, publication?.snapshot.education))
-    setProjectIndexes(findSelectedIndexes(projectItems, publication?.snapshot.projects))
-    setSkillIndexes(findSelectedIndexes(skillItems, publication?.snapshot.skills))
-    setIncludeEmail(Boolean(publication?.snapshot.personal_info?.email))
-    setIncludePhone(Boolean(publication?.snapshot.personal_info?.phone))
-    setIncludeAddress(Boolean(publication?.snapshot.personal_info?.address))
+    setEducationIndexes(findSelectedIndexes(resumeEducation, publication?.snapshot.education))
+    setProjectIndexes(findSelectedIndexes(resumeProjects, publication?.snapshot.projects))
+    setSkillIndexes(findSelectedIndexes(resumeSkills, publication?.snapshot.skills))
+    setIncludeEmail(publication ? Boolean(publication.snapshot.personal_info?.email) : true)
+    setIncludePhone(publication ? Boolean(publication.snapshot.personal_info?.phone) : true)
+    setIncludeAddress(publication ? Boolean(publication.snapshot.personal_info?.address) : true)
     setIncludeGithub(
       publication
         ? Boolean(publication.snapshot.personal_info?.github_url || publication.snapshot.personal_info?.github_label)
         : true,
     )
-    setIsPublished(publication?.is_published ?? true)
     setErrorMessage(null)
     setSavedPublicUrl(null)
-  }, [educationItems, open, projectItems, publication, resume, skillItems])
+  }, [open, publication, resume])
 
   const canSubmit = useMemo(() => {
     return Boolean(resume && slug.trim())
@@ -104,8 +106,7 @@ function PublishPortfolioDialog({ open, resume, publication, onClose, onPublishe
     setIndexes([...indexes, index].sort((a, b) => a - b))
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  async function handleSubmit() {
     if (!resume) {
       return
     }
@@ -129,7 +130,7 @@ function PublishPortfolioDialog({ open, resume, publication, onClose, onPublishe
           project_indexes: projectIndexes,
           skill_indexes: skillIndexes,
         },
-        is_published: isPublished,
+        is_published: publication?.is_published ?? true,
       }
 
       const record = publication
@@ -159,7 +160,10 @@ function PublishPortfolioDialog({ open, resume, publication, onClose, onPublishe
           </button>
         </div>
 
-        <form className="space-y-5" onSubmit={(event) => void handleSubmit(event)}>
+        <form className="space-y-5" onSubmit={(event) => {
+          event.preventDefault()
+          void handleSubmit()
+        }}>
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Public Slug</legend>
             <input className="input w-full" value={slug} onChange={(event) => setSlug(slugify(event.target.value))} />
@@ -241,11 +245,6 @@ function PublishPortfolioDialog({ open, resume, publication, onClose, onPublishe
               </label>
             </div>
           </fieldset>
-
-          <label className="label cursor-pointer justify-start gap-2">
-            <input type="checkbox" className="checkbox checkbox-sm" checked={isPublished} onChange={(event) => setIsPublished(event.target.checked)} />
-            <span className="label-text">Published</span>
-          </label>
 
           {errorMessage ? <p className="text-sm text-error">{errorMessage}</p> : null}
           {savedPublicUrl ? (
