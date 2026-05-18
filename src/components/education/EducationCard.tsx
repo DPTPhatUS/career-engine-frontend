@@ -5,13 +5,22 @@ type EducationCardProps = {
   item: EducationItem
   isSelected?: boolean
   isDeleting?: boolean
-  onEdit: (item: EducationItem) => void
-  onDelete: (item: EducationItem) => void
+  showActions?: boolean
+  onEdit?: (item: EducationItem) => void
+  onDelete?: (item: EducationItem) => void
 }
 
-function EducationCard({ item, isSelected = false, isDeleting = false, onEdit, onDelete }: EducationCardProps) {
+function EducationCard({
+  item,
+  isSelected = false,
+  isDeleting = false,
+  showActions = true,
+  onEdit,
+  onDelete,
+}: EducationCardProps) {
   const hasCoursework = Boolean(item.coursework && item.coursework.length > 0)
   const isOngoing = /\(expected\)|present|expected/i.test(item.timePeriod)
+  const canShowActions = showActions && onEdit && onDelete
 
   return (
     <div className={`card bg-base-100 border ${isSelected ? 'border-primary' : 'border-base-300'}`}>
@@ -60,26 +69,28 @@ function EducationCard({ item, isSelected = false, isDeleting = false, onEdit, o
             {isOngoing ? 'Ongoing' : 'Graduated'}
           </div>
 
-          <div>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              aria-label="Edit education item"
-              onClick={() => onEdit(item)}
-              disabled={isDeleting}
-            >
-              <Pencil className="size-4" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              aria-label="Delete education item"
-              onClick={() => onDelete(item)}
-              disabled={isDeleting}
-            >
-              <Trash2 className="size-4" aria-hidden="true" />
-            </button>
-          </div>
+          {canShowActions ? (
+            <div>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                aria-label="Edit education item"
+                onClick={() => onEdit(item)}
+                disabled={isDeleting}
+              >
+                <Pencil className="size-4" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                aria-label="Delete education item"
+                onClick={() => onDelete(item)}
+                disabled={isDeleting}
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

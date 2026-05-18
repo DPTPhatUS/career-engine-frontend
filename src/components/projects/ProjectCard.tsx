@@ -5,15 +5,19 @@ function ProjectCard({
   item,
   isSelected = false,
   isDeleting = false,
+  showActions = true,
   onEdit,
   onDelete,
 }: {
   item: ProjectItem
   isSelected?: boolean
   isDeleting?: boolean
-  onEdit: (item: ProjectItem) => void
-  onDelete: (item: ProjectItem) => void
+  showActions?: boolean
+  onEdit?: (item: ProjectItem) => void
+  onDelete?: (item: ProjectItem) => void
 }) {
+  const canShowActions = showActions && onEdit && onDelete
+
   return (
     <div className={`card border ${isSelected ? 'border-primary' : 'border-base-300'} bg-base-100`}>
       <div className="card-body">
@@ -57,26 +61,28 @@ function ProjectCard({
             <span className="btn btn-ghost btn-sm btn-disabled">No Repository</span>
           )}
 
-          <div>
-            <button
-              type="button"
-              aria-label="Edit project"
-              className="btn btn-ghost btn-sm"
-              onClick={() => onEdit(item)}
-              disabled={isDeleting}
-            >
-              <Pencil className="size-4" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              aria-label="Delete project"
-              className="btn btn-ghost btn-sm"
-              onClick={() => onDelete(item)}
-              disabled={isDeleting}
-            >
-              <Trash2 className="size-4" aria-hidden="true" />
-            </button>
-          </div>
+          {canShowActions ? (
+            <div>
+              <button
+                type="button"
+                aria-label="Edit project"
+                className="btn btn-ghost btn-sm"
+                onClick={() => onEdit(item)}
+                disabled={isDeleting}
+              >
+                <Pencil className="size-4" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                aria-label="Delete project"
+                className="btn btn-ghost btn-sm"
+                onClick={() => onDelete(item)}
+                disabled={isDeleting}
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
